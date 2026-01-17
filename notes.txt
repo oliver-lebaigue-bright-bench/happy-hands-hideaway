@@ -1,0 +1,11 @@
+shop
+    categories
+            -houses
+            -cards
+            -hanging Decorations
+        
+        paypal
+
+community events
+
+contact

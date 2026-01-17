@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Gonks - Happy Hands Hideaway</title>
+
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- Poppins -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+        <script>
+            tailwind.config = {
+            theme: {
+                extend: {
+                fontFamily: {
+                    poppins: ['Poppins', 'sans-serif']
+                },
+                colors: {
+                    paper: '#f5f1eb',
+                    ink: '#4a3f35',
+                    header: '#d8cfc4',
+                    hero: '#bfa98a',
+                    accent: '#7a5c3c'
+                }
+                }
+            }
+            }
+        </script>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+            import { getDatabase, ref, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
+                authDomain: "happy-hands-a2927.firebaseapp.com",
+                databaseURL: "https://happy-hands-a2927-default-rtdb.europe-west1.firebasedatabase.app",
+                projectId: "happy-hands-a2927",
+                storageBucket: "happy-hands-a2927.firebasestorage.app",
+                messagingSenderId: "245124696893",
+                appId: "1:245124696893:web:55de882f935bfb07cb5354"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);
+            window.firebaseDB = db;
+            window.firebaseRef = ref;
+            window.firebaseGet = get;
+            window.firebaseTransaction = runTransaction;
+        </script>
+        <script src="../basket.js"></script>
+    </head>
+
+    <body class="bg-paper text-ink font-poppins">
+
+    <!-- Page Hero -->
+    <section class="bg-hero text-center py-16 px-4">
+        <div class="max-w-[1100px] mx-auto">
+        <h2 class="text-[2.2rem] font-semibold mb-2">Gonks</h2>
+        <p class="text-[1.1rem]">Scroll through our collection and add your favourites to your basket</p>
+        </div>
+    </section>
+
+    <!-- Gonks Gallery -->
+    <section class="py-12">
+        <div class="max-w-[1100px] mx-auto px-6">
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+
+            <!-- Single Gonk Card -->
+            <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
+            <img loading="lazy" src="../images/gonks1.jpg" alt="Gonk 1" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+            <h4 class="font-medium mb-2">Gonk #1</h4>
+            <p class="text-accent font-semibold mb-3">£8.50</p>
+            <button 
+                class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
+                data-name="Gonk #1"
+                data-price="8.50"
+            >
+                Add to Basket
+            </button>
+            </div>
+
+            <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
+            <img loading="lazy" src="../images/gonks2.jpg" alt="Gonk 2" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+            <h4 class="font-medium mb-2">Gonk #2</h4>
+            <p class="text-accent font-semibold mb-3">£9.00</p>
+            <button 
+                class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
+                data-name="Gonk #2"
+                data-price="9.00"
+            >
+                Add to Basket
+            </button>
+            </div>
+
+            <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
+            <img loading="lazy" src="../images/gonks3.jpg" alt="Gonk 3" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+            <h4 class="font-medium mb-2">Gonk #3</h4>
+            <p class="text-accent font-semibold mb-3">£8.75</p>
+            <button 
+                class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
+                data-name="Gonk #3"
+                data-price="8.75"
+            >
+                Add to Basket
+            </button>
+            </div>
+
+            <!-- Duplicate these blocks for as many Gonks as you have -->
+
+        </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-header text-center py-4">
+        <p class="text-sm">
+        © 2025 Happy Hands Hideaway. Handmade, not mass-made.
+        </p>
+    </footer>
+    </body>
+</html>

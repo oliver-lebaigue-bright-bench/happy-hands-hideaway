@@ -4,72 +4,123 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Happy Hands Hideaway</title>
-  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            poppins: ['Poppins', 'sans-serif']
+          },
+          colors: {
+            paper: '#f5f1eb',
+            ink: '#4a3f35',
+            header: '#d8cfc4',
+            hero: '#bfa98a',
+            accent: '#7a5c3c'
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
 
-<header>
-  <!-- Logo + Text pinned top-left -->
-  <div class="logo-container">
-    <img src="logo.jpeg" alt="Happy Hands Hideaway logo">
-    <span class="logo-text">Happy Hands Hideaway</span>
-  </div>
+<body class="bg-paper text-ink font-poppins">
 
-  <!-- Navigation on right -->
-  <div class="container header-container">
-    <nav>
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="Socials.html">Socials</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+  <!-- Hero -->
+  <section class="bg-hero text-center py-16 px-4">
+    <div class="max-w-[1100px] mx-auto">
+      <h2 class="text-[2.2rem] font-semibold mb-2">
+        Happy Hands Hideaway
+      </h2>
+      <p class="text-[1.1rem]">
+        Handmade with love
+      </p>
+    </div>
+  </section>
 
-<section class="hero">
-  <div class="container">
-    <h2>Handmade with love</h2>
-    <p>Earthy, joyful crafts made to last</p>
-  </div>
-</section>
+  <!-- Products -->
+  <section class="py-12">
+    <div class="max-w-[1100px] mx-auto px-6">
 
-<section class="products">
-  <div class="container">
-    <h3>Clay Decorations</h3>
+      <div class="grid grid-cols-2 gap-8">
 
-    <div class="product-grid">
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x300" alt="Decoupage disk" />
-        <h4>Decoupage Disk</h4>
-        <p>£15.00</p>
-      </div>
+        <!-- Card -->
+        <div onclick="window.location.href='products/gonks.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/gonks.jpg" alt="Gonks" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Gonks</h4>
+        </div>
 
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x300" alt="Macrame wall hanging" />
-        <h4>Macrame Wall Hanging</h4>
-        <p>£25.00</p>
-      </div>
+        <div onclick="window.location.href='products/creatures.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/creatures.jpg" alt="Clay mini creatures" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Clay Mini Creatures</h4>
+        </div>
 
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x300" alt="Clay plant pot" />
-        <h4>Clay Plant Pot</h4>
-        <p>£18.00</p>
-      </div>
+        <div onclick="window.location.href='products/desk_tidy.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/desk_tidy.jpg" alt="Clay desk tidy" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Clay Desk Tidy</h4>
+        </div>
 
-      <div class="product-card">
-        <img src="https://via.placeholder.com/300x300" alt="Clay ornament" />
-        <h4>Clay Ornament</h4>
-        <p>£12.00</p>
+        <div onclick="window.location.href='products/fairy_house.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/fairy_house.jpg" alt="Fairy Houses" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Fairy Houses</h4>
+        </div>
+
+        <div onclick="window.location.href='products/souvenirs.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/welsh_souvenir.jpg" alt="Welsh Souvenirs" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Welsh Souvenirs</h4>
+        </div>
+
+        <div onclick="window.location.href='products/jelly_prints.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/jell_print.jpg" alt="Jell Print Range" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Jell Print Range</h4>
+        </div>
+
+        <div onclick="window.location.href='products/personalised_gifts.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/personalised_gift.jpg" alt="Personalised gifts" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Personalised Gifts</h4>
+        </div>
+
+        <div onclick="window.location.href='products/magnets.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/magnets.jpg" alt="Magnets" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Magnets</h4>
+        </div>
+
+        <div onclick="window.location.href='products/bunting.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/bunting.jpg" alt="Bunting" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Bunting</h4>
+        </div>
+
+        <div onclick="window.location.href='products/bauble.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/bauble.jpg" alt="Bauble" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Baubles</h4>
+        </div>
+
+        <div onclick="window.location.href='products/figurines.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
+          <img loading="lazy" src="images/figurines.jpg" alt="Figurines" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+          <h4 class="font-medium">Figurines</h4>
+        </div>
+
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer>
-  <div class="container">
-    <p>&copy; 2025 Happy Hands Hideaway. Handmade, not mass-made.</p>
-  </div>
-</footer>
+  <!-- Footer -->
+  <footer class="bg-header text-center py-4">
+    <p class="text-sm">
+      © 2025 Happy Hands Hideaway. Handmade, not mass-made.
+    </p>
+  </footer>
+
+  <script src="basket.js"></script>
 
 </body>
 </html>
