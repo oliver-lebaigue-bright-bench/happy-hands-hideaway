@@ -1,4 +1,4 @@
-// basket.js — Site-wide basket with Firebase stock, delivery validation, street autocomplete, and orders
+// basket.js — Modern Basket with full delivery modal and Firebase stock
 (() => {
   document.addEventListener('DOMContentLoaded', () => {
     // --- Firebase globals ---
@@ -12,127 +12,155 @@
     const basket = JSON.parse(localStorage.getItem('basket')) || [];
     function saveBasket() { localStorage.setItem('basket', JSON.stringify(basket)); }
 
-    // --- Basket UI ---
-    const basketBtn = document.createElement('button');
-    basketBtn.id = 'basket-btn';
-    basketBtn.className = `
-      fixed top-6 right-6 bg-accent text-white font-bold py-3 px-6 rounded-xl shadow-xl z-50
-      hover:bg-yellow-500 transition text-lg
-    `;
-    document.body.appendChild(basketBtn);
-
+    // --- Overlay ---
     const overlay = document.createElement('div');
     overlay.id = 'basket-overlay';
     overlay.className = `
-      fixed inset-0 bg-black bg-opacity-60 hidden flex justify-center items-center z-50
-      backdrop-blur-sm
+      fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50
+      backdrop-blur-sm transition-opacity
     `;
+    document.body.appendChild(overlay);
 
+    // --- Basket Modal ---
     const basketModal = document.createElement('div');
     basketModal.id = 'basket-modal';
     basketModal.className = `
-      bg-white w-11/12 max-w-lg rounded-2xl shadow-2xl p-6 relative
-      max-h-[85vh] overflow-y-auto flex flex-col
+      bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 flex flex-col relative
+      max-h-[85vh] overflow-y-auto animate-fadeIn
     `;
 
+    // Close button
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '✕';
-    closeBtn.className = 'absolute top-4 right-4 text-ink font-bold text-2xl hover:text-red-600';
+    closeBtn.className = 'absolute top-4 right-4 text-gray-600 hover:text-red-600 font-bold text-2xl transition';
     closeBtn.addEventListener('click', () => hideBasket());
     basketModal.appendChild(closeBtn);
 
+    // Title
     const basketTitle = document.createElement('h3');
     basketTitle.textContent = 'Your Basket';
-    basketTitle.className = 'font-bold text-2xl mb-4 text-center';
+    basketTitle.className = 'text-center font-bold text-3xl mb-6 text-gray-800';
     basketModal.appendChild(basketTitle);
 
+    // Basket list
     const basketList = document.createElement('div');
     basketList.id = 'basket-list';
     basketList.className = 'space-y-4';
     basketModal.appendChild(basketList);
 
+    // Total
     const basketTotal = document.createElement('p');
     basketTotal.id = 'basket-total';
-    basketTotal.className = 'font-bold text-lg mt-4 text-right';
+    basketTotal.className = 'font-bold text-lg mt-6 text-right text-gray-800';
     basketModal.appendChild(basketTotal);
 
+    // Checkout button
     const checkoutBtn = document.createElement('button');
     checkoutBtn.textContent = 'Checkout';
-    checkoutBtn.className = 'mt-4 w-full bg-hero text-white py-3 rounded-xl font-semibold hover:bg-ink transition';
+    checkoutBtn.className = `
+      mt-6 w-full bg-hero text-white py-3 rounded-2xl font-semibold text-lg hover:bg-ink
+      transition shadow-lg
+    `;
     basketModal.appendChild(checkoutBtn);
 
     overlay.appendChild(basketModal);
-    document.body.appendChild(overlay);
 
     // --- Delivery Modal ---
     const deliveryModal = document.createElement('div');
     deliveryModal.id = 'delivery-modal';
     deliveryModal.className = `
-      fixed inset-0 bg-black bg-opacity-60 hidden flex justify-center items-center z-50
-      backdrop-blur-sm
+      fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50
+      backdrop-blur-sm transition-opacity
     `;
 
     const deliveryForm = document.createElement('div');
     deliveryForm.className = `
-      bg-white w-11/12 max-w-lg rounded-2xl shadow-2xl p-6 flex flex-col relative
+      bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 flex flex-col relative
+      max-h-[90vh] overflow-y-auto animate-fadeIn
     `;
 
     const closeDeliveryBtn = document.createElement('button');
     closeDeliveryBtn.textContent = '✕';
-    closeDeliveryBtn.className = 'absolute top-4 right-4 text-ink font-bold text-2xl hover:text-red-600';
+    closeDeliveryBtn.className = 'absolute top-4 right-4 text-gray-600 hover:text-red-600 font-bold text-2xl transition';
     closeDeliveryBtn.addEventListener('click', () => deliveryModal.classList.add('hidden'));
     deliveryForm.appendChild(closeDeliveryBtn);
 
-    const title = document.createElement('h3');
-    title.textContent = 'Delivery Details';
-    title.className = 'font-bold text-2xl mb-4 text-center';
-    deliveryForm.appendChild(title);
+    const deliveryTitle = document.createElement('h3');
+    deliveryTitle.textContent = 'Delivery Details';
+    deliveryTitle.className = 'text-center font-bold text-3xl mb-6 text-gray-800';
+    deliveryForm.appendChild(deliveryTitle);
 
-    const postcodeInput = document.createElement('input');
-    postcodeInput.placeholder = 'Postcode (e.g., SW1A 1AA)';
-    postcodeInput.className = 'mb-3 p-2 border rounded';
-    deliveryForm.appendChild(postcodeInput);
+    // Helper to create labeled input
+    function createLabeledInput(labelText, placeholder, type='text', required=true) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'mb-4 flex flex-col';
+      const label = document.createElement('label');
+      label.textContent = labelText;
+      label.className = 'mb-1 font-semibold text-gray-700';
+      const input = document.createElement('input');
+      input.placeholder = placeholder;
+      input.type = type;
+      input.className = `
+        p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hero
+        transition
+      `;
+      if (required) input.required = true;
+      wrapper.appendChild(label);
+      wrapper.appendChild(input);
+      deliveryForm.appendChild(wrapper);
+      return input;
+    }
 
-    const streetInput = document.createElement('input');
-    streetInput.placeholder = 'Street & House No.';
-    streetInput.className = 'mb-3 p-2 border rounded';
-    deliveryForm.appendChild(streetInput);
+    // Delivery fields
+    const fullNameInput = createLabeledInput('Full Name', 'John Doe');
+    const phoneInput = createLabeledInput('Phone Number', '07123 456789', 'tel');
+    const houseInput = createLabeledInput('House Number / Name', '12B');
+    const streetInput = createLabeledInput('Street', 'Baker Street');
+    const cityInput = createLabeledInput('City/Town', 'London');
+    const countyInput = createLabeledInput('County', 'Greater London', 'text', false);
+    const postcodeInput = createLabeledInput('Postcode', 'SW1A 1AA');
 
+    // Street suggestions
     const streetSuggestions = document.createElement('div');
-    streetSuggestions.className = 'mb-3 p-2 border rounded bg-white max-h-40 overflow-y-auto';
+    streetSuggestions.className = 'mb-4 p-2 border border-gray-300 rounded-xl bg-white max-h-36 overflow-y-auto';
     deliveryForm.appendChild(streetSuggestions);
 
-    const cityInput = document.createElement('input');
-    cityInput.placeholder = 'City/Town';
-    cityInput.className = 'mb-3 p-2 border rounded';
-    cityInput.disabled = true;
-    deliveryForm.appendChild(cityInput);
-
+    // Confirm & Pay
     const submitDeliveryBtn = document.createElement('button');
     submitDeliveryBtn.textContent = 'Confirm & Pay';
-    submitDeliveryBtn.className = 'mt-4 bg-hero text-white py-3 rounded-xl font-semibold hover:bg-ink transition';
+    submitDeliveryBtn.className = `
+      mt-6 bg-hero text-white py-3 rounded-2xl font-semibold text-lg hover:bg-ink
+      transition shadow-lg
+    `;
     deliveryForm.appendChild(submitDeliveryBtn);
-
     deliveryModal.appendChild(deliveryForm);
     document.body.appendChild(deliveryModal);
 
-    // --- Modal Animations ---
+    // --- Basket Button ---
+    const basketBtn = document.createElement('button');
+    basketBtn.id = 'basket-btn';
+    basketBtn.className = `
+      fixed top-6 right-6 bg-accent text-white font-bold py-3 px-6 rounded-2xl shadow-xl z-50
+      hover:bg-yellow-500 transition text-lg
+    `;
+    document.body.appendChild(basketBtn);
+
+    // --- Modal show/hide ---
     function showBasket() {
       overlay.classList.remove('hidden');
-      basketModal.style.transform = 'translateY(-50px) scale(0.95)';
+      basketModal.style.transform = 'translateY(-20px)';
       basketModal.style.opacity = '0';
-      basketModal.style.transition = 'transform 0.35s ease, opacity 0.35s ease';
+      basketModal.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
       requestAnimationFrame(() => {
-        basketModal.style.transform = 'translateY(0) scale(1)';
+        basketModal.style.transform = 'translateY(0)';
         basketModal.style.opacity = '1';
       });
     }
+    function hideBasket() { overlay.classList.add('hidden'); }
 
-    function hideBasket() {
-      basketModal.style.transform = 'translateY(-50px) scale(0.95)';
-      basketModal.style.opacity = '0';
-      setTimeout(() => overlay.classList.add('hidden'), 350);
-    }
+    basketBtn.addEventListener('click', showBasket);
+    overlay.addEventListener('click', e => { if(e.target === overlay) hideBasket(); });
+    checkoutBtn.addEventListener('click', () => { hideBasket(); deliveryModal.classList.remove('hidden'); });
 
     // --- Firebase stock helpers ---
     async function getStock(itemName) {
@@ -157,7 +185,7 @@
       });
     }
 
-    // --- Basket UI update ---
+    // --- Update basket UI ---
     async function updateBasketUI() {
       basketList.innerHTML = '';
       let total = 0, count = 0;
@@ -166,19 +194,23 @@
         const item = basket[i];
         const stock = await getStock(item.name);
 
+        // Item card
         const itemDiv = document.createElement('div');
-        itemDiv.className = 'flex justify-between items-center';
+        itemDiv.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-xl shadow-sm hover:shadow-md transition';
 
         const left = document.createElement('div');
-        left.className = 'text-sm';
-        left.textContent = item.name;
+        left.className = 'flex flex-col';
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = item.name;
+        nameSpan.className = 'font-semibold text-gray-800';
+        left.appendChild(nameSpan);
 
         const qtyContainer = document.createElement('div');
-        qtyContainer.className = 'flex items-center space-x-2';
+        qtyContainer.className = 'flex items-center space-x-2 mt-1';
 
         const minusBtn = document.createElement('button');
         minusBtn.textContent = '−';
-        minusBtn.className = 'bg-hero text-white px-2 rounded hover:bg-ink transition';
+        minusBtn.className = 'bg-hero text-white px-3 rounded-full hover:bg-ink transition';
         minusBtn.addEventListener('click', () => {
           if (item.qty > 1) item.qty--; else basket.splice(i, 1);
           saveBasket(); updateBasketUI();
@@ -186,11 +218,11 @@
 
         const qtyText = document.createElement('span');
         qtyText.textContent = item.qty;
-        qtyText.className = 'w-5 text-center';
+        qtyText.className = 'w-6 text-center font-medium';
 
         const plusBtn = document.createElement('button');
         plusBtn.textContent = '+';
-        plusBtn.className = 'bg-hero text-white px-2 rounded hover:bg-ink transition';
+        plusBtn.className = 'bg-hero text-white px-3 rounded-full hover:bg-ink transition';
         plusBtn.disabled = item.qty >= stock;
         plusBtn.addEventListener('click', async () => {
           const currentStock = await getStock(item.name);
@@ -199,22 +231,22 @@
         });
 
         qtyContainer.append(minusBtn, qtyText, plusBtn);
+        left.appendChild(qtyContainer);
 
         const right = document.createElement('div');
-        right.className = 'flex items-center space-x-2';
+        right.className = 'flex flex-col items-end space-y-1';
         const priceSpan = document.createElement('span');
         priceSpan.textContent = `£${(item.price * item.qty).toFixed(2)}`;
-        priceSpan.className = 'font-semibold';
+        priceSpan.className = 'font-semibold text-gray-800';
 
         const removeBtn = document.createElement('button');
         removeBtn.textContent = '✕';
         removeBtn.className = 'text-red-500 hover:text-red-700';
-        removeBtn.addEventListener('click', () => {
-          basket.splice(i, 1); saveBasket(); updateBasketUI();
-        });
+        removeBtn.addEventListener('click', () => { basket.splice(i, 1); saveBasket(); updateBasketUI(); });
 
         right.append(priceSpan, removeBtn);
-        itemDiv.append(left, qtyContainer, right);
+
+        itemDiv.append(left, right);
         basketList.appendChild(itemDiv);
 
         total += item.price * item.qty;
@@ -224,7 +256,7 @@
       basketTotal.textContent = `Total: £${total.toFixed(2)}`;
       basketBtn.textContent = `🛒 Basket (${count})`;
 
-      // Update buttons
+      // Update add-to-basket buttons
       document.querySelectorAll('button.add-to-basket').forEach(async btn => {
         const name = btn.dataset.name;
         const stock = await getStock(name);
@@ -235,10 +267,12 @@
           btn.classList.add('bg-gray-400', 'cursor-not-allowed');
         } else if (inBasket) {
           btn.textContent = 'In Basket'; btn.disabled = false;
-          btn.classList.add('bg-ink','text-white'); btn.classList.remove('bg-hero','hover:bg-ink','hover:text-white','bg-gray-400','cursor-not-allowed');
+          btn.classList.add('bg-ink','text-white'); 
+          btn.classList.remove('bg-hero','hover:bg-ink','hover:text-white','bg-gray-400','cursor-not-allowed');
         } else {
           btn.textContent = 'Add to Basket'; btn.disabled = false;
-          btn.classList.add('bg-hero','hover:bg-ink','hover:text-white'); btn.classList.remove('bg-ink','text-white','bg-gray-400','cursor-not-allowed');
+          btn.classList.add('bg-hero','hover:bg-ink','hover:text-white'); 
+          btn.classList.remove('bg-ink','text-white','bg-gray-400','cursor-not-allowed');
         }
       });
     }
@@ -249,87 +283,54 @@
         const name = btn.dataset.name;
         const price = parseFloat(btn.dataset.price);
         const stock = await getStock(name);
-
         const existing = basket.find(i => i.name === name);
         if (existing) {
           if (existing.qty < stock) existing.qty++;
         } else if (stock > 0) {
           basket.push({name, price, qty:1});
         }
-
         saveBasket(); updateBasketUI();
       });
     });
 
-    // --- Checkout ---
-    checkoutBtn.addEventListener('click', () => {
-      hideBasket(); deliveryModal.classList.remove('hidden');
-    });
-
-    // --- Street Autocomplete ---
-    streetInput.addEventListener('input', async () => {
-      const postcode = postcodeInput.value.trim();
-      const term = streetInput.value.trim();
-      streetSuggestions.innerHTML = '';
-      if (!postcode || term.length < 2) return;
-      try {
-        const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(postcode)}/autocomplete`);
-        const data = await res.json();
-        if (data.status === 200 && data.result) {
-          const matches = data.result.filter(s => s.toLowerCase().includes(term.toLowerCase()));
-          matches.forEach(s => {
-            const div = document.createElement('div');
-            div.textContent = s;
-            div.className = 'p-1 hover:bg-gray-200 cursor-pointer';
-            div.addEventListener('click', () => {
-              streetInput.value = s; streetSuggestions.innerHTML = '';
-            });
-            streetSuggestions.appendChild(div);
-          });
-        }
-      } catch (err) {}
-    });
-
-    // --- Confirm Delivery & Create Order ---
+    // --- Confirm Delivery ---
     submitDeliveryBtn.addEventListener('click', async () => {
-      const postcode = postcodeInput.value.trim();
+      const fullName = fullNameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const house = houseInput.value.trim();
       const street = streetInput.value.trim();
-      if (!postcode || !street) { alert("Fill all fields"); return; }
+      const city = cityInput.value.trim();
+      const county = countyInput.value.trim();
+      const postcode = postcodeInput.value.trim();
 
-      let city = '';
-      try {
-        const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(postcode)}`);
-        const data = await res.json();
-        if (data.status !== 200 || !data.result) { alert("Invalid postcode"); return; }
-        city = data.result.admin_district;
-      } catch (err) { alert("Error validating postcode"); return; }
-
-      cityInput.value = city;
+      if (!fullName || !phone || !house || !street || !city || !postcode) {
+        alert("Please fill in all required fields.");
+        return;
+      }
 
       try {
         for (const item of basket) await deductStock(item);
 
-        // --- Add order to Firebase ---
-        const orderRef = ref(db, `orders/${Date.now()}`);
+        const orderRef = ref(db, `orders/${crypto.randomUUID()}`);
         await set(orderRef, {
           timestamp: new Date().toISOString(),
-          postcode,
-          city,
-          street,
+          fullName, phone, house, street, city, county, postcode,
           items: basket.map(i => ({name:i.name, qty:i.qty, price:i.price})),
           price: basket.reduce((acc,i)=>acc+i.price*i.qty,0)
         });
 
-        alert(`Purchase complete!\nDelivery to:\n${street}\n${city}\n${postcode}`);
+        alert(`Purchase complete!\nDelivery to:\n${house} ${street}, ${city}, ${county || ''}, ${postcode}`);
         basket.length = 0; saveBasket(); updateBasketUI();
         deliveryModal.classList.add('hidden');
-        postcodeInput.value=''; streetInput.value=''; cityInput.value=''; streetSuggestions.innerHTML='';
-      } catch (err) { alert(err.message); }
+
+        fullNameInput.value=''; phoneInput.value=''; houseInput.value='';
+        streetInput.value=''; cityInput.value=''; countyInput.value=''; postcodeInput.value='';
+        streetSuggestions.innerHTML='';
+
+      } catch(err){ alert(err.message); }
     });
 
     // --- Init ---
     updateBasketUI();
-    basketBtn.addEventListener('click', showBasket);
-    overlay.addEventListener('click', e => { if(e.target === overlay) hideBasket(); });
   });
 })();

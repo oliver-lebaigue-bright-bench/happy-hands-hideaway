@@ -31,6 +31,29 @@
       }
     }
   </script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getDatabase, ref, get, runTransaction, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
+      authDomain: "happy-hands-a2927.firebaseapp.com",
+      databaseURL: "https://happy-hands-a2927-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "happy-hands-a2927",
+      storageBucket: "happy-hands-a2927.firebasestorage.app",
+      messagingSenderId: "245124696893",
+      appId: "1:245124696893:web:55de882f935bfb07cb5354"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.firebaseDB = db;
+    window.firebaseRef = ref;
+    window.firebaseGet = get;
+    window.firebaseTransaction = runTransaction;
+    window.firebaseSet = set;
+  </script>
 </head>
 
 <body class="bg-paper text-ink font-poppins">
