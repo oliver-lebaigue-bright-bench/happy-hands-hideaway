@@ -12,6 +12,10 @@
     const basket = JSON.parse(localStorage.getItem('basket')) || [];
     function saveBasket() { localStorage.setItem('basket', JSON.stringify(basket)); }
 
+    // --- Wishlist data ---
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    function saveWishlist() { localStorage.setItem('wishlist', JSON.stringify(wishlist)); }
+
     // --- Overlay ---
     const overlay = document.createElement('div');
     overlay.id = 'basket-overlay';
@@ -28,6 +32,37 @@
       bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 flex flex-col relative
       max-h-[85vh] overflow-y-auto animate-fadeIn
     `;
+
+    // --- Wishlist Modal ---
+    const wishlistModal = document.createElement('div');
+    wishlistModal.id = 'wishlist-modal';
+    wishlistModal.className = `
+      bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 flex flex-col relative
+      max-h-[85vh] overflow-y-auto animate-fadeIn
+    `;
+
+    const closeWishlistBtn = document.createElement('button');
+    closeWishlistBtn.textContent = '✕';
+    closeWishlistBtn.className = 'absolute top-4 right-4 text-gray-600 hover:text-red-600 font-bold text-2xl transition';
+    closeWishlistBtn.addEventListener('click', () => wishlistModal.classList.add('hidden'));
+    wishlistModal.appendChild(closeWishlistBtn);
+
+    const wishlistTitle = document.createElement('h3');
+    wishlistTitle.textContent = 'Your Wishlist';
+    wishlistTitle.className = 'text-center font-bold text-3xl mb-6 text-gray-800';
+    wishlistModal.appendChild(wishlistTitle);
+
+    const wishlistList = document.createElement('div');
+    wishlistList.id = 'wishlist-list';
+    wishlistList.className = 'space-y-4';
+    wishlistModal.appendChild(wishlistList);
+
+    const wishlistEmpty = document.createElement('p');
+    wishlistEmpty.textContent = 'Your wishlist is empty.';
+    wishlistEmpty.className = 'text-center text-gray-500';
+    wishlistList.appendChild(wishlistEmpty);
+
+    overlay.appendChild(wishlistModal);
 
     // Close button
     const closeBtn = document.createElement('button');
@@ -136,17 +171,33 @@
     deliveryModal.appendChild(deliveryForm);
     document.body.appendChild(deliveryModal);
 
-    // --- Basket Button ---
+    // --- Basket and Wishlist Buttons ---
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'fixed top-6 right-6 flex space-x-2 z-50';
+
     const basketBtn = document.createElement('button');
     basketBtn.id = 'basket-btn';
     basketBtn.className = `
-      fixed top-6 right-6 bg-accent text-white font-bold py-3 px-6 rounded-2xl shadow-xl z-50
+      bg-accent text-white font-bold py-3 px-6 rounded-2xl shadow-xl
       hover:bg-yellow-500 transition text-lg
     `;
-    document.body.appendChild(basketBtn);
+    buttonContainer.appendChild(basketBtn);
+
+    const wishlistBtn = document.createElement('button');
+    wishlistBtn.id = 'wishlist-btn';
+    wishlistBtn.className = `
+      bg-pink-500 text-white font-bold py-3 px-6 rounded-2xl shadow-xl
+      hover:bg-pink-600 transition text-lg
+    `;
+    wishlistBtn.textContent = '❤️ Wishlist';
+    buttonContainer.appendChild(wishlistBtn);
+
+    document.body.appendChild(buttonContainer);
 
     // --- Modal show/hide ---
     function showBasket() {
+      wishlistModal.classList.add('hidden'); // Hide wishlist modal
+      basketModal.classList.remove('hidden');
       overlay.classList.remove('hidden');
       basketModal.style.transform = 'translateY(-20px)';
       basketModal.style.opacity = '0';
@@ -158,9 +209,26 @@
     }
     function hideBasket() { overlay.classList.add('hidden'); }
 
+    function showWishlist() {
+      basketModal.classList.add('hidden'); // Hide basket modal
+      wishlistModal.classList.remove('hidden');
+      overlay.classList.remove('hidden');
+      wishlistModal.style.transform = 'translateY(-20px)';
+      wishlistModal.style.opacity = '0';
+      wishlistModal.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+      requestAnimationFrame(() => {
+        wishlistModal.style.transform = 'translateY(0)';
+        wishlistModal.style.opacity = '1';
+      });
+    }
+    function hideWishlist() { overlay.classList.add('hidden'); }
+
     basketBtn.addEventListener('click', showBasket);
-    overlay.addEventListener('click', e => { if(e.target === overlay) hideBasket(); });
+    wishlistBtn.addEventListener('click', showWishlist);
     checkoutBtn.addEventListener('click', () => { hideBasket(); deliveryModal.classList.remove('hidden'); });
+    closeBtn.addEventListener('click', hideBasket);
+    closeWishlistBtn.addEventListener('click', hideWishlist);
+    overlay.addEventListener('click', e => { if(e.target === overlay) { hideBasket(); hideWishlist(); } });
 
     // --- Firebase stock helpers ---
     async function getStock(itemName) {
@@ -277,6 +345,51 @@
       });
     }
 
+    // --- Update wishlist UI ---
+    function updateWishlistUI() {
+      wishlistList.innerHTML = '';
+      if (wishlist.length === 0) {
+        wishlistList.appendChild(wishlistEmpty);
+        return;
+      }
+
+      wishlist.forEach((item, i) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-xl shadow-sm hover:shadow-md transition';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = item;
+        nameSpan.className = 'font-semibold text-gray-800';
+        itemDiv.appendChild(nameSpan);
+
+        const right = document.createElement('div');
+        right.className = 'flex space-x-2';
+
+        const addToBasketBtn = document.createElement('button');
+        addToBasketBtn.textContent = 'Add to Basket';
+        addToBasketBtn.className = 'bg-hero text-white px-4 py-2 rounded-lg hover:bg-ink transition';
+        addToBasketBtn.addEventListener('click', () => {
+          const price = parseFloat(document.querySelector(`button[data-name="${item}"]`)?.dataset.price || 0);
+          const existing = basket.find(b => b.name === item);
+          if (existing) existing.qty++;
+          else basket.push({name: item, price, qty: 1});
+          saveBasket(); updateBasketUI();
+        });
+        right.appendChild(addToBasketBtn);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = '✕';
+        removeBtn.className = 'text-red-500 hover:text-red-700';
+        removeBtn.addEventListener('click', () => { wishlist.splice(i, 1); saveWishlist(); updateWishlistUI(); });
+        right.appendChild(removeBtn);
+
+        itemDiv.appendChild(right);
+        wishlistList.appendChild(itemDiv);
+      });
+
+      wishlistBtn.textContent = `❤️ Wishlist (${wishlist.length})`;
+    }
+
     // --- Add to Basket ---
     document.querySelectorAll('button.add-to-basket').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -291,6 +404,25 @@
         }
         saveBasket(); updateBasketUI();
       });
+    });
+
+    // --- Wishlist Toggle (Heart Icon) ---
+    document.querySelectorAll('button.add-to-basket').forEach(btn => {
+      const name = btn.dataset.name;
+      const heartBtn = document.createElement('button');
+      heartBtn.textContent = wishlist.includes(name) ? '❤️' : '🤍';
+      heartBtn.className = 'ml-4 text-2xl hover:scale-110 transition';
+      heartBtn.addEventListener('click', () => {
+        if (wishlist.includes(name)) {
+          wishlist.splice(wishlist.indexOf(name), 1);
+          heartBtn.textContent = '🤍';
+        } else {
+          wishlist.push(name);
+          heartBtn.textContent = '❤️';
+        }
+        saveWishlist(); updateWishlistUI();
+      });
+      btn.parentNode.insertBefore(heartBtn, btn.nextSibling);
     });
 
     // --- Confirm Delivery ---
@@ -332,5 +464,6 @@
 
     // --- Init ---
     updateBasketUI();
+    updateWishlistUI();
   });
 })();

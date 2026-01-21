@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Gonks - Happy Hands Hideaway</title>
+        <title>Creatures - Happy Hands Hideaway</title>
 
         <!-- Tailwind -->
         <script src="https://cdn.tailwindcss.com"></script>
@@ -55,32 +55,33 @@
             window.firebaseTransaction = runTransaction;
         </script>
         <script src="../basket.js"></script>
+        <link rel="stylesheet" href="../style.css">
     </head>
 
     <body class="bg-paper text-ink font-poppins">
 
     <!-- Page Hero -->
-    <section class="bg-hero text-center py-16 px-4">
+    <section class="bg-hero text-center py-16 px-4 top-bar">
         <div class="max-w-[1100px] mx-auto">
-        <h2 class="text-[2.2rem] font-semibold mb-2">Gonks</h2>
+        <h2 class="text-[2.8rem] font-semibold mb-2">Creatures</h2>
         <p class="text-[1.1rem]">Scroll through our collection and add your favourites to your basket</p>
         </div>
     </section>
 
-    <!-- Gonks Gallery -->
+    <!-- Creatures Gallery -->
     <section class="py-12">
         <div class="max-w-[1100px] mx-auto px-6">
 
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
 
-            <!-- Single Gonk Card -->
+            <!-- Single Creature Card -->
             <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
-            <img loading="lazy" src="../images/gonks1.jpg" alt="Gonk 1" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-            <h4 class="font-medium mb-2">Gonk #1</h4>
+            <img loading="lazy" src="../images/creatures1.jpg" alt="Creature 1" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+            <h4 class="font-medium mb-2">Creature #1</h4>
             <p class="text-accent font-semibold mb-3">£8.50</p>
             <button 
                 class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
-                data-name="Gonk #1"
+                data-name="Creature #1"
                 data-price="8.50"
             >
                 Add to Basket
@@ -88,12 +89,12 @@
             </div>
 
             <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
-            <img loading="lazy" src="../images/gonks2.jpg" alt="Gonk 2" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-            <h4 class="font-medium mb-2">Gonk #2</h4>
+            <img loading="lazy" src="../images/creatures2.jpg" alt="Creature 2" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+            <h4 class="font-medium mb-2">Creature #2</h4>
             <p class="text-accent font-semibold mb-3">£9.00</p>
             <button 
                 class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
-                data-name="Gonk #2"
+                data-name="Creature #2"
                 data-price="9.00"
             >
                 Add to Basket
@@ -101,12 +102,12 @@
             </div>
 
             <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
-            <img loading="lazy" src="../images/gonks3.jpg" alt="Gonk 3" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-            <h4 class="font-medium mb-2">Gonk #3</h4>
+            <img loading="lazy" src="../images/creatures3.jpg" alt="Creature 3" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
+            <h4 class="font-medium mb-2">Creature #3</h4>
             <p class="text-accent font-semibold mb-3">£8.75</p>
             <button 
                 class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
-                data-name="Gonk #3"
+                data-name="Creature #3"
                 data-price="8.75"
             >
                 Add to Basket
