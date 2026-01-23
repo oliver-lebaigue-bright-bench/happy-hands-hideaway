@@ -1,0 +1,49 @@
+/* Base mobile adjustments */
+@media (max-width: 768px) {
+  
+  /* Hero section text */
+  section.bg-hero h2 {
+    font-size: 2rem !important;
+  }
+  
+  section.bg-hero p {
+    font-size: 1rem !important;
+  }
+
+  /* Grid layout for products: 1 column on small screens */
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Product card image */
+  .grid img {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Card padding */
+  .grid div {
+    padding: 1.5rem !important;
+  }
+
+  /* Footer text size */
+  footer p {
+    font-size: 0.875rem !important;
+  }
+}
+
+/* Optional: Very small screens adjustments */
+@media (max-width: 480px) {
+  section.bg-hero h2 {
+    font-size: 1.6rem !important;
+  }
+
+  section.bg-hero p {
+    font-size: 0.95rem !important;
+  }
+
+  .grid div h4 {
+    font-size: 1rem !important;
+  }
+}

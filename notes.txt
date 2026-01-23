@@ -1,11 +1,11 @@
 shop
-    categories
-            -houses
-            -cards
-            -hanging Decorations
-        
-        paypal
+    paypal
 
 community events
 
 contact
+
+TODO:
+    contact.html
+    other item pages
+    merge basket.js wishlist and basket buttons
