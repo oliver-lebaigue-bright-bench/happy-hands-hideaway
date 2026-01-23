@@ -13,7 +13,7 @@
     function saveBasket() { localStorage.setItem('basket', JSON.stringify(basket)); }
 
     // --- Wishlist data ---
-    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || []);
     function saveWishlist() { localStorage.setItem('wishlist', JSON.stringify(wishlist)); }
 
     // --- Overlay ---
@@ -25,80 +25,86 @@
     `;
     document.body.appendChild(overlay);
 
-    // --- Basket Modal ---
-    const basketModal = document.createElement('div');
-    basketModal.id = 'basket-modal';
-    basketModal.className = `
+    // --- Cart Modal (merged basket and wishlist) ---
+    const cartModal = document.createElement('div');
+    cartModal.id = 'cart-modal';
+    cartModal.className = `
       bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 flex flex-col relative
       max-h-[85vh] overflow-y-auto animate-fadeIn
     `;
-
-    // --- Wishlist Modal ---
-    const wishlistModal = document.createElement('div');
-    wishlistModal.id = 'wishlist-modal';
-    wishlistModal.className = `
-      bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 flex flex-col relative
-      max-h-[85vh] overflow-y-auto animate-fadeIn
-    `;
-
-    const closeWishlistBtn = document.createElement('button');
-    closeWishlistBtn.textContent = '✕';
-    closeWishlistBtn.className = 'absolute top-4 right-4 text-gray-600 hover:text-red-600 font-bold text-2xl transition';
-    closeWishlistBtn.addEventListener('click', () => wishlistModal.classList.add('hidden'));
-    wishlistModal.appendChild(closeWishlistBtn);
-
-    const wishlistTitle = document.createElement('h3');
-    wishlistTitle.textContent = 'Your Wishlist';
-    wishlistTitle.className = 'text-center font-bold text-3xl mb-6 text-gray-800';
-    wishlistModal.appendChild(wishlistTitle);
-
-    const wishlistList = document.createElement('div');
-    wishlistList.id = 'wishlist-list';
-    wishlistList.className = 'space-y-4';
-    wishlistModal.appendChild(wishlistList);
-
-    const wishlistEmpty = document.createElement('p');
-    wishlistEmpty.textContent = 'Your wishlist is empty.';
-    wishlistEmpty.className = 'text-center text-gray-500';
-    wishlistList.appendChild(wishlistEmpty);
-
-    overlay.appendChild(wishlistModal);
 
     // Close button
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '✕';
     closeBtn.className = 'absolute top-4 right-4 text-gray-600 hover:text-red-600 font-bold text-2xl transition';
-    closeBtn.addEventListener('click', () => hideBasket());
-    basketModal.appendChild(closeBtn);
+    closeBtn.addEventListener('click', () => hideCart());
+    cartModal.appendChild(closeBtn);
 
-    // Title
+    // Tabs
+    const tabContainer = document.createElement('div');
+    tabContainer.className = 'flex justify-center mb-6 border-b border-gray-200';
+    const basketTab = document.createElement('button');
+    basketTab.textContent = 'Basket';
+    basketTab.className = 'px-4 py-2 font-semibold text-gray-800 border-b-2 border-transparent hover:border-hero transition';
+    const wishlistTab = document.createElement('button');
+    wishlistTab.textContent = 'Wishlist';
+    wishlistTab.className = 'px-4 py-2 font-semibold text-gray-500 border-b-2 border-transparent hover:border-hero transition';
+    tabContainer.appendChild(basketTab);
+    tabContainer.appendChild(wishlistTab);
+    cartModal.appendChild(tabContainer);
+
+    // Basket Content
+    const basketContent = document.createElement('div');
+    basketContent.id = 'basket-content';
+    basketContent.className = 'flex flex-col';
+
     const basketTitle = document.createElement('h3');
     basketTitle.textContent = 'Your Basket';
     basketTitle.className = 'text-center font-bold text-3xl mb-6 text-gray-800';
-    basketModal.appendChild(basketTitle);
+    basketContent.appendChild(basketTitle);
 
-    // Basket list
     const basketList = document.createElement('div');
     basketList.id = 'basket-list';
     basketList.className = 'space-y-4';
-    basketModal.appendChild(basketList);
+    basketContent.appendChild(basketList);
 
-    // Total
     const basketTotal = document.createElement('p');
     basketTotal.id = 'basket-total';
     basketTotal.className = 'font-bold text-lg mt-6 text-right text-gray-800';
-    basketModal.appendChild(basketTotal);
+    basketContent.appendChild(basketTotal);
 
-    // Checkout button
     const checkoutBtn = document.createElement('button');
     checkoutBtn.textContent = 'Checkout';
     checkoutBtn.className = `
       mt-6 w-full bg-hero text-white py-3 rounded-2xl font-semibold text-lg hover:bg-ink
       transition shadow-lg
     `;
-    basketModal.appendChild(checkoutBtn);
+    basketContent.appendChild(checkoutBtn);
 
-    overlay.appendChild(basketModal);
+    // Wishlist Content
+    const wishlistContent = document.createElement('div');
+    wishlistContent.id = 'wishlist-content';
+    wishlistContent.className = 'flex flex-col hidden';
+
+    const wishlistTitle = document.createElement('h3');
+    wishlistTitle.textContent = 'Your Wishlist';
+    wishlistTitle.className = 'text-center font-bold text-3xl mb-6 text-gray-800';
+    wishlistContent.appendChild(wishlistTitle);
+
+    const wishlistList = document.createElement('div');
+    wishlistList.id = 'wishlist-list';
+    wishlistList.className = 'space-y-4';
+    wishlistContent.appendChild(wishlistList);
+
+    const wishlistEmpty = document.createElement('p');
+    wishlistEmpty.textContent = 'Your wishlist is empty.';
+    wishlistEmpty.className = 'text-center text-gray-500';
+    wishlistList.appendChild(wishlistEmpty);
+
+    cartModal.appendChild(basketContent);
+    cartModal.appendChild(wishlistContent);
+
+    overlay.appendChild(cartModal);
 
     // --- Delivery Modal ---
     const deliveryModal = document.createElement('div');
@@ -171,64 +177,52 @@
     deliveryModal.appendChild(deliveryForm);
     document.body.appendChild(deliveryModal);
 
-    // --- Basket and Wishlist Buttons ---
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'fixed top-6 right-6 flex space-x-2 z-50';
-
-    const basketBtn = document.createElement('button');
-    basketBtn.id = 'basket-btn';
-    basketBtn.className = `
-      bg-accent text-white font-bold py-3 px-6 rounded-2xl shadow-xl
-      hover:bg-yellow-500 transition text-lg
+    // --- Cart Button (merged) ---
+    const cartBtn = document.createElement('button');
+    cartBtn.id = 'cart-btn';
+    cartBtn.className = `
+      fixed top-6 right-6 bg-accent text-white font-bold py-3 px-6 rounded-2xl shadow-xl
+      hover:bg-yellow-500 transition text-lg z-50
     `;
-    buttonContainer.appendChild(basketBtn);
-
-    const wishlistBtn = document.createElement('button');
-    wishlistBtn.id = 'wishlist-btn';
-    wishlistBtn.className = `
-      bg-pink-500 text-white font-bold py-3 px-6 rounded-2xl shadow-xl
-      hover:bg-pink-600 transition text-lg
-    `;
-    wishlistBtn.textContent = '❤️ Wishlist';
-    buttonContainer.appendChild(wishlistBtn);
-
-    document.body.appendChild(buttonContainer);
-
-    // --- Modal show/hide ---
-    function showBasket() {
-      wishlistModal.classList.add('hidden'); // Hide wishlist modal
-      basketModal.classList.remove('hidden');
+    document.body.appendChild(cartBtn);
+        // --- Modal show/hide ---
+    let currentTab = 'basket';
+    function showCart(tab = 'basket') {
+      currentTab = tab;
       overlay.classList.remove('hidden');
-      basketModal.style.transform = 'translateY(-20px)';
-      basketModal.style.opacity = '0';
-      basketModal.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+      cartModal.classList.remove('hidden');
+      cartModal.style.transform = 'translateY(-20px)';
+      cartModal.style.opacity = '0';
+      cartModal.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
       requestAnimationFrame(() => {
-        basketModal.style.transform = 'translateY(0)';
-        basketModal.style.opacity = '1';
+        cartModal.style.transform = 'translateY(0)';
+        cartModal.style.opacity = '1';
       });
+      updateTabUI();
     }
-    function hideBasket() { overlay.classList.add('hidden'); }
+    function hideCart() { overlay.classList.add('hidden'); }
 
-    function showWishlist() {
-      basketModal.classList.add('hidden'); // Hide basket modal
-      wishlistModal.classList.remove('hidden');
-      overlay.classList.remove('hidden');
-      wishlistModal.style.transform = 'translateY(-20px)';
-      wishlistModal.style.opacity = '0';
-      wishlistModal.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-      requestAnimationFrame(() => {
-        wishlistModal.style.transform = 'translateY(0)';
-        wishlistModal.style.opacity = '1';
-      });
+    function updateTabUI() {
+      if (currentTab === 'basket') {
+        basketTab.className = 'px-4 py-2 font-semibold text-gray-800 border-b-2 border-hero transition';
+        wishlistTab.className = 'px-4 py-2 font-semibold text-gray-500 border-b-2 border-transparent hover:border-hero transition';
+        basketContent.classList.remove('hidden');
+        wishlistContent.classList.add('hidden');
+      } else {
+        basketTab.className = 'px-4 py-2 font-semibold text-gray-500 border-b-2 border-transparent hover:border-hero transition';
+        wishlistTab.className = 'px-4 py-2 font-semibold text-gray-800 border-b-2 border-hero transition';
+        basketContent.classList.add('hidden');
+        wishlistContent.classList.remove('hidden');
+      }
     }
-    function hideWishlist() { overlay.classList.add('hidden'); }
 
-    basketBtn.addEventListener('click', showBasket);
-    wishlistBtn.addEventListener('click', showWishlist);
-    checkoutBtn.addEventListener('click', () => { hideBasket(); deliveryModal.classList.remove('hidden'); });
-    closeBtn.addEventListener('click', hideBasket);
-    closeWishlistBtn.addEventListener('click', hideWishlist);
-    overlay.addEventListener('click', e => { if(e.target === overlay) { hideBasket(); hideWishlist(); } });
+    basketTab.addEventListener('click', () => { currentTab = 'basket'; updateTabUI(); });
+    wishlistTab.addEventListener('click', () => { currentTab = 'wishlist'; updateTabUI(); });
+
+    cartBtn.addEventListener('click', () => showCart());
+    checkoutBtn.addEventListener('click', () => { hideCart(); deliveryModal.classList.remove('hidden'); });
+    closeBtn.addEventListener('click', hideCart);
+    overlay.addEventListener('click', e => { if(e.target === overlay) hideCart(); });
 
     // --- Firebase stock helpers ---
     async function getStock(itemName) {
@@ -322,7 +316,7 @@
       }
 
       basketTotal.textContent = `Total: £${total.toFixed(2)}`;
-      basketBtn.textContent = `🛒 Basket (${count})`;
+      cartBtn.textContent = `🛒 Basket (${count}) ❤️ (${wishlist.length})`;
 
       // Update add-to-basket buttons
       document.querySelectorAll('button.add-to-basket').forEach(async btn => {
@@ -386,8 +380,6 @@
         itemDiv.appendChild(right);
         wishlistList.appendChild(itemDiv);
       });
-
-      wishlistBtn.textContent = `❤️ Wishlist (${wishlist.length})`;
     }
 
     // --- Add to Basket ---
@@ -410,9 +402,7 @@
     document.querySelectorAll('button.add-to-basket').forEach(btn => {
       const name = btn.dataset.name;
       const heartBtn = document.createElement('button');
-      heartBtn.textContent = wishlist.includes(name) ? '❤️' : '🤍';
-      heartBtn.className = 'ml-4 text-2xl hover:scale-110 transition';
-      heartBtn.addEventListener('click', () => {
+            heartBtn.addEventListener('click', () => {
         if (wishlist.includes(name)) {
           wishlist.splice(wishlist.indexOf(name), 1);
           heartBtn.textContent = '🤍';
@@ -420,7 +410,7 @@
           wishlist.push(name);
           heartBtn.textContent = '❤️';
         }
-        saveWishlist(); updateWishlistUI();
+        saveWishlist(); updateWishlistUI(); updateBasketUI(); // Update button text
       });
       btn.parentNode.insertBefore(heartBtn, btn.nextSibling);
     });
