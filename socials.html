@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Socials – Happy Hands Hideaway</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="responsive.css">
+  <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            poppins: ['Poppins', 'sans-serif']
+          },
+          colors: {
+            paper: '#f5f1eb',
+            ink: '#4a3f35',
+            header: '#d8cfc4',
+            hero: '#bfa98a',
+            accent: '#7a5c3c'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-paper text-ink font-poppins">
+
+  <!-- Hero -->
+  <section class="bg-hero text-center py-16 px-4">
+    <div class="max-w-[1100px] mx-auto">
+        <h2 class="text-[2.2rem] sm:text-[2.8rem] font-semibold mb-3">
+            Connect with Me
+        </h2>
+        <p class="text-[1rem] sm:text-[1.1rem] max-w-[520px] mx-auto">
+            Follow Happy Hands Hideaway and stay in touch
+        </p>
+    </div>
+  </section>
+
+  <!-- Social Links -->
+  <section class="py-14">
+    <div class="max-w-[600px] mx-auto px-6 flex flex-col gap-6">
+
+      <!-- Instagram -->
+      <a href="https://www.instagram.com/happy.hands.hideaway/" target="_blank" class="flex items-center justify-between bg-accent text-white px-6 py-4 rounded-[12px] hover:shadow-lg transition-transform hover:-translate-y-0.5">
+        <span class="font-medium text-lg">@happy.hands.hideaway</span>
+        <img src="resources/instagram.png" alt="Instagram" class="w-8 h-6">
+      </a>
+
+      <!-- Facebook -->
+      <a href="https://www.facebook.com/HappyHandsHideaway" target="_blank" class="flex items-center justify-between bg-accent text-white px-6 py-4 rounded-[12px] hover:shadow-lg transition-transform hover:-translate-y-0.5">
+        <span class="font-medium text-lg">Happy Hands Hideaway</span>
+        <img src="resources/facebook.png" alt="Facebook" class="w-8 h-6">
+      </a>
+
+      <!-- Email -->
+      <a href="mailto:Happyhandshideaway@outlook.com" class="flex items-center justify-between bg-accent text-white px-6 py-4 rounded-[12px] hover:shadow-lg transition-transform hover:-translate-y-0.5">
+        <span class="font-medium text-lg">Email Me</span>
+        <img src="resources/email.png" alt="Email" class="w-6 h-6">
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Back Button -->
+  <div class="text-center mt-10">
+    <a href="profile.html" class="inline-block bg-hero text-ink px-8 py-3 rounded-[999px] font-medium hover:-translate-y-0.5 hover:shadow-lg transition-transform">
+      Back to Profile
+    </a>
+  </div>
+
+  <!--shop button-->
+  <div class="text-center mt-6">
+    <a href="shop.html" class="inline-block bg-hero text-ink px-8 py-3 rounded-[999px] font-medium hover:-translate-y-0.5 hover:shadow-lg transition-transform">
+      Visit the Shop
+    </a>
+
+  <!-- Footer -->
+  <footer class="bg-header text-center py-4 mt-14">
+    <p class="text-sm">
+      © 2025 Happy Hands Hideaway. Handmade, not mass-made.
+    </p>
+  </footer>
+
+</body>
+</html>
