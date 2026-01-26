@@ -1,132 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Creatures - Happy Hands Hideaway</title>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Creatures - Happy Hands Hideaway</title>
 
-        <!-- Tailwind -->
-        <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Poppins -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="../style.css">
-        <link rel="stylesheet" href="../responsive.css">
-        <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
+    <!-- Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../responsive.css">
+    <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
 
-        <script>
-            tailwind.config = {
-            theme: {
-                extend: {
-                fontFamily: {
-                    poppins: ['Poppins', 'sans-serif']
-                },
-                colors: {
-                    paper: '#f5f1eb',
-                    ink: '#4a3f35',
-                    header: '#d8cfc4',
-                    hero: '#bfa98a',
-                    accent: '#7a5c3c'
-                }
-                }
+    <script>
+        tailwind.config = {
+        theme: {
+            extend: {
+            fontFamily: {
+                poppins: ['Poppins', 'sans-serif']
+            },
+            colors: {
+                paper: '#f5f1eb',
+                ink: '#4a3f35',
+                header: '#d8cfc4',
+                hero: '#bfa98a',
+                accent: '#7a5c3c',
+                'accent-hover': '#5e462d'
             }
             }
-        </script>
+        }
+        }
+    </script>
 
-        <script type="module">
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-            import { getDatabase, ref, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+    <!-- Firebase Config -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getDatabase, ref, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
-            const firebaseConfig = {
-                apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
-                authDomain: "happy-hands-a2927.firebaseapp.com",
-                databaseURL: "https://happy-hands-a2927-default-rtdb.europe-west1.firebasedatabase.app",
-                projectId: "happy-hands-a2927",
-                storageBucket: "happy-hands-a2927.firebasestorage.app",
-                messagingSenderId: "245124696893",
-                appId: "1:245124696893:web:55de882f935bfb07cb5354"
-            };
+        const firebaseConfig = {
+            apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
+            authDomain: "happy-hands-a2927.firebaseapp.com",
+            databaseURL: "https://happy-hands-a2927-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "happy-hands-a2927",
+            storageBucket: "happy-hands-a2927.firebasestorage.app",
+            messagingSenderId: "245124696893",
+            appId: "1:245124696893:web:55de882f935bfb07cb5354"
+        };
 
-            const app = initializeApp(firebaseConfig);
-            const db = getDatabase(app);
-            window.firebaseDB = db;
-            window.firebaseRef = ref;
-            window.firebaseGet = get;
-            window.firebaseTransaction = runTransaction;
-        </script>
-        <script src="../basket.js"></script>
-        <link rel="stylesheet" href="../style.css">
-    </head>
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.firebaseDB = db;
+        window.firebaseRef = ref;
+        window.firebaseGet = get;
+        window.firebaseTransaction = runTransaction;
+    </script>
+    <script src="../basket.js" defer></script>
 
-    <body class="bg-paper text-ink font-poppins">
+    <style>
+        /* Smooth transition for images */
+        .card-img {
+            transition: transform 0.5s ease;
+        }
+        .group:hover .card-img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
+
+    <!-- Navigation (Sticky) -->
+    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
+        <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html" class="text-xl font-bold tracking-wide cursor-pointer hover:text-accent transition-colors">
+                Happy Hands <span class="text-accent">Hideaway</span>
+            </a>
+            <div class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="../index.html" class="hover:text-accent transition-colors">Home</a>
+                <a href="#" class="text-accent font-semibold">Creatures</a>
+            </div>
+        </div>
+    </nav>
 
     <!-- Page Hero -->
-    <section class="bg-hero text-center py-16 px-4 top-bar">
-        <div class="max-w-[1100px] mx-auto">
-        <h2 class="text-[2.8rem] font-semibold mb-2">Creatures</h2>
-        <p class="text-[1.1rem]">Scroll through our collection and add your favourites to your basket</p>
+    <section class="bg-hero text-center py-20 px-4 relative overflow-hidden">
+        <!-- Decorative pattern background -->
+        <div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        
+        <div class="max-w-[800px] mx-auto relative z-10">
+            <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
+                The Creatures Collection
+            </h2>
+            <p class="text-[1.1rem] mb-8 text-ink/80 max-w-lg mx-auto">
+                Tiny hand-sculpted friends, perfect for fairy gardens or your desk.
+            </p>
         </div>
     </section>
 
     <!-- Creatures Gallery -->
-    <section class="py-12">
-        <div class="max-w-[1100px] mx-auto px-6">
+    <section class="flex-grow py-12 px-4 sm:px-6">
+        <div class="max-w-[1100px] mx-auto">
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 
-            <!-- Single Creature Card -->
-            <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
-            <img loading="lazy" src="../images/creatures1.jpg" alt="Creature 1" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-            <h4 class="font-medium mb-2">Creature #1</h4>
-            <p class="text-accent font-semibold mb-3">£8.50</p>
-            <button 
-                class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
-                data-name="Creature #1"
-                data-price="8.50"
-            >
-                Add to Basket
-            </button>
+            <!-- Creature 1 -->
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
+                <div class="aspect-square overflow-hidden bg-gray-100 relative">
+                    <img loading="lazy" src="../images/creatures1.jpg" onerror="this.src='https://picsum.photos/seed/creature1/400/400'" alt="Creature 1" class="card-img w-full h-full object-cover">
+                </div>
+                <div class="p-5 text-center flex-grow flex flex-col justify-center">
+                    <h4 class="font-bold text-lg mb-1">Creature #1</h4>
+                    <p class="text-accent font-bold text-xl mb-4">£8.50</p>
+                    
+                    <div class="mt-auto flex flex-col items-center justify-center gap-2">
+                        <button 
+                            class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
+                            data-name="Creature #1"
+                            data-price="8.50"
+                        >
+                            Add to Basket
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
-            <img loading="lazy" src="../images/creatures2.jpg" alt="Creature 2" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-            <h4 class="font-medium mb-2">Creature #2</h4>
-            <p class="text-accent font-semibold mb-3">£9.00</p>
-            <button 
-                class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
-                data-name="Creature #2"
-                data-price="9.00"
-            >
-                Add to Basket
-            </button>
+            <!-- Creature 2 -->
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
+                <div class="aspect-square overflow-hidden bg-gray-100 relative">
+                    <img loading="lazy" src="../images/creatures2.jpg" onerror="this.src='https://picsum.photos/seed/creature2/400/400'" alt="Creature 2" class="card-img w-full h-full object-cover">
+                </div>
+                <div class="p-5 text-center flex-grow flex flex-col justify-center">
+                    <h4 class="font-bold text-lg mb-1">Creature #2</h4>
+                    <p class="text-accent font-bold text-xl mb-4">£9.00</p>
+                    
+                    <div class="mt-auto flex flex-col items-center justify-center gap-2">
+                        <button 
+                            class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
+                            data-name="Creature #2"
+                            data-price="9.00"
+                        >
+                            Add to Basket
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
-            <img loading="lazy" src="../images/creatures3.jpg" alt="Creature 3" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-            <h4 class="font-medium mb-2">Creature #3</h4>
-            <p class="text-accent font-semibold mb-3">£8.75</p>
-            <button 
-                class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
-                data-name="Creature #3"
-                data-price="8.75"
-            >
-                Add to Basket
-            </button>
+            <!-- Creature 3 -->
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
+                <div class="aspect-square overflow-hidden bg-gray-100 relative">
+                    <img loading="lazy" src="../images/creatures3.jpg" onerror="this.src='https://picsum.photos/seed/creature3/400/400'" alt="Creature 3" class="card-img w-full h-full object-cover">
+                </div>
+                <div class="p-5 text-center flex-grow flex flex-col justify-center">
+                    <h4 class="font-bold text-lg mb-1">Creature #3</h4>
+                    <p class="text-accent font-bold text-xl mb-4">£8.75</p>
+                    
+                    <div class="mt-auto flex flex-col items-center justify-center gap-2">
+                        <button 
+                            class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
+                            data-name="Creature #3"
+                            data-price="8.75"
+                        >
+                            Add to Basket
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Duplicate these blocks for as many Gonks as you have -->
+            <!-- Creature 4 (Example Duplicate) -->
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
+                <div class="aspect-square overflow-hidden bg-gray-100 relative">
+                    <img loading="lazy" src="../images/creatures1.jpg" onerror="this.src='https://picsum.photos/seed/creature4/400/400'" alt="Creature 4" class="card-img w-full h-full object-cover">
+                </div>
+                <div class="p-5 text-center flex-grow flex flex-col justify-center">
+                    <h4 class="font-bold text-lg mb-1">Creature #4</h4>
+                    <p class="text-accent font-bold text-xl mb-4">£10.00</p>
+                    
+                    <div class="mt-auto flex flex-col items-center justify-center gap-2">
+                        <button 
+                            class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
+                            data-name="Creature #4"
+                            data-price="10.00"
+                        >
+                            Add to Basket
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Duplicate these blocks for as many Creatures as you have -->
 
         </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-header text-center py-4">
+    <footer class="bg-header text-center py-4 mt-auto">
         <p class="text-sm">
         © 2025 Happy Hands Hideaway. Handmade, not mass-made.
         </p>
     </footer>
-    </body>
+</body>
 </html>

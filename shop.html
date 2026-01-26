@@ -11,9 +11,7 @@
   <!-- Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="responsive.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
 
   <script>
@@ -28,102 +26,265 @@
             ink: '#4a3f35',
             header: '#d8cfc4',
             hero: '#bfa98a',
-            accent: '#7a5c3c'
+            accent: '#7a5c3c',
+            'accent-hover': '#5e462d'
           }
         }
       }
     }
   </script>
+
+  <!-- Firebase Initialization (Required for basket.js to work on this page) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getDatabase, ref, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
+        authDomain: "happy-hands-a2927.firebaseapp.com",
+        databaseURL: "https://happy-hands-a2927-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "happy-hands-a2927",
+        storageBucket: "happy-hands-a2927.firebasestorage.app",
+        messagingSenderId: "245124696893",
+        appId: "1:245124696893:web:55de882f935bfb07cb5354"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    window.firebaseDB = db;
+    window.firebaseRef = ref;
+    window.firebaseGet = get;
+    window.firebaseTransaction = runTransaction;
+  </script>
+  
+  <!-- Include your basket script so the floating cart button appears here too -->
+  <script src="basket.js" defer></script>
+
+  <style>
+    /* Smooth transition for images */
+    .card-img {
+      transition: transform 0.5s ease;
+    }
+    .group:hover .card-img {
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 
-<body class="bg-paper text-ink font-poppins">
+<body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
+    <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="text-xl font-bold tracking-wide cursor-pointer" onclick="window.scrollTo(0,0)">
+        Happy Hands <span class="text-accent">Hideaway</span>
+      </div>
+      <div class="hidden md:flex space-x-8 text-sm font-medium">
+        <a href="#" class="hover:text-accent transition-colors">Home</a>
+        <a href="#categories" class="hover:text-accent transition-colors">Collections</a>
+      </div>
+    </div>
+  </nav>
 
   <!-- Hero -->
-  <section class="bg-hero text-center py-16 px-4">
-    <div class="max-w-[1100px] mx-auto">
-      <h2 class="text-[2.8rem] font-semibold mb-2">
-        Happy Hands Hideaway
+  <section class="bg-hero text-center py-20 px-4 relative overflow-hidden">
+    <!-- Decorative pattern background -->
+    <div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+    
+    <div class="max-w-[800px] mx-auto relative z-10">
+      <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
+        Art that whispers, <br/> <span class="italic text-accent">"Go ahead and smile"</span>
       </h2>
-      <p class="text-[1.1rem]">
-        Art that whispers, "Go ahead and smile"
+      <p class="text-[1.1rem] mb-8 text-ink/80 max-w-lg mx-auto">
+        Explore our categories of handmade clay figurines, home decor, and gifts.
       </p>
+      <a href="#categories" class="inline-block bg-accent text-white font-medium px-8 py-3 rounded-full shadow-lg hover:bg-accent-hover hover:-translate-y-1 transition-all duration-300">
+        Browse Collections
+      </a>
     </div>
   </section>
 
-  <!-- Products -->
-  <section class="py-12">
-    <div class="max-w-[1100px] mx-auto px-6">
+  <!-- Categories Grid -->
+  <section id="categories" class="flex-grow py-12 px-4 sm:px-6">
+    <div class="max-w-[1100px] mx-auto">
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 
-      <div class="grid grid-cols-2 gap-8">
+        <!-- Category: Gonks -->
+        <a href="products/gonks.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/gonks.jpg" onerror="this.src='https://picsum.photos/seed/gonks/400/400'" alt="Gonks" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Gonks</h4>
+              <p class="text-gray-500 text-sm mb-4">Whimsical bearded creatures</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <!-- Card -->
-        <div onclick="window.location.href='products/gonks.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/gonks.jpg" alt="Gonks" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Gonks</h4>
-        </div>
+        <!-- Category: Creatures -->
+        <a href="products/creatures.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/creatures.jpg" onerror="this.src='https://picsum.photos/seed/creatures/400/400'" alt="Clay mini creatures" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Clay Mini Creatures</h4>
+              <p class="text-gray-500 text-sm mb-4">Tiny friends for your desk</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <div onclick="window.location.href='products/creatures.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/creatures.jpg" alt="Clay mini creatures" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Clay Mini Creatures</h4>
-        </div>
+        <!-- Category: Desk Tidy -->
+        <a href="products/desk_tidy.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/desk_tidy.jpg" onerror="this.src='https://picsum.photos/seed/desk/400/400'" alt="Clay desk tidy" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Clay Desk Tidy</h4>
+              <p class="text-gray-500 text-sm mb-4">Organize in style</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <div onclick="window.location.href='products/desk_tidy.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/desk_tidy.jpg" alt="Clay desk tidy" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Clay Desk Tidy</h4>
-        </div>
+        <!-- Category: Fairy Houses -->
+        <a href="products/fairy_house.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/fairy_house.jpg" onerror="this.src='https://picsum.photos/seed/fairy/400/400'" alt="Fairy Houses" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Fairy Houses</h4>
+              <p class="text-gray-500 text-sm mb-4">Magical garden decor</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <div onclick="window.location.href='products/fairy_house.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/fairy_house.jpg" alt="Fairy Houses" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Fairy Houses</h4>
-        </div>
+        <!-- Category: Welsh Souvenirs -->
+        <a href="products/souvenirs.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/welsh_souvenir.jpg" onerror="this.src='https://picsum.photos/seed/welsh/400/400'" alt="Welsh Souvenirs" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Welsh Souvenirs</h4>
+              <p class="text-gray-500 text-sm mb-4">A piece of Cymru</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <div onclick="window.location.href='products/souvenirs.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/welsh_souvenir.jpg" alt="Welsh Souvenirs" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Welsh Souvenirs</h4>
-        </div>
+        <!-- Category: Jell Prints -->
+        <a href="products/jelly_prints.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/jell_print.jpg" onerror="this.src='https://picsum.photos/seed/print/400/400'" alt="Jell Print Range" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Jell Print Range</h4>
+              <p class="text-gray-500 text-sm mb-4">Unique textured art</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <div onclick="window.location.href='products/jelly_prints.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/jell_print.jpg" alt="Jell Print Range" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Jell Print Range</h4>
-        </div>
+        <!-- Category: Personalised Gifts -->
+        <a href="products/personalised_gifts.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/personalised_gift.jpg" onerror="this.src='https://picsum.photos/seed/gifts/400/400'" alt="Personalised gifts" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Personalised Gifts</h4>
+              <p class="text-gray-500 text-sm mb-4">Custom made for you</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <div onclick="window.location.href='products/personalised_gifts.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/personalised_gift.jpg" alt="Personalised gifts" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Personalised Gifts</h4>
-        </div>
+        <!-- Category: Magnets -->
+        <a href="products/magnets.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/magnets.jpg" onerror="this.src='https://picsum.photos/seed/magnets/400/400'" alt="Magnets" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Magnets</h4>
+              <p class="text-gray-500 text-sm mb-4">Fridge & board decor</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <div onclick="window.location.href='products/magnets.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/magnets.jpg" alt="Magnets" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Magnets</h4>
-        </div>
+        <!-- Category: Bunting -->
+        <a href="products/bunting.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/bunting.jpg" onerror="this.src='https://picsum.photos/seed/bunting/400/400'" alt="Bunting" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Bunting</h4>
+              <p class="text-gray-500 text-sm mb-4">Celebration decorations</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <div onclick="window.location.href='products/bunting.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/bunting.jpg" alt="Bunting" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Bunting</h4>
-        </div>
+        <!-- Category: Baubles -->
+        <a href="products/bauble.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/bauble.jpg" onerror="this.src='https://picsum.photos/seed/bauble/400/400'" alt="Baubles" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Baubles</h4>
+              <p class="text-gray-500 text-sm mb-4">Seasonal Christmas cheer</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
-        <div onclick="window.location.href='products/bauble.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/bauble.jpg" alt="Bauble" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Baubles</h4>
-        </div>
-
-        <div onclick="window.location.href='products/figurines.html'" class="bg-white rounded-[18px] p-5 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="images/figurines.jpg" alt="Figurines" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium">Figurines</h4>
-        </div>
+        <!-- Category: Figurines -->
+        <a href="products/figurines.html" class="group block">
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="aspect-square overflow-hidden bg-gray-100 relative">
+              <img loading="lazy" src="images/figurines.jpg" onerror="this.src='https://picsum.photos/seed/figurines/400/400'" alt="Figurines" class="card-img w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+            </div>
+            <div class="p-5 text-center">
+              <h4 class="font-bold text-xl mb-1">Figurines</h4>
+              <p class="text-gray-500 text-sm mb-4">Detailed collectibles</p>
+              <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
+            </div>
+          </div>
+        </a>
 
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-header text-center py-4">
+  <footer class="bg-header text-center py-4 mt-auto">
     <p class="text-sm">
       © 2025 Happy Hands Hideaway. Handmade, not mass-made.
     </p>
   </footer>
-
-  <script src="basket.js"></script>
 
 </body>
 </html>

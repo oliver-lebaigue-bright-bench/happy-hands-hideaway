@@ -11,7 +11,7 @@
   <!-- Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../responsive.css">
   <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
@@ -28,12 +28,15 @@
             ink: '#4a3f35',
             header: '#d8cfc4',
             hero: '#bfa98a',
-            accent: '#7a5c3c'
+            accent: '#7a5c3c',
+            'accent-hover': '#5e462d'
           }
         }
       }
     }
   </script>
+
+  <!-- Firebase Config (Preserving your specific import of 'set') -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getDatabase, ref, get, runTransaction, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
@@ -57,79 +60,151 @@
     window.firebaseTransaction = runTransaction;
     window.firebaseSet = set;
   </script>
+  <script src="../basket.js" defer></script>
+
+  <style>
+    /* Smooth transition for images */
+    .card-img {
+      transition: transform 0.5s ease;
+    }
+    .group:hover .card-img {
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 
-<body class="bg-paper text-ink font-poppins">
+<body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
+
+  <!-- Navigation (Sticky) -->
+  <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
+    <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="../index.html" class="text-xl font-bold tracking-wide cursor-pointer hover:text-accent transition-colors">
+        Happy Hands <span class="text-accent">Hideaway</span>
+      </a>
+      <div class="hidden md:flex space-x-8 text-sm font-medium">
+        <a href="../index.html" class="hover:text-accent transition-colors">Home</a>
+        <a href="#" class="text-accent font-semibold">Bunting</a>
+      </div>
+    </div>
+  </nav>
 
   <!-- Page Hero -->
-  <section class="bg-hero text-center py-16 px-4">
-    <div class="max-w-[1100px] mx-auto">
-      <h2 class="text-[2.2rem] font-semibold mb-2">Bunting</h2>
-      <p class="text-[1.1rem]">Scroll through our collection and add your favourites to your basket</p>
+  <section class="bg-hero text-center py-20 px-4 relative overflow-hidden">
+    <!-- Decorative pattern background -->
+    <div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+    
+    <div class="max-w-[800px] mx-auto relative z-10">
+      <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
+        The Bunting Collection
+      </h2>
+      <p class="text-[1.1rem] mb-8 text-ink/80 max-w-lg mx-auto">
+        Hand-sewn celebration decor. Perfect for parties, nurseries, or brightening up any room.
+      </p>
     </div>
   </section>
 
   <!-- Bunting Gallery -->
-  <section class="py-12">
-    <div class="max-w-[1100px] mx-auto px-6">
+  <section class="flex-grow py-12 px-4 sm:px-6">
+    <div class="max-w-[1100px] mx-auto">
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 
-        <!-- Single Bunting Card -->
-        <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="../images/bunting1.jpg" alt="Bunting 1" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium mb-2">Bunting #1</h4>
-          <p class="text-accent font-semibold mb-3">£8.50</p>
-          <button 
-            class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
-            data-name="Bunting #1"
-            data-price="8.50"
-          >
-            Add to Basket
-          </button>
+        <!-- Bunting 1 -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
+          <div class="aspect-square overflow-hidden bg-gray-100 relative">
+            <img loading="lazy" src="../images/bunting1.jpg" onerror="this.src='https://picsum.photos/seed/bunting1/400/400'" alt="Bunting 1" class="card-img w-full h-full object-cover">
+          </div>
+          <div class="p-5 text-center flex-grow flex flex-col justify-center">
+            <h4 class="font-bold text-lg mb-1">Bunting #1</h4>
+            <p class="text-accent font-bold text-xl mb-4">£8.50</p>
+            
+            <div class="mt-auto flex flex-col items-center justify-center gap-2">
+              <button 
+                class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
+                data-name="Bunting #1"
+                data-price="8.50"
+              >
+                Add to Basket
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="../images/bunting2.jpg" alt="Bunting 2" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium mb-2">Bunting #2</h4>
-          <p class="text-accent font-semibold mb-3">£9.00</p>
-          <button 
-            class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
-            data-name="Bunting #2"
-            data-price="9.00"
-          >
-            Add to Basket
-          </button>
+        <!-- Bunting 2 -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
+          <div class="aspect-square overflow-hidden bg-gray-100 relative">
+            <img loading="lazy" src="../images/bunting2.jpg" onerror="this.src='https://picsum.photos/seed/bunting2/400/400'" alt="Bunting 2" class="card-img w-full h-full object-cover">
+          </div>
+          <div class="p-5 text-center flex-grow flex flex-col justify-center">
+            <h4 class="font-bold text-lg mb-1">Bunting #2</h4>
+            <p class="text-accent font-bold text-xl mb-4">£9.00</p>
+            
+            <div class="mt-auto flex flex-col items-center justify-center gap-2">
+              <button 
+                class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
+                data-name="Bunting #2"
+                data-price="9.00"
+              >
+                Add to Basket
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="bg-white rounded-[18px] shadow-[0_10px_25px_rgba(0,0,0,0.08)] p-5 text-center transition-transform hover:-translate-y-1">
-          <img loading="lazy" src="../images/bunting3.jpg" alt="Bunting 3" class="w-[300px] h-[300px] object-cover rounded-[14px] mx-auto mb-4">
-          <h4 class="font-medium mb-2">Bunting #3</h4>
-          <p class="text-accent font-semibold mb-3">£8.75</p>
-          <button 
-            class="add-to-basket bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink hover:text-white transition"
-            data-name="Bunting #3"
-            data-price="8.75"
-          >
-            Add to Basket
-          </button>
+        <!-- Bunting 3 -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
+          <div class="aspect-square overflow-hidden bg-gray-100 relative">
+            <img loading="lazy" src="../images/bunting3.jpg" onerror="this.src='https://picsum.photos/seed/bunting3/400/400'" alt="Bunting 3" class="card-img w-full h-full object-cover">
+          </div>
+          <div class="p-5 text-center flex-grow flex flex-col justify-center">
+            <h4 class="font-bold text-lg mb-1">Bunting #3</h4>
+            <p class="text-accent font-bold text-xl mb-4">£8.75</p>
+            
+            <div class="mt-auto flex flex-col items-center justify-center gap-2">
+              <button 
+                class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
+                data-name="Bunting #3"
+                data-price="8.75"
+              >
+                Add to Basket
+              </button>
+            </div>
+          </div>
         </div>
 
-        <!-- Duplicate these blocks for as many Gonks as you have -->
+        <!-- Bunting 4 (Example Duplicate) -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
+          <div class="aspect-square overflow-hidden bg-gray-100 relative">
+            <img loading="lazy" src="../images/bunting1.jpg" onerror="this.src='https://picsum.photos/seed/bunting4/400/400'" alt="Bunting 4" class="card-img w-full h-full object-cover">
+          </div>
+          <div class="p-5 text-center flex-grow flex flex-col justify-center">
+            <h4 class="font-bold text-lg mb-1">Bunting #4</h4>
+            <p class="text-accent font-bold text-xl mb-4">£10.50</p>
+            
+            <div class="mt-auto flex flex-col items-center justify-center gap-2">
+              <button 
+                class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
+                data-name="Bunting #4"
+                data-price="10.50"
+              >
+                Add to Basket
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Duplicate these blocks for as many Bunting items as you have -->
 
       </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-header text-center py-4">
+  <footer class="bg-header text-center py-4 mt-auto">
     <p class="text-sm">
       © 2025 Happy Hands Hideaway. Handmade, not mass-made.
     </p>
   </footer>
-
-  <!-- Basket Script -->
-  <script src="../basket.js"></script>
 
 </body>
 </html>
