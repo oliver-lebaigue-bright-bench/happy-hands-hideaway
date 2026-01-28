@@ -1,4 +1,4 @@
-@font-face { font-family: ntype; src: url('resources/NType82-Regular.otf'); } 
+@font-face { font-family: ntype; src: url('resources/custom_font.otf'); } 
 
 h2 {
     font-family: ntype !important;

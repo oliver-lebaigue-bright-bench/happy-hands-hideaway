@@ -6,6 +6,5 @@ community events
 contact
 
 TODO:
-    contact.html
     other item pages
-    merge basket.js wishlist and basket buttons
+    profile.html

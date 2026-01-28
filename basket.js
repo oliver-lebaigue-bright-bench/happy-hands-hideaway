@@ -1,4 +1,5 @@
 // basket.js — Modern Basket with combined modal, delivery, wishlist, and Firebase stock
+// basket.js — Modern Basket with combined modal, delivery, wishlist, and Firebase stock
 (() => {
   document.addEventListener('DOMContentLoaded', () => {
     // --- Firebase globals ---
@@ -7,7 +8,9 @@
     const get = window.firebaseGet;
     const runTransaction = window.firebaseTransaction;
     const set = window.firebaseSet || ((r, v) => runTransaction(r, () => v));
+    const set = window.firebaseSet || ((r, v) => runTransaction(r, () => v));
 
+    // --- Basket and Wishlist ---
     // --- Basket and Wishlist ---
     const basket = JSON.parse(localStorage.getItem('basket')) || [];
     function saveBasket() { localStorage.setItem('basket', JSON.stringify(basket)); }
@@ -19,8 +22,13 @@
     const overlay = document.createElement('div');
     overlay.id = 'basket-overlay';
     overlay.className = 'fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 backdrop-blur-sm transition-opacity';
+    overlay.className = 'fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 backdrop-blur-sm transition-opacity';
     document.body.appendChild(overlay);
 
+    // --- Combined Modal ---
+    const modal = document.createElement('div');
+    modal.id = 'basket-wishlist-modal';
+    modal.className = 'bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 flex flex-col relative max-h-[85vh] overflow-y-auto animate-fadeIn hidden';
     // --- Combined Modal ---
     const modal = document.createElement('div');
     modal.id = 'basket-wishlist-modal';
@@ -30,7 +38,10 @@
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '✕';
     closeBtn.className = 'absolute top-4 right-4 text-gray-600 hover:text-red-600 font-bold text-2xl transition';
-    closeBtn.addEventListener('click', () => overlay.classList.add('hidden'));
+    closeBtn.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      modal.classList.add('hidden');
+    });
     modal.appendChild(closeBtn);
 
     // Tabs
@@ -47,11 +58,30 @@
 
     tabs.append(basketTab, wishlistTab);
     modal.appendChild(tabs);
+    // Tabs
+    const tabs = document.createElement('div');
+    tabs.className = 'flex justify-around mb-4 border-b-2 border-gray-200';
+    const basketTab = document.createElement('button');
+    basketTab.textContent = 'Basket';
+    const wishlistTab = document.createElement('button');
+    wishlistTab.textContent = 'Wishlist';
 
+    [basketTab, wishlistTab].forEach(btn => {
+      btn.className = 'py-2 px-4 font-semibold text-gray-700 transition';
+    });
+
+    tabs.append(basketTab, wishlistTab);
+    modal.appendChild(tabs);
+
+    // Containers
     // Containers
     const basketList = document.createElement('div');
     basketList.id = 'basket-list';
     basketList.className = 'space-y-4';
+
+    const wishlistList = document.createElement('div');
+    wishlistList.id = 'wishlist-list';
+    wishlistList.className = 'space-y-4 hidden';
 
     const wishlistList = document.createElement('div');
     wishlistList.id = 'wishlist-list';
@@ -78,14 +108,40 @@
         wishlistTab.classList.add('border-b-4', 'border-hero');
         basketTab.classList.remove('border-b-4', 'border-hero');
       }
+    basketTotal.className = 'font-bold text-lg mt-4 text-right text-gray-800';
+
+    modal.append(basketList, wishlistList, basketTotal);
+    overlay.appendChild(modal);
+
+    let currentTab = 'basket';
+    function switchTab(tab) {
+      currentTab = tab;
+      if (tab === 'basket') {
+        basketList.classList.remove('hidden');
+        wishlistList.classList.add('hidden');
+        basketTab.classList.add('border-b-4', 'border-hero');
+        wishlistTab.classList.remove('border-b-4', 'border-hero');
+      } else {
+        wishlistList.classList.remove('hidden');
+        basketList.classList.add('hidden');
+        wishlistTab.classList.add('border-b-4', 'border-hero');
+        basketTab.classList.remove('border-b-4', 'border-hero');
+      }
     }
+    switchTab('basket');
     switchTab('basket');
 
     basketTab.addEventListener('click', () => switchTab('basket'));
     wishlistTab.addEventListener('click', () => switchTab('wishlist'));
 
-    overlay.addEventListener('click', e => { if(e.target === overlay) overlay.classList.add('hidden'); });
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) {
+        overlay.classList.add('hidden');
+        modal.classList.add('hidden');
+      }
+    });
 
+    // --- Firebase helpers ---
     // --- Firebase helpers ---
     async function getStock(itemName) {
       const key = itemName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -112,25 +168,38 @@
     // --- Update Buttons ---
     async function refreshAddButtons() {
       const buttons = document.querySelectorAll('button.add-to-basket');
+
       for (const btn of buttons) {
         const name = btn.dataset.name;
         const stock = await getStock(name);
-        const inBasket = basket.find(i => i.name === name);
+        const item = basket.find(i => i.name === name);
+        const qty = item ? item.qty : 0;
 
+        // Reset state completely
         btn.disabled = false;
-        btn.classList.remove('bg-gray-400','cursor-not-allowed','bg-ink','text-white','bg-hero','hover:bg-ink','hover:text-white');
+        btn.className = 'add-to-basket px-4 py-2 rounded-xl font-semibold transition';
 
         if (stock <= 0) {
           btn.textContent = 'Out of Stock';
           btn.disabled = true;
-          btn.classList.add('bg-gray-400','cursor-not-allowed');
-        } else if (inBasket) {
+          btn.classList.add('bg-gray-400','cursor-not-allowed','text-white');
+          continue;
+        }
+
+        if (qty >= stock) {
+          btn.textContent = 'Max in Basket';
+          btn.classList.add('bg-ink','text-white');
+          continue;
+        }
+
+        if (qty > 0) {
           btn.textContent = 'In Basket';
           btn.classList.add('bg-ink','text-white');
-        } else {
-          btn.textContent = 'Add to Basket';
-          btn.classList.add('bg-hero','hover:bg-ink','hover:text-white');
+          continue;
         }
+
+        btn.textContent = 'Add to Basket';
+        btn.classList.add('bg-hero','hover:bg-ink','hover:text-white','text-white');
       }
     }
 
@@ -143,7 +212,15 @@
       }
       saveBasket();
 
+      for (let i = basket.length - 1; i >= 0; i--) {
+        if (!document.querySelector(`button[data-name="${basket[i].name}"]`)) {
+          basket.splice(i, 1);
+        }
+      }
+      saveBasket();
+
       basketList.innerHTML = '';
+      let total = 0;
       let total = 0;
 
       for (let i = 0; i < basket.length; i++) {
@@ -216,7 +293,19 @@
       for (let i = wishlist.length - 1; i >= 0; i--) {
         if (!document.querySelector(`button[data-name="${wishlist[i]}"]`)) {
           wishlist.splice(i, 1);
+      updateCombinedButton();
+      await refreshAddButtons();
+    }
+
+    // --- Update Wishlist UI ---
+    async function updateWishlistUI() {
+      for (let i = wishlist.length - 1; i >= 0; i--) {
+        if (!document.querySelector(`button[data-name="${wishlist[i]}"]`)) {
+          wishlist.splice(i, 1);
         }
+      }
+      saveWishlist();
+
       }
       saveWishlist();
 
@@ -230,12 +319,26 @@
         wishlist.forEach((item, i) => {
           const itemDiv = document.createElement('div');
           itemDiv.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-xl shadow-sm hover:shadow-md transition';
+        const empty = document.createElement('p');
+        empty.textContent = 'Your wishlist is empty.';
+        empty.className = 'text-center text-gray-500';
+        wishlistList.appendChild(empty);
+      } else {
+        wishlist.forEach((item, i) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-xl shadow-sm hover:shadow-md transition';
 
           const nameSpan = document.createElement('span');
           nameSpan.textContent = item;
           nameSpan.className = 'font-semibold text-gray-800';
           itemDiv.appendChild(nameSpan);
+          const nameSpan = document.createElement('span');
+          nameSpan.textContent = item;
+          nameSpan.className = 'font-semibold text-gray-800';
+          itemDiv.appendChild(nameSpan);
 
+          const right = document.createElement('div');
+          right.className = 'flex space-x-2';
           const right = document.createElement('div');
           right.className = 'flex space-x-2';
 
@@ -249,7 +352,22 @@
             saveBasket(); updateBasketUI();
           });
           right.appendChild(addToBasketBtn);
+          const addToBasketBtn = document.createElement('button');
+          addToBasketBtn.textContent = 'Add to Basket';
+          addToBasketBtn.className = 'bg-hero text-white px-4 py-2 rounded-lg hover:bg-ink transition';
+          addToBasketBtn.addEventListener('click', () => {
+            const price = parseFloat(document.querySelector(`button[data-name="${item}"]`)?.dataset.price || 0);
+            const existing = basket.find(b => b.name === item);
+            if (existing) existing.qty++; else basket.push({name:item,price,qty:1});
+            saveBasket(); updateBasketUI();
+          });
+          right.appendChild(addToBasketBtn);
 
+          const removeBtn = document.createElement('button');
+          removeBtn.textContent = '✕';
+          removeBtn.className = 'text-red-500 hover:text-red-700';
+          removeBtn.addEventListener('click', () => { wishlist.splice(i,1); saveWishlist(); updateWishlistUI(); });
+          right.appendChild(removeBtn);
           const removeBtn = document.createElement('button');
           removeBtn.textContent = '✕';
           removeBtn.className = 'text-red-500 hover:text-red-700';
@@ -275,10 +393,30 @@
 
     function updateCombinedButton() {
       combinedBtn.textContent = `🛒 Basket (${basket.reduce((a,b)=>a+b.qty,0)}) / ❤️ Wishlist (${wishlist.length})`;
+          itemDiv.appendChild(right);
+          wishlistList.appendChild(itemDiv);
+        });
+      }
+      updateCombinedButton();
+      await refreshAddButtons();
+    }
+
+    // --- Combined Button ---
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'fixed top-6 right-6 flex z-50';
+    const combinedBtn = document.createElement('button');
+    combinedBtn.id = 'combined-btn';
+    combinedBtn.className = 'bg-accent text-white font-bold py-3 px-6 rounded-2xl shadow-xl hover:bg-yellow-500 transition text-lg';
+    buttonContainer.appendChild(combinedBtn);
+    document.body.appendChild(buttonContainer);
+
+    function updateCombinedButton() {
+      combinedBtn.textContent = `🛒 Basket (${basket.reduce((a,b)=>a+b.qty,0)}) / ❤️ Wishlist (${wishlist.length})`;
     }
 
     combinedBtn.addEventListener('click', () => {
       overlay.classList.remove('hidden');
+      modal.classList.remove('hidden');
       switchTab(currentTab);
     });
 
@@ -289,20 +427,27 @@
     // --- Product Buttons ---
     document.querySelectorAll('button.add-to-basket').forEach(btn => {
       const name = btn.dataset.name;
+      const name = btn.dataset.name;
       btn.addEventListener('click', async () => {
         const price = parseFloat(btn.dataset.price);
         const stock = await getStock(name);
         const existing = basket.find(i => i.name === name);
         if (existing) { if (existing.qty < stock) existing.qty++; } 
         else if (stock > 0) { basket.push({name,price,qty:1}); }
+        if (existing) { if (existing.qty < stock) existing.qty++; } 
+        else if (stock > 0) { basket.push({name,price,qty:1}); }
         saveBasket(); updateBasketUI();
       });
+      });
 
+      // Wishlist heart
       // Wishlist heart
       const heartBtn = document.createElement('button');
       heartBtn.textContent = wishlist.includes(name) ? '❤️' : '🤍';
       heartBtn.className = 'ml-4 text-2xl hover:scale-110 transition';
       heartBtn.addEventListener('click', () => {
+        if (wishlist.includes(name)) { wishlist.splice(wishlist.indexOf(name),1); heartBtn.textContent='🤍'; }
+        else { wishlist.push(name); heartBtn.textContent='❤️'; }
         if (wishlist.includes(name)) { wishlist.splice(wishlist.indexOf(name),1); heartBtn.textContent='🤍'; }
         else { wishlist.push(name); heartBtn.textContent='❤️'; }
         saveWishlist(); updateWishlistUI();

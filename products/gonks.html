@@ -4,7 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Gonks - Happy Hands Hideaway</title>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Gonks - Happy Hands Hideaway</title>
 
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -37,12 +43,50 @@
         }
         }
     </script>
+    <!-- Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../responsive.css">
+    <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
 
-    <!-- Firebase Config (Keep your existing config) -->
+
+    
+    <script>
+        tailwind.config = {
+        theme: {
+            extend: {
+            fontFamily: {
+                poppins: ['Poppins', 'sans-serif']
+            },
+            colors: {
+                paper: '#f5f1eb',
+                ink: '#4a3f35',
+                header: '#d8cfc4',
+                hero: '#bfa98a',
+                accent: '#7a5c3c',
+                'accent-hover': '#5e462d'
+            }
+            }
+        }
+        }
+    </script>
+
+    <!-- Firebase Config -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
         import { getDatabase, ref, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
+            authDomain: "happy-hands-a2927.firebaseapp.com",
+            databaseURL: "https://happy-hands-a2927-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "happy-hands-a2927",
+            storageBucket: "happy-hands-a2927.firebasestorage.app",
+            messagingSenderId: "245124696893",
+            appId: "1:245124696893:web:55de882f935bfb07cb5354"
+        };
         const firebaseConfig = {
             apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
             authDomain: "happy-hands-a2927.firebaseapp.com",
@@ -72,6 +116,25 @@
         }
     </style>
 </head>
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.firebaseDB = db;
+        window.firebaseRef = ref;
+        window.firebaseGet = get;
+        window.firebaseTransaction = runTransaction;
+    </script>
+    <script src="../basket.js" defer></script>
+    
+    <style>
+        /* Smooth transition for images */
+        .card-img {
+            transition: transform 0.5s ease;
+        }
+        .group:hover .card-img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
 
 <body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
 
@@ -82,8 +145,9 @@
                 Happy Hands <span class="text-accent">Hideaway</span>
             </a>
             <div class="hidden md:flex space-x-8 text-sm font-medium">
-                <a href="../index.html" class="hover:text-accent transition-colors">Home</a>
-                <a href="#" class="text-accent font-semibold">Gonks</a>
+                <a href="../profile.html" class="hover:text-accent transition-colors">profile</a>
+                <a href="../shop.html" class="hover:text-accent transition-colors">shop</a>
+                <a href="../socials.html" class="hover:text-accent transition-colors">socials</a>
             </div>
         </div>
     </nav>
@@ -97,22 +161,22 @@
             <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
                 The Gonks Collection
             </h2>
-            <p class="text-[1.1rem] mb-8 text-ink/80 max-w-lg mx-auto">
-                Whimsical bearded creatures, each with their own unique personality. Scroll to find your favorite.
-            </p>
         </div>
     </section>
 
     <!-- Gonks Gallery -->
     <section class="flex-grow py-12 px-4 sm:px-6">
         <div class="max-w-[1100px] mx-auto">
+    <section class="flex-grow py-12 px-4 sm:px-6">
+        <div class="max-w-[1100px] mx-auto">
 
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 
                 <!-- Gonk 1 -->
                 <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
                     <div class="aspect-square overflow-hidden bg-gray-100 relative">
-                        <img loading="lazy" src="../images/gonks1.jpg" onerror="this.src='https://picsum.photos/seed/gonk1/400/400'" alt="Gonk 1" class="card-img w-full h-full object-cover">
+                        <img loading="lazy" src="../images/gonks1.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Gonk 1" class="card-img w-full h-full object-cover">
                     </div>
                     <div class="p-5 text-center flex-grow flex flex-col justify-center">
                         <h4 class="font-bold text-lg mb-1">Gonk #1</h4>
@@ -134,7 +198,7 @@
                 <!-- Gonk 2 -->
                 <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
                     <div class="aspect-square overflow-hidden bg-gray-100 relative">
-                        <img loading="lazy" src="../images/gonks2.jpg" onerror="this.src='https://picsum.photos/seed/gonk2/400/400'" alt="Gonk 2" class="card-img w-full h-full object-cover">
+                        <img loading="lazy" src="../images/gonks2.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Gonk 2" class="card-img w-full h-full object-cover">
                     </div>
                     <div class="p-5 text-center flex-grow flex flex-col justify-center">
                         <h4 class="font-bold text-lg mb-1">Gonk #2</h4>
@@ -155,7 +219,7 @@
                 <!-- Gonk 3 -->
                 <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
                     <div class="aspect-square overflow-hidden bg-gray-100 relative">
-                        <img loading="lazy" src="../images/gonks3.jpg" onerror="this.src='https://picsum.photos/seed/gonk3/400/400'" alt="Gonk 3" class="card-img w-full h-full object-cover">
+                        <img loading="lazy" src="../images/gonks3.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Gonk 3" class="card-img w-full h-full object-cover">
                     </div>
                     <div class="p-5 text-center flex-grow flex flex-col justify-center">
                         <h4 class="font-bold text-lg mb-1">Gonk #3</h4>
@@ -173,10 +237,10 @@
                     </div>
                 </div>
 
-                <!-- Gonk 4 (Example Duplicate) -->
+                <!-- Gonk 4 -->
                 <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
                     <div class="aspect-square overflow-hidden bg-gray-100 relative">
-                        <img loading="lazy" src="../images/gonks1.jpg" onerror="this.src='https://picsum.photos/seed/gonk4/400/400'" alt="Gonk 4" class="card-img w-full h-full object-cover">
+                        <img loading="lazy" src="../images/gonks4.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Gonk 4" class="card-img w-full h-full object-cover">
                     </div>
                     <div class="p-5 text-center flex-grow flex flex-col justify-center">
                         <h4 class="font-bold text-lg mb-1">Gonk #4</h4>
@@ -193,18 +257,18 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Duplicate these blocks for as many Gonks as you have -->
-
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="bg-header text-center py-4 mt-auto">
+    <footer class="bg-header text-center py-4 mt-auto">
         <p class="text-sm">
+            © 2025 Happy Hands Hideaway. Handmade, not mass-made.
             © 2025 Happy Hands Hideaway. Handmade, not mass-made.
         </p>
     </footer>
+</body>
 </body>
 </html>

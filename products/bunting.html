@@ -12,7 +12,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../responsive.css">
+  <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="../responsive.css">
   <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
 
@@ -30,13 +33,15 @@
             hero: '#bfa98a',
             accent: '#7a5c3c',
             'accent-hover': '#5e462d'
+            accent: '#7a5c3c',
+            'accent-hover': '#5e462d'
           }
         }
       }
     }
   </script>
 
-  <!-- Firebase Config (Preserving your specific import of 'set') -->
+  <!-- Firebase Config -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getDatabase, ref, get, runTransaction, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
@@ -71,6 +76,17 @@
       transform: scale(1.05);
     }
   </style>
+  <script src="../basket.js" defer></script>
+
+  <style>
+    /* Smooth transition for images */
+    .card-img {
+      transition: transform 0.5s ease;
+    }
+    .group:hover .card-img {
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 
 <body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
@@ -82,8 +98,9 @@
         Happy Hands <span class="text-accent">Hideaway</span>
       </a>
       <div class="hidden md:flex space-x-8 text-sm font-medium">
-        <a href="../index.html" class="hover:text-accent transition-colors">Home</a>
-        <a href="#" class="text-accent font-semibold">Bunting</a>
+          <a href="../profile.html" class="hover:text-accent transition-colors">profile</a>
+          <a href="../shop.html" class="hover:text-accent transition-colors">shop</a>
+          <a href="../socials.html" class="hover:text-accent transition-colors">socials</a>
       </div>
     </div>
   </nav>
@@ -97,22 +114,22 @@
       <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
         The Bunting Collection
       </h2>
-      <p class="text-[1.1rem] mb-8 text-ink/80 max-w-lg mx-auto">
-        Hand-sewn celebration decor. Perfect for parties, nurseries, or brightening up any room.
-      </p>
     </div>
   </section>
 
   <!-- Bunting Gallery -->
   <section class="flex-grow py-12 px-4 sm:px-6">
     <div class="max-w-[1100px] mx-auto">
+  <section class="flex-grow py-12 px-4 sm:px-6">
+    <div class="max-w-[1100px] mx-auto">
 
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 
         <!-- Bunting 1 -->
         <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
           <div class="aspect-square overflow-hidden bg-gray-100 relative">
-            <img loading="lazy" src="../images/bunting1.jpg" onerror="this.src='https://picsum.photos/seed/bunting1/400/400'" alt="Bunting 1" class="card-img w-full h-full object-cover">
+            <img loading="lazy" src="../images/bunting1.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Bunting 1" class="card-img w-full h-full object-cover">
           </div>
           <div class="p-5 text-center flex-grow flex flex-col justify-center">
             <h4 class="font-bold text-lg mb-1">Bunting #1</h4>
@@ -133,7 +150,7 @@
         <!-- Bunting 2 -->
         <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
           <div class="aspect-square overflow-hidden bg-gray-100 relative">
-            <img loading="lazy" src="../images/bunting2.jpg" onerror="this.src='https://picsum.photos/seed/bunting2/400/400'" alt="Bunting 2" class="card-img w-full h-full object-cover">
+            <img loading="lazy" src="../images/bunting2.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Bunting 2" class="card-img w-full h-full object-cover">
           </div>
           <div class="p-5 text-center flex-grow flex flex-col justify-center">
             <h4 class="font-bold text-lg mb-1">Bunting #2</h4>
@@ -154,7 +171,7 @@
         <!-- Bunting 3 -->
         <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
           <div class="aspect-square overflow-hidden bg-gray-100 relative">
-            <img loading="lazy" src="../images/bunting3.jpg" onerror="this.src='https://picsum.photos/seed/bunting3/400/400'" alt="Bunting 3" class="card-img w-full h-full object-cover">
+            <img loading="lazy" src="../images/bunting3.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Bunting 3" class="card-img w-full h-full object-cover">
           </div>
           <div class="p-5 text-center flex-grow flex flex-col justify-center">
             <h4 class="font-bold text-lg mb-1">Bunting #3</h4>
@@ -172,10 +189,10 @@
           </div>
         </div>
 
-        <!-- Bunting 4 (Example Duplicate) -->
+        <!-- Bunting 4 -->
         <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
           <div class="aspect-square overflow-hidden bg-gray-100 relative">
-            <img loading="lazy" src="../images/bunting1.jpg" onerror="this.src='https://picsum.photos/seed/bunting4/400/400'" alt="Bunting 4" class="card-img w-full h-full object-cover">
+            <img loading="lazy" src="../images/bunting1.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Bunting 4" class="card-img w-full h-full object-cover">
           </div>
           <div class="p-5 text-center flex-grow flex flex-col justify-center">
             <h4 class="font-bold text-lg mb-1">Bunting #4</h4>
@@ -192,19 +209,16 @@
             </div>
           </div>
         </div>
-
-        <!-- Duplicate these blocks for as many Bunting items as you have -->
-
       </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="bg-header text-center py-4 mt-auto">
+  <footer class="bg-header text-center py-4 mt-auto">
     <p class="text-sm">
       © 2025 Happy Hands Hideaway. Handmade, not mass-made.
     </p>
   </footer>
-
 </body>
 </html>
