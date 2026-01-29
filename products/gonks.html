@@ -4,13 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Gonks - Happy Hands Hideaway</title>
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Gonks - Happy Hands Hideaway</title>
 
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -21,37 +15,6 @@
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../responsive.css">
     <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
-
-
-    
-    <script>
-        tailwind.config = {
-        theme: {
-            extend: {
-            fontFamily: {
-                poppins: ['Poppins', 'sans-serif']
-            },
-            colors: {
-                paper: '#f5f1eb',
-                ink: '#4a3f35',
-                header: '#d8cfc4',
-                hero: '#bfa98a',
-                accent: '#7a5c3c',
-                'accent-hover': '#5e462d'
-            }
-            }
-        }
-        }
-    </script>
-    <!-- Poppins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="../responsive.css">
-    <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
-
-
     
     <script>
         tailwind.config = {
@@ -87,35 +50,7 @@
             messagingSenderId: "245124696893",
             appId: "1:245124696893:web:55de882f935bfb07cb5354"
         };
-        const firebaseConfig = {
-            apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
-            authDomain: "happy-hands-a2927.firebaseapp.com",
-            databaseURL: "https://happy-hands-a2927-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "happy-hands-a2927",
-            storageBucket: "happy-hands-a2927.firebasestorage.app",
-            messagingSenderId: "245124696893",
-            appId: "1:245124696893:web:55de882f935bfb07cb5354"
-        };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        window.firebaseDB = db;
-        window.firebaseRef = ref;
-        window.firebaseGet = get;
-        window.firebaseTransaction = runTransaction;
-    </script>
-    <script src="../basket.js" defer></script>
-    
-    <style>
-        /* Smooth transition for images */
-        .card-img {
-            transition: transform 0.5s ease;
-        }
-        .group:hover .card-img {
-            transform: scale(1.05);
-        }
-    </style>
-</head>
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         window.firebaseDB = db;
@@ -154,9 +89,6 @@
 
     <!-- Page Hero -->
     <section class="bg-hero text-center py-20 px-4 relative overflow-hidden">
-        <!-- Decorative pattern background -->
-        <div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-        
         <div class="max-w-[800px] mx-auto relative z-10">
             <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
                 The Gonks Collection
@@ -167,10 +99,6 @@
     <!-- Gonks Gallery -->
     <section class="flex-grow py-12 px-4 sm:px-6">
         <div class="max-w-[1100px] mx-auto">
-    <section class="flex-grow py-12 px-4 sm:px-6">
-        <div class="max-w-[1100px] mx-auto">
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 
                 <!-- Gonk 1 -->
@@ -263,9 +191,7 @@
 
     <!-- Footer -->
     <footer class="bg-header text-center py-4 mt-auto">
-    <footer class="bg-header text-center py-4 mt-auto">
         <p class="text-sm">
-            © 2025 Happy Hands Hideaway. Handmade, not mass-made.
             © 2025 Happy Hands Hideaway. Handmade, not mass-made.
         </p>
     </footer>
