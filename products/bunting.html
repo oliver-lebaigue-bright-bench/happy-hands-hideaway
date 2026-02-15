@@ -144,27 +144,29 @@
           const item = items[key];
           if (item.category && item.category.toLowerCase() === categoryName.toLowerCase()) {
             count++;
-                        const imageUrl = (function(){
-              const stored = item.imageUrl || '';
-              // If stored URL is a valid https/http resource, use it
-              if (stored && /^https?:\/\/.+/.test(stored)) {
-                console.log(`✅ Using stored image URL for "${item.name}":`, stored);
-                return stored;
-              }
-              // Fallback
-              console.log(`⚠️ No valid image URL for "${item.name}", using placeholder`);
-              return '../images/img_not_found.jpg';
-            })();
+            
+            // SAFETY CHECK: Skip items that have the fallback URL stored in DB
+            if (!item.imageUrl || item.imageUrl.includes('img_not_found.jpg')) {
+                console.warn(`Skipping product "${item.name}" due to missing/broken image URL in database.`);
+                return; 
+            }
 
-            console.log(`Product: ${item.name}`, { original: item.imageUrl, final: imageUrl });
+            const imageUrl = item.imageUrl;
+            console.log(`Rendering product: ${item.name}`, imageUrl);
             const price = typeof item.price === 'number' ? item.price.toFixed(2) : '0.00';
             
-            console.log(`Product: ${item.name}`, { imageUrl: item.imageUrl, fallbackUsed: !item.imageUrl });
+            // Unique ID for the image element
+            const uniqueImgId = `img-${key.replace(/[^a-zA-Z0-9]/g, '')}`;
             
             html += `
               <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
                 <div class="aspect-square overflow-hidden bg-gray-100 relative">
-                  <img loading="lazy" src="${imageUrl}" onerror="this.src='../images/img_not_found.jpg'" alt="${item.name}" class="card-img w-full h-full object-cover">
+                  <img loading="lazy" 
+                       id="${uniqueImgId}"
+                       src="${imageUrl}" 
+                       alt="${item.name}" 
+                       class="card-img loading w-full h-full object-cover"
+                  >
                 </div>
                 <div class="p-5 text-center flex-grow flex flex-col justify-center">
                   <h4 class="font-bold text-lg mb-1">${item.name}</h4>
@@ -190,6 +192,40 @@
           grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500"><p>No products in this category yet.</p></div>';
         } else {
           grid.innerHTML = html;
+          
+          // Attach the Smart Error Handler to all images
+          Object.keys(items).forEach(key => {
+            const item = items[key];
+            if (item.category && item.category.toLowerCase() === categoryName.toLowerCase()) {
+                const uniqueImgId = `img-${key.replace(/[^a-zA-Z0-9]/g, '')}`;
+                const imgElement = document.getElementById(uniqueImgId);
+                
+                if (imgElement) {
+                    // Define the error handler directly
+                    imgElement.onerror = function() {
+                        // Give GitHub 5 seconds (5000ms) to wake up
+                        console.log(`⏳ Image slow to load... waiting 5s for ${item.name}`);
+                        
+                        setTimeout(() => {
+                            // Try loading it one more time (forces browser to retry)
+                            this.src = this.src + "?t=" + new Date().getTime();
+                            
+                            // Set a SECOND error handler for this retry attempt
+                            this.onerror = function() {
+                                console.error(`❌ Image definitively broken: ${item.name}`);
+                                this.src = '../images/img_not_found.jpg';
+                                this.classList.remove('loading');
+                            };
+                        }, 5000);
+                    };
+                    
+                    // If it loads successfully, just remove the loading state
+                    imgElement.onload = function() {
+                        this.classList.remove('loading');
+                    };
+                }
+            }
+          });
         }
         
       } catch (error) {

@@ -3,3 +3,9 @@
 h2 {
     font-family: ntype !important;
  }
+
+.card-img.loading {
+    opacity: 0.5;
+    filter: blur(2px);
+    background-color: #f3f4f6;
+}

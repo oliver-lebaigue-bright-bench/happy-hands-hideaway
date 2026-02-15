@@ -620,22 +620,19 @@
                         const uploadData = await uploadResponse.json();
                         console.log('✅ Step 1 Complete: File uploaded to GitHub', { sha: uploadData.content?.sha });
 
-                        // Build the raw.githubusercontent URL - this is what browsers can actually load
-                        const rawUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${filepath}`;
+                        // Build the raw.githubusercontent URL
+                        // We assume 'main' is the branch. If your repo uses 'master', change 'main' to 'master' below.
+                        const rawUrl = `https://cdn.jsdelivr.net/gh/${username}/${repo}@main/${filepath}`;
                         console.log('📍 Step 2: Raw URL constructed:', rawUrl);
 
-                        // Verify the URL is accessible
-                        console.log('🔍 Step 3: Verifying URL is accessible...');
-                        const verifyResponse = await fetch(rawUrl, { method: 'HEAD', cache: 'no-store' });
+                        // --- REMOVED VERIFICATION STEP ---
+                        // We have REMOVED the code that checks if the URL is accessible immediately.
+                        // GitHub CDN takes 30-60s to propagate, so checking now causes a 404.
+                        // We trust the API upload response (Step 1) and return the URL.
                         
-                        if (!verifyResponse.ok) {
-                            console.warn(`URL returned status ${verifyResponse.status}, but will still try to use it`);
-                        } else {
-                            console.log('✅ Step 3 Complete: URL verified accessible');
-                        }
-
-                        console.log('✅ ALL STEPS COMPLETE. Saving to Firebase:', rawUrl);
+                        console.log('✅ ALL STEPS COMPLETE. Saving URL to Firebase (CDN propagation may take up to 60s):', rawUrl);
                         resolve(rawUrl);
+
                     } catch (error) {
                         console.error('❌ Upload failed:', error.message);
                         reject(error);
