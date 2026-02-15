@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Gonks - Happy Hands Hideaway</title>
+    <title>Figurines - Happy Hands Hideaway</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,24 +15,24 @@
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../responsive.css">
     <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
-    
+
     <script>
         tailwind.config = {
-        theme: {
-            extend: {
-            fontFamily: {
-                poppins: ['Poppins', 'sans-serif']
-            },
-            colors: {
-                paper: '#f5f1eb',
-                ink: '#4a3f35',
-                header: '#d8cfc4',
-                hero: '#bfa98a',
-                accent: '#7a5c3c',
-                'accent-hover': '#5e462d'
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif']
+                    },
+                    colors: {
+                        paper: '#f5f1eb',
+                        ink: '#4a3f35',
+                        header: '#d8cfc4',
+                        hero: '#bfa98a',
+                        accent: '#7a5c3c',
+                        'accent-hover': '#5e462d'
+                    }
+                }
             }
-            }
-        }
         }
     </script>
 
@@ -59,10 +59,8 @@
         window.firebaseSet = set;
         window.firebaseTransaction = runTransaction;
     </script>
-    <script src="../basket.js" defer></script>
-    
+
     <style>
-        /* Smooth transition for images */
         .card-img {
             transition: transform 0.5s ease;
         }
@@ -70,6 +68,7 @@
             transform: scale(1.05);
         }
     </style>
+    <script src="../basket.js" defer></script>
 </head>
 
 <body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
@@ -92,37 +91,19 @@
     <section class="bg-hero text-center py-20 px-4 relative overflow-hidden">
         <div class="max-w-[800px] mx-auto relative z-10">
             <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
-                The Gonks Collection
+                Figurines Collection
             </h2>
         </div>
     </section>
 
-    <!-- Gonks Gallery -->
+    <!-- Figurines Gallery -->
     <section class="flex-grow py-12 px-4 sm:px-6">
         <div class="max-w-[1100px] mx-auto">
-     <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="productsGrid">
-       <div class="col-span-full text-center py-12 text-gray-500">
-         <p>Loading products...</p>
-       </div>
-                    <div class="aspect-square overflow-hidden bg-gray-100 relative">
-                        <img loading="lazy" src="../images/gonks1.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Gonk 1" class="card-img w-full h-full object-cover">
-                    </div>
-                    <div class="p-5 text-center flex-grow flex flex-col justify-center">
-                        <h4 class="font-bold text-lg mb-1">Gonk #1</h4>
-                        <p class="text-accent font-bold text-xl mb-4">£8.50</p>
-                        
-                        <!-- Container for Button + Injected Heart -->
-                        <div class="mt-auto flex flex-col items-center justify-center gap-2">
-                            <button 
-                                class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
-                                data-name="Gonk #1"
-                                data-price="8.50"
-                            >
-                                Add to Basket
-                            </button>
-                        </div>
-                    </div>
-                </div></div>
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div class="col-span-full text-center py-12 text-gray-500">
+          <p>Loading products...</p>
+        </div>
+      </div>
     </section>
 
     <!-- Footer -->
@@ -131,7 +112,6 @@
             © 2025 Happy Hands Hideaway. Handmade, not mass-made.
         </p>
     </footer>
-</body>
 
   <script>
     async function loadProductsByCategory(categoryName) {
@@ -209,7 +189,7 @@
     }
     
     document.addEventListener('DOMContentLoaded', () => {
-      loadProductsByCategory('gonks');
+      loadProductsByCategory('figurines');
     });
   </script>
 </body>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin - Happy Hands Hideaway</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif']
+                    },
+                    colors: {
+                        paper: '#f5f1eb',
+                        ink: '#4a3f35',
+                        header: '#d8cfc4',
+                        hero: '#bfa98a',
+                        accent: '#7a5c3c',
+                        'accent-hover': '#5e462d'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Firebase Config -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
+            authDomain: "happy-hands-a2927.firebaseapp.com",
+            databaseURL: "https://happy-hands-a2927-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "happy-hands-a2927",
+            storageBucket: "happy-hands-a2927.firebasestorage.app",
+            messagingSenderId: "245124696893",
+            appId: "1:245124696893:web:55de882f935bfb07cb5354"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        window.firebaseDB = db;
+        window.firebaseRef = ref;
+        window.firebaseGet = get;
+        window.firebaseSet = set;
+        window.firebaseUpdate = update;
+    </script>
+
+    <style>
+        .tab-btn.active {
+            border-bottom: 3px solid #7a5c3c;
+            color: #7a5c3c;
+        }
+        .tab-btn {
+            color: #999;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        input, select, textarea {
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #7a5c3c;
+        }
+    </style>
+</head>
+
+<body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
+        <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="index.html" class="text-xl font-bold tracking-wide cursor-pointer hover:text-accent transition-colors">
+                Happy Hands <span class="text-accent">Hideaway</span> <span class="text-sm text-accent">Admin</span>
+            </a>
+            <div class="flex space-x-4 text-sm">
+                <a href="shop.html" class="hover:text-accent transition-colors">back to shop</a>
+                <button onclick="logout()" class="text-red-600 hover:text-red-800 transition-colors">logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex-grow py-8 px-4 sm:px-6">
+        <div class="max-w-[1100px] mx-auto">
+
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="mb-4 p-4 rounded-lg bg-blue-50 border border-blue-200 text-blue-900">
+                <p class="text-sm">⏳ Initializing Firebase... Please wait a moment.</p>
+            </div>
+
+            <!-- Setup Required Notice -->
+            <div id="setupNotice" class="mb-4 p-4 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-900 hidden">
+                <p class="text-sm mb-2"><strong>⚠️ GitHub Integration Not Configured</strong></p>
+                <p class="text-sm mb-3">Image uploads require GitHub settings to be configured first.</p>
+                <a href="setup.html" class="inline-block bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-yellow-700 transition">Configure Now →</a>
+            </div>
+
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold mb-2">Admin Dashboard</h1>
+                <p class="text-gray-600">Manage your product inventory and stock levels</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex gap-4 border-b border-gray-300 mb-6">
+                <button class="tab-btn active py-2 px-4 font-semibold transition" data-tab="inventory">
+                    📦 Current Inventory
+                </button>
+                <button class="tab-btn py-2 px-4 font-semibold transition" data-tab="adjust">
+                    📊 Adjust Stock
+                </button>
+                <button class="tab-btn py-2 px-4 font-semibold transition" data-tab="new-product">
+                    ➕ Add New Product
+                </button>
+            </div>
+
+            <!-- TAB 1: Current Inventory -->
+            <div id="inventory" class="tab-content active">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold mb-6">Current Inventory</h2>
+                    
+                    <!-- Inventory Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b-2 border-accent">
+                                    <th class="pb-4 px-4 font-bold">Product Name</th>
+                                    <th class="pb-4 px-4 font-bold">Price</th>
+                                    <th class="pb-4 px-4 font-bold">Current Stock</th>
+                                    <th class="pb-4 px-4 font-bold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryBody">
+                                <tr class="text-center">
+                                    <td colspan="4" class="py-8 text-gray-500">Loading inventory...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Summary Stats -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 pt-8 border-t border-gray-200">
+                        <div class="text-center">
+                            <p class="text-gray-600 text-sm mb-2">Total Products</p>
+                            <p id="totalProducts" class="text-3xl font-bold text-accent">0</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-600 text-sm mb-2">Total Stock</p>
+                            <p id="totalStock" class="text-3xl font-bold text-accent">0</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-600 text-sm mb-2">Low Stock Items</p>
+                            <p id="lowStockItems" class="text-3xl font-bold text-red-600">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Adjust Stock -->
+            <div id="adjust" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- Add Stock Form -->
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h2 class="text-2xl font-bold mb-6">➕ Add Stock</h2>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Product</label>
+                                <select id="addProductSelect" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2">
+                                    <option value="">-- Select Product --</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Quantity to Add</label>
+                                <input id="addQuantity" type="number" min="1" value="1" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2">
+                            </div>
+
+                            <button onclick="addStock()" class="w-full bg-hero text-white font-semibold py-3 rounded-lg hover:bg-accent transition mt-6">
+                                Add Stock
+                            </button>
+
+                            <div id="addFeedback" class="hidden p-4 rounded-lg text-sm font-medium"></div>
+                        </div>
+                    </div>
+
+                    <!-- Deduct Stock Form -->
+                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                        <h2 class="text-2xl font-bold mb-6">➖ Deduct Stock</h2>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Product</label>
+                                <select id="deductProductSelect" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2">
+                                    <option value="">-- Select Product --</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Quantity to Deduct</label>
+                                <input id="deductQuantity" type="number" min="1" value="1" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2">
+                            </div>
+
+                            <button onclick="deductStock()" class="w-full bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition mt-6">
+                                Deduct Stock
+                            </button>
+
+                            <div id="deductFeedback" class="hidden p-4 rounded-lg text-sm font-medium"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 3: Add New Product -->
+            <div id="new-product" class="tab-content">
+                <div class="bg-white rounded-2xl shadow-lg p-8 max-w-2xl">
+                    <h2 class="text-2xl font-bold mb-6">Add New Product</h2>
+                    
+                    <form id="newProductForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Product Name *</label>
+                            <input id="newProductName" type="text" placeholder="e.g., 'Bunting #5'" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Price (£) *</label>
+                            <input id="newProductPrice" type="number" step="0.01" min="0" placeholder="9.99" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Initial Stock *</label>
+                            <input id="newProductStock" type="number" min="0" value="0" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-2">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Product Category</label>
+                            <select id="newProductCategory" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2">
+                                <option value="bunting">Bunting</option>
+                                <option value="creatures">Creatures</option>
+                                <option value="desk_tidy">Desk Tidy</option>
+                                <option value="gonks">Gonks</option>
+                                <option value="fairy_house">Fairy House</option>
+                                <option value="figurines">Figurines</option>
+                                <option value="jelly_prints">Jelly Prints</option>
+                                <option value="magnets">Magnets</option>
+                                <option value="personalised_gifts">Personalised Gifts</option>
+                                <option value="souvenirs">Souvenirs</option>
+                                <option value="bauble">Bauble</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Product Image</label>
+                            <input id="newProductImageFile" type="file" accept="image/*" class="w-full border-2 border-gray-300 rounded-lg px-4 py-2">
+                            <p class="text-xs text-gray-500 mt-1">JPG, PNG, WebP (max 5MB)</p>
+                        </div>
+
+                        <div id="imagePreview" class="hidden mt-2">
+                            <img id="imagePreviewImg" src="" alt="Preview" class="w-full max-h-48 object-cover rounded-lg">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Description</label>
+                            <textarea id="newProductDescription" placeholder="Brief description of the product..." class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 h-24"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-hero text-white font-semibold py-3 rounded-lg hover:bg-accent transition mt-6">
+                            Create Product
+                        </button>
+
+                        <div id="newProductFeedback" class="hidden p-4 rounded-lg text-sm font-medium"></div>
+                    </form>
+
+                    <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <p class="text-sm text-green-900">
+                            <strong>✓ GitHub Integration:</strong> Images will be automatically uploaded to your GitHub repo when you select them!
+                        </p>
+                    </div>
+
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <p class="text-sm text-blue-900">
+                            <strong>🔍 Debugging:</strong> Open your browser's Developer Console (F12) to see detailed logs about image uploads and product creation. Check the Console tab if images don't appear.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        function initializeFirebase() {
+            db = window.firebaseDB;
+            ref = window.firebaseRef;
+            get = window.firebaseGet;
+            set = window.firebaseSet;
+            update = window.firebaseUpdate;
+            
+            if (!db || !ref || !get || !set) {
+                console.error('Firebase not initialized properly');
+                return false;
+            }
+            return true;
+        }
+        
+        // Wait for Firebase before proceeding
+        let firebaseReady = false;
+        const checkFirebase = setInterval(() => {
+            if (window.firebaseDB) {
+                clearInterval(checkFirebase);
+                firebaseReady = initializeFirebase();
+                if (firebaseReady) {
+                    console.log('Firebase initialized successfully');
+                } else {
+                    console.error('Failed to initialize Firebase properly');
+                    // Show error message to user
+                    setTimeout(() => {
+                        const loadingDiv = document.getElementById('loadingIndicator');
+                        if (loadingDiv) {
+                            loadingDiv.innerHTML = '<p class="text-sm text-red-700">⚠️ Failed to connect to database. Please refresh the page or check your internet connection.</p>';
+                        }
+                    }, 1000);
+                }
+            }
+        }, 100);
+
+        // Timeout after 10 seconds if Firebase doesn't load
+        setTimeout(() => {
+            if (!firebaseReady) {
+                console.error('Firebase failed to initialize after 10 seconds');
+                const loadingDiv = document.getElementById('loadingIndicator');
+                if (loadingDiv) {
+                    loadingDiv.innerHTML = '<p class="text-sm text-red-700">⚠️ Failed to load Firebase. Please refresh the page or check your internet connection.</p>';
+                }
+            }
+        }, 10000);
+
+        // Utility: Convert product name to Firebase key
+        function keyFromName(name) {
+            return name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        }
+
+        // Password Protection (Optional - can be removed)
+        function checkAuth() {
+            const password = localStorage.getItem('adminPassword');
+            if (!password) {
+                const pwd = prompt('Enter admin password (or leave blank for demo mode):\n\nDefault: hideaway2025');
+                if (pwd === 'hideaway2025' || pwd === '') {
+                    localStorage.setItem('adminPassword', 'verified');
+                } else if (pwd !== null) {
+                    alert('Incorrect password. Using demo mode with limited functionality.');
+                    localStorage.setItem('adminPassword', 'demo');
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminPassword');
+            window.location.href = 'index.html';
+        }
+
+        // Load Inventory
+        async function loadInventory() {
+            if (!firebaseReady) {
+                console.warn('Firebase not ready yet, retrying...');
+                setTimeout(loadInventory, 500);
+                return;
+            }
+
+            try {
+                const itemsRef = ref(db, 'items');
+                const snap = await get(itemsRef);
+                
+                if (!snap.exists()) {
+                    document.getElementById('inventoryBody').innerHTML = '<tr><td colspan="4" class="py-8 text-center text-gray-500">No products yet. Create one in the "Add New Product" tab.</td></tr>';
+                    document.getElementById('totalProducts').textContent = '0';
+                    document.getElementById('totalStock').textContent = '0';
+                    document.getElementById('lowStockItems').textContent = '0';
+                    return;
+                }
+
+                const items = snap.val();
+                let html = '';
+                let totalStock = 0;
+                let lowStockCount = 0;
+
+                Object.keys(items).forEach(key => {
+                    const item = items[key];
+                    const stock = item.stock || 0;
+                    const price = item.price || 'N/A';
+                    const status = stock === 0 ? '🔴 Out of Stock' : stock < 5 ? '🟡 Low Stock' : '🟢 In Stock';
+                    
+                    totalStock += stock;
+                    if (stock < 5) lowStockCount++;
+
+                    const displayName = item.name || key;
+                    html += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-4 px-4">${displayName}</td>
+                            <td class="py-4 px-4">£${typeof price === 'number' ? price.toFixed(2) : price}</td>
+                            <td class="py-4 px-4"><strong>${stock}</strong></td>
+                            <td class="py-4 px-4">${status}</td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('inventoryBody').innerHTML = html;
+                document.getElementById('totalProducts').textContent = Object.keys(items).length;
+                document.getElementById('totalStock').textContent = totalStock;
+                document.getElementById('lowStockItems').textContent = lowStockCount;
+
+                // Populate dropdowns
+                populateProductSelects(items);
+
+            } catch (error) {
+                console.error('Error loading inventory:', error);
+                document.getElementById('inventoryBody').innerHTML = `<tr><td colspan="4" class="py-8 text-center text-red-500">Error loading inventory: ${error.message}</td></tr>`;
+            }
+        }
+
+        // Populate Select Dropdowns
+        async function populateProductSelects(items) {
+            let options = '<option value="">-- Select Product --</option>';
+            Object.keys(items).forEach(key => {
+                const displayName = items[key].name || key;
+                options += `<option value="${key}">${displayName}</option>`;
+            });
+
+            document.getElementById('addProductSelect').innerHTML = options;
+            document.getElementById('deductProductSelect').innerHTML = options;
+        }
+
+        // Add Stock
+        async function addStock() {
+            if (!firebaseReady) {
+                alert('Firebase is still loading. Please wait a moment and try again.');
+                return;
+            }
+
+            const productKey = document.getElementById('addProductSelect').value;
+            const quantity = parseInt(document.getElementById('addQuantity').value);
+            const feedback = document.getElementById('addFeedback');
+
+            if (!productKey || quantity < 1) {
+                feedback.classList.remove('hidden');
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+                feedback.textContent = 'Please select a product and enter a valid quantity';
+                return;
+            }
+
+            try {
+                const itemRef = ref(db, `items/${productKey}/stock`);
+                const snap = await get(itemRef);
+                const currentStock = snap.exists() ? snap.val() : 0;
+                const newStock = currentStock + quantity;
+
+                await set(itemRef, newStock);
+
+                feedback.classList.remove('hidden');
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-green-100 text-green-700';
+                feedback.textContent = `✓ Added ${quantity} units. New stock: ${newStock}`;
+
+                document.getElementById('addQuantity').value = '1';
+                loadInventory();
+
+                setTimeout(() => feedback.classList.add('hidden'), 4000);
+            } catch (error) {
+                feedback.classList.remove('hidden');
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+                feedback.textContent = `Error: ${error.message}`;
+                console.error('Add stock error:', error);
+            }
+        }
+
+        // Deduct Stock
+        async function deductStock() {
+            if (!firebaseReady) {
+                alert('Firebase is still loading. Please wait a moment and try again.');
+                return;
+            }
+
+            const productKey = document.getElementById('deductProductSelect').value;
+            const quantity = parseInt(document.getElementById('deductQuantity').value);
+            const feedback = document.getElementById('deductFeedback');
+
+            if (!productKey || quantity < 1) {
+                feedback.classList.remove('hidden');
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+                feedback.textContent = 'Please select a product and enter a valid quantity';
+                return;
+            }
+
+            try {
+                const itemRef = ref(db, `items/${productKey}/stock`);
+                const snap = await get(itemRef);
+                const currentStock = snap.exists() ? snap.val() : 0;
+
+                if (currentStock < quantity) {
+                    feedback.classList.remove('hidden');
+                    feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+                    feedback.textContent = `Not enough stock. Available: ${currentStock}`;
+                    return;
+                }
+
+                const newStock = currentStock - quantity;
+                await set(itemRef, newStock);
+
+                feedback.classList.remove('hidden');
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-green-100 text-green-700';
+                feedback.textContent = `✓ Deducted ${quantity} units. New stock: ${newStock}`;
+
+                document.getElementById('deductQuantity').value = '1';
+                loadInventory();
+
+                setTimeout(() => feedback.classList.add('hidden'), 4000);
+            } catch (error) {
+                feedback.classList.remove('hidden');
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+                feedback.textContent = `Error: ${error.message}`;
+                console.error('Deduct stock error:', error);
+            }
+        }
+
+        // Add New Product
+        // GitHub Settings Management - Load from Firebase Database
+        let githubSettings = {};
+
+        async function loadGitHubSettingsFromDB() {
+            if (!firebaseReady) {
+                console.warn('Firebase not ready, scheduling retry...');
+                setTimeout(loadGitHubSettingsFromDB, 500);
+                return;
+            }
+
+            try {
+                const settingsRef = ref(db, 'settings/github');
+                const snap = await get(settingsRef);
+                
+                if (snap.exists()) {
+                    githubSettings = snap.val();
+                    console.log('GitHub settings loaded from Firebase');
+                    document.getElementById('setupNotice').classList.add('hidden');
+                } else {
+                    console.warn('GitHub settings not found in Firebase database');
+                    document.getElementById('setupNotice').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading GitHub settings:', error);
+                document.getElementById('setupNotice').classList.remove('hidden');
+            }
+        }
+
+        // Upload image to GitHub
+        async function uploadImageToGithub(file) {
+            const token = githubSettings.token;
+            const repo = githubSettings.repo;
+            const username = githubSettings.username;
+            const imagePath = githubSettings.imagePath || 'images';
+
+            if (!token || !repo || !username) {
+                console.error('GitHub settings incomplete:', { token: !!token, repo, username });
+                throw new Error('GitHub settings not configured. Please visit setup.html first.');
+            }
+
+            if (!token.startsWith('ghp_')) {
+                throw new Error('Invalid GitHub token format - must start with "ghp_"');
+            }
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        const base64 = e.target.result.split(',')[1];
+                        const ext = file.name.split('.').pop().toLowerCase();
+                        const timestamp = Date.now();
+                        const filename = `${keyFromName(file.name.split('.')[0])}_${timestamp}.${ext}`;
+                        const filepath = `${imagePath}/${filename}`;
+                        const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${filepath}`;
+
+                        console.log('🚀 Step 1: Uploading to GitHub', { username, repo, filepath });
+
+                        const uploadResponse = await fetch(apiUrl, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `token ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                message: `Add product image: ${filename}`,
+                                content: base64
+                            })
+                        });
+
+                        if (!uploadResponse.ok) {
+                            const errData = await uploadResponse.json();
+                            throw new Error(`GitHub API ${uploadResponse.status}: ${errData.message || 'Unknown error'}`);
+                        }
+
+                        const uploadData = await uploadResponse.json();
+                        console.log('✅ Step 1 Complete: File uploaded to GitHub', { sha: uploadData.content?.sha });
+
+                        // Build the raw.githubusercontent URL - this is what browsers can actually load
+                        const rawUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${filepath}`;
+                        console.log('📍 Step 2: Raw URL constructed:', rawUrl);
+
+                        // Verify the URL is accessible
+                        console.log('🔍 Step 3: Verifying URL is accessible...');
+                        const verifyResponse = await fetch(rawUrl, { method: 'HEAD', cache: 'no-store' });
+                        
+                        if (!verifyResponse.ok) {
+                            console.warn(`URL returned status ${verifyResponse.status}, but will still try to use it`);
+                        } else {
+                            console.log('✅ Step 3 Complete: URL verified accessible');
+                        }
+
+                        console.log('✅ ALL STEPS COMPLETE. Saving to Firebase:', rawUrl);
+                        resolve(rawUrl);
+                    } catch (error) {
+                        console.error('❌ Upload failed:', error.message);
+                        reject(error);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Image preview
+        document.addEventListener('DOMContentLoaded', () => {
+            const imageInput = document.getElementById('newProductImageFile');
+            if (imageInput) {
+                imageInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const preview = document.getElementById('imagePreview');
+                        const previewImg = document.getElementById('imagePreviewImg');
+                        
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            previewImg.src = event.target.result;
+                            preview.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+
+        document.getElementById('newProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!firebaseReady) {
+                alert('Firebase is still loading. Refresh and try again.');
+                return;
+            }
+
+            const name = document.getElementById('newProductName').value.trim();
+            const price = parseFloat(document.getElementById('newProductPrice').value);
+            const stock = parseInt(document.getElementById('newProductStock').value);
+            const category = document.getElementById('newProductCategory').value;
+            const imageFile = document.getElementById('newProductImageFile').files[0];
+            const description = document.getElementById('newProductDescription').value.trim();
+            const feedback = document.getElementById('newProductFeedback');
+
+            // Validation
+            if (!name || isNaN(price) || price < 0 || isNaN(stock) || stock < 0) {
+                feedback.classList.remove('hidden');
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+                feedback.textContent = '❌ Fill in all required fields properly';
+                return;
+            }
+
+            if (!imageFile) {
+                feedback.classList.remove('hidden');
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+                feedback.textContent = '❌ An image file is required';
+                return;
+            }
+
+            try {
+                // Step 1: Upload image
+                feedback.classList.remove('hidden');
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-blue-100 text-blue-700';
+                feedback.textContent = '📤 Uploading image to GitHub...';
+
+                let imageUrl = '';
+                try {
+                    imageUrl = await uploadImageToGithub(imageFile);
+                    if (!imageUrl || imageUrl.trim() === '') {
+                        throw new Error('Image upload returned empty URL');
+                    }
+                    console.log('✅ Image upload success. URL:', imageUrl);
+                } catch (uploadError) {
+                    feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+                    feedback.textContent = `❌ Image upload failed: ${uploadError.message}. Check console & GitHub settings.`;
+                    console.error('UPLOAD FAILED:', uploadError);
+                    return;
+                }
+
+                // Step 2: Save product to Firebase
+                feedback.textContent = '💾 Saving product to database...';
+                
+                const productKey = keyFromName(name);
+                const productData = {
+                    name: name,
+                    price: price,
+                    stock: stock,
+                    category: category,
+                    imageUrl: imageUrl,
+                    description: description,
+                    createdAt: new Date().toISOString()
+                };
+
+                console.log('💾 Saving to Firebase:', productData);
+                const productRef = ref(db, `items/${productKey}`);
+                await set(productRef, productData);
+
+                // Success!
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-green-100 text-green-700';
+                feedback.textContent = `✅ Product "${name}" created successfully with image!`;
+                console.log('✅ PRODUCT CREATION COMPLETE');
+
+                // Reset form
+                document.getElementById('newProductForm').reset();
+                document.getElementById('imagePreview').classList.add('hidden');
+                
+                // Reload inventory
+                loadInventory();
+
+                // Hide feedback after 4 seconds
+                setTimeout(() => feedback.classList.add('hidden'), 4000);
+
+            } catch (error) {
+                console.error('❌ UNEXPECTED ERROR:', error);
+                feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
+                feedback.textContent = `❌ Error: ${error.message}`;
+            }
+        });
+
+        // Tab Navigation
+        function setupTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.dataset.tab;
+
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                    btn.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupTabs();
+            checkAuth();
+            
+            // Hide loading indicator once Firebase is initialized
+            const hideLoadingWhenReady = setInterval(() => {
+                if (firebaseReady) {
+                    clearInterval(hideLoadingWhenReady);
+                    const loadingDiv = document.getElementById('loadingIndicator');
+                    if (loadingDiv) {
+                        loadingDiv.style.display = 'none';
+                    }
+                    loadGitHubSettingsFromDB();
+                    loadInventory();
+                }
+            }, 100);
+        });
+
+        // Reload inventory every 30 seconds
+        setInterval(() => {
+            if (firebaseReady) {
+                loadInventory();
+            }
+        }, 30000);
+    </script>
+
+</body>
+</html>

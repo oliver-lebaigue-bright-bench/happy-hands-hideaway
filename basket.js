@@ -249,12 +249,9 @@
     }
 
     function updateHeartButtons() {
-      document.querySelectorAll('.add-to-basket').forEach(btn => {
-        const name = btn.dataset.name;
-        const heart = btn.nextElementSibling;
-        if (heart && (heart.textContent === '❤️' || heart.textContent === '🤍')) {
-           heart.textContent = wishlist.includes(name) ? '❤️' : '🤍';
-        }
+      document.querySelectorAll('.wishlist-heart').forEach(heart => {
+        const name = heart.dataset.name;
+        heart.textContent = wishlist.includes(name) ? '❤️' : '🤍';
       });
     }
 
@@ -428,238 +425,90 @@
     function playTruckAnimation(btn, onComplete) {
       isAnimating = true;
 
-      // 1. Setup Canvas
+      // Clear and setup button for animation
       btn.innerHTML = '';
-      btn.className = 'w-full bg-sky-100 border-2 border-sky-200 rounded-xl overflow-hidden shadow-inner relative';
-      btn.style.height = '140px'; 
+      btn.className = 'w-full bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-300 rounded-xl overflow-hidden shadow-lg relative';
+      btn.style.height = 'auto';
+      btn.style.minHeight = '80px';
       btn.style.width = '100%';
+      btn.style.padding = '0';
 
-      const svgNS = "http://www.w3.org/2000/svg";
-      const svg = document.createElementNS(svgNS, "svg");
-      svg.setAttribute("viewBox", "0 0 400 140");
-      svg.setAttribute("width", "100%");
-      svg.setAttribute("height", "100%");
-      svg.style.display = 'block';
-
-      // --- GRAPHICS ---
+      // Create container for animation
+      const animContainer = document.createElement('div');
+      animContainer.style.cssText = 'position: relative; height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;';
       
-      // Road
-      const road = document.createElementNS(svgNS, "line");
-      road.setAttribute("x1", "0");
-      road.setAttribute("y1", "115");
-      road.setAttribute("x2", "400");
-      road.setAttribute("y2", "115");
-      road.setAttribute("stroke", "#94a3b8");
-      road.setAttribute("stroke-width", "4");
-      svg.appendChild(road);
+      // Add CSS animations
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes confetti-fall {
+          0% { transform: translate(0, -100%) rotate(0deg); opacity: 1; }
+          100% { transform: translate(var(--tx), 300px) rotate(720deg); opacity: 0; }
+        }
+        @keyframes pop-scale {
+          0% { transform: scale(0); opacity: 0; }
+          50% { transform: scale(1.1); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-20px); }
+        }
+        .success-icon {
+          font-size: 60px;
+          animation: pop-scale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .confetti {
+          position: absolute;
+          pointer-events: none;
+        }
+      `;
+      document.head.appendChild(style);
 
-      // Main Truck Group
-      const truckGroup = document.createElementNS(svgNS, "g");
-      
-      // Trailer Body
-      const trailer = document.createElementNS(svgNS, "path");
-      trailer.setAttribute("d", "M 10 40 L 130 40 L 130 100 L 10 100 Z");
-      trailer.setAttribute("fill", "#3b82f6");
-      trailer.setAttribute("stroke", "#1d4ed8");
-      trailer.setAttribute("stroke-width", "2");
+      // Success checkmark
+      const checkmark = document.createElement('div');
+      checkmark.className = 'success-icon';
+      checkmark.textContent = '✓';
+      checkmark.style.cssText = 'color: #16a34a; z-index: 10;';
+      animContainer.appendChild(checkmark);
 
-      // Cab Body
-      const cab = document.createElementNS(svgNS, "path");
-      cab.setAttribute("d", "M 135 50 L 170 50 L 175 100 L 135 100 Z");
-      cab.setAttribute("fill", "#2563eb");
-      
-      // Window
-      const window = document.createElementNS(svgNS, "path");
-      window.setAttribute("d", "M 138 55 L 165 55 L 168 75 L 138 75 Z");
-      window.setAttribute("fill", "#bae6fd");
+      // Create confetti pieces
+      for (let i = 0; i < 20; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        const emoji = ['🎉', '🎊', '✨', '🌟', '⭐'][Math.floor(Math.random() * 5)];
+        confetti.textContent = emoji;
+        confetti.style.cssText = `
+          font-size: ${12 + Math.random() * 12}px;
+          left: 50%;
+          --tx: ${(Math.random() - 0.5) * 200}px;
+          animation: confetti-fall ${1.5 + Math.random() * 1}s ease-out forwards;
+          animation-delay: ${Math.random() * 0.3}s;
+        `;
+        animContainer.appendChild(confetti);
+      }
 
-      // Wheels (Back)
-      const wheelBack = createWheel(svgNS, 40, 100);
-      const wheelMid = createWheel(svgNS, 90, 100);
-      const wheelFront = createWheel(svgNS, 155, 100);
+      btn.appendChild(animContainer);
 
-      // Package (Start High)
-      const packageBox = document.createElementNS(svgNS, "rect");
-      packageBox.setAttribute("x", "50");
-      packageBox.setAttribute("y", "-60"); // High
-      packageBox.setAttribute("width", "40");
-      packageBox.setAttribute("height", "40");
-      packageBox.setAttribute("fill", "#d97706");
-      packageBox.setAttribute("stroke", "#92400e");
-      packageBox.setAttribute("stroke-width", "3");
-      // Add detail to box
-      const boxDetail = document.createElementNS(svgNS, "line");
-      boxDetail.setAttribute("x1", "50");
-      boxDetail.setAttribute("y1", "-60");
-      boxDetail.setAttribute("x2", "90");
-      boxDetail.setAttribute("y2", "-20");
-      boxDetail.setAttribute("stroke", "#92400e");
-      boxDetail.setAttribute("stroke-width", "2");
+      // Phase 1: Show animation (1.5 seconds)
+      setTimeout(() => {
+        // Phase 2: Show success message
+        animContainer.innerHTML = `
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; animation: pop-scale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
+            <div style="font-size: 36px; color: #16a34a;">🎉</div>
+            <div style="font-weight: 700; color: #15803d; font-size: 18px;">Order Placed!</div>
+            <div style="font-size: 12px; color: #4b5563;">Your delivery is on its way</div>
+          </div>
+        `;
+        btn.className = 'w-full bg-white border-2 border-green-500 rounded-xl shadow-lg py-4';
+        btn.style.minHeight = 'auto';
 
-      const packageGroup = document.createElementNS(svgNS, "g");
-      packageGroup.appendChild(packageBox);
-      packageGroup.appendChild(boxDetail);
-
-      // Smoke Particles Group
-      const smokeGroup = document.createElementNS(svgNS, "g");
-
-      truckGroup.appendChild(trailer);
-      truckGroup.appendChild(cab);
-      truckGroup.appendChild(window);
-      truckGroup.appendChild(wheelBack);
-      truckGroup.appendChild(wheelMid);
-      truckGroup.appendChild(wheelFront);
-      truckGroup.appendChild(packageGroup);
-      
-      svg.appendChild(smokeGroup);
-      svg.appendChild(truckGroup);
-      btn.appendChild(svg);
-
-      // --- ANIMATION SEQUENCER ---
-
-      // Phase 1: Truck Enters (Smooth deceleration)
-      const enterAnim = truckGroup.animate([
-        { transform: 'translate(400px, 0)' },
-        { transform: 'translate(130px, 0)' } // Stop in center
-      ], {
-        duration: 1000,
-        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
-        fill: 'forwards'
-      });
-
-      // Wheel Spin during entry
-      const spinWheels = (duration) => {
-        [wheelBack, wheelMid, wheelFront].forEach(w => {
-           w.animate([
-             { transform: 'rotate(0deg)' },
-             { transform: `rotate(${360 * (duration/1000) * 2}deg)` } // Rough spin calc
-           ], { duration: duration, easing: 'linear', fill: 'forwards' });
-        });
-      };
-      spinWheels(1000);
-
-      enterAnim.onfinish = () => {
-        // Phase 2: Package Drops (Heavy gravity)
-        packageGroup.animate([
-          { transform: 'translate(0, 0)' },
-          { transform: 'translate(0, 110px)' } // Fall into trailer
-        ], {
-          duration: 600,
-          easing: 'cubic-bezier(0.6, 0.04, 0.98, 0.335)', // Heavy thud
-          fill: 'forwards'
-        }).onfinish = () => {
-          
-          // Phase 3: Impact & Bounce
-          
-          // Button Shake
-          btn.animate([
-            { transform: 'translate(0,0)' },
-            { transform: 'translate(0,4px)' },
-            { transform: 'translate(0,0)' }
-          ], { duration: 150, easing: 'ease-out' });
-
-          // Truck Suspension Dip
-          const suspAnim = truckGroup.animate([
-            { transform: 'translate(130px, 0)' },
-            { transform: 'translate(130px, 8px)' },
-            { transform: 'translate(130px, 0)' }
-          ], {
-            duration: 400,
-            easing: 'ease-out'
-          });
-
-          suspAnim.onfinish = () => {
-            // Phase 4: Drive Away (Accelerate)
-            
-            // Spawn Smoke
-            createSmoke(svgNS, smokeGroup, 175, 95);
-            setTimeout(() => createSmoke(svgNS, smokeGroup, 175, 95), 200);
-
-            const exitAnim = truckGroup.animate([
-              { transform: 'translate(130px, 0)' },
-              { transform: 'translate(-250px, 0)' }
-            ], {
-              duration: 1200,
-              easing: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)', // Fast start
-              fill: 'forwards'
-            });
-
-            // Spin wheels fast
-            spinWheels(1200);
-
-            exitAnim.onfinish = () => {
-              // Phase 5: Success
-              btn.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
-                  <div style="font-size:24px;">🎉</div>
-                  <div style="font-weight:bold; color:#15803d; font-size:20px;">Order Placed!</div>
-                </div>
-              `;
-              btn.className = 'w-full bg-white border-2 border-green-500 rounded-xl shadow-lg';
-              
-              setTimeout(() => {
-                onComplete();
-              }, 1200);
-            };
-          };
-        };
-      };
+        // Phase 3: Complete after 2 more seconds
+        setTimeout(() => {
+          isAnimating = false;
+          onComplete();
+        }, 2000);
+      }, 1500);
     }
-
-    // Helper to create a wheel
-    function createWheel(svgNS, cx, cy) {
-      const g = document.createElementNS(svgNS, "g");
-      g.setAttribute("transform", `translate(${cx}, ${cy})`);
-      
-      const tire = document.createElementNS(svgNS, "circle");
-      tire.setAttribute("r", "14");
-      tire.setAttribute("fill", "#333");
-      
-      const rim = document.createElementNS(svgNS, "circle");
-      rim.setAttribute("r", "8");
-      rim.setAttribute("fill", "#cbd5e1");
-      
-      const spoke1 = document.createElementNS(svgNS, "rect");
-      spoke1.setAttribute("x", "-1");
-      spoke1.setAttribute("y", "-8");
-      spoke1.setAttribute("width", "2");
-      spoke1.setAttribute("height", "16");
-      spoke1.setAttribute("fill", "#94a3b8");
-
-      const spoke2 = document.createElementNS(svgNS, "rect");
-      spoke2.setAttribute("x", "-8");
-      spoke2.setAttribute("y", "-1");
-      spoke2.setAttribute("width", "16");
-      spoke2.setAttribute("height", "2");
-      spoke2.setAttribute("fill", "#94a3b8");
-
-      g.appendChild(tire);
-      g.appendChild(rim);
-      g.appendChild(spoke1);
-      g.appendChild(spoke2);
-      return g;
-    }
-
-    // Helper to create smoke puff
-    function createSmoke(svgNS, group, x, y) {
-      const circle = document.createElementNS(svgNS, "circle");
-      circle.setAttribute("cx", x);
-      circle.setAttribute("cy", y);
-      circle.setAttribute("r", "5");
-      circle.setAttribute("fill", "#cbd5e1");
-      circle.setAttribute("opacity", "0.8");
-      group.appendChild(circle);
-
-      circle.animate([
-        { transform: 'translate(0,0) scale(1)', opacity: 0.8 },
-        { transform: 'translate(-20px, -10px) scale(2)', opacity: 0 }
-      ], {
-        duration: 800,
-        easing: 'ease-out',
-        fill: 'forwards'
-      }).onfinish = () => circle.remove();
-    }
-
     /* ================= FLOATING BUTTON ================= */
     const floating = document.createElement('button');
     floating.className =
@@ -674,12 +523,15 @@
 
     floating.onclick = openModal;
 
-    /* ================= PRODUCT BUTTONS ================= */
-    document.querySelectorAll('.add-to-basket').forEach(btn => {
-      const name = btn.dataset.name;
-      const price = parseFloat(btn.dataset.price);
-
-      btn.onclick = async () => {
+    /* ================= PRODUCT BUTTONS (EVENT DELEGATION FOR DYNAMIC ITEMS) ================= */
+    // Use event delegation so buttons created dynamically still work
+    document.addEventListener('click', async (e) => {
+      // Handle Add to Basket button
+      if (e.target.classList.contains('add-to-basket')) {
+        const btn = e.target;
+        const name = btn.dataset.name;
+        const price = parseFloat(btn.dataset.price);
+        
         const stock = await getStock(name);
         const existing = basket.find(i => i.name === name);
 
@@ -687,24 +539,46 @@
         else if (!existing && stock > 0)
           basket.push({ name, price, qty: 1 });
 
+        saveBasket();
         updateBasketUI();
-      };
+      }
 
-      const heart = document.createElement('button');
-      heart.textContent = wishlist.includes(name) ? '❤️' : '🤍';
-      heart.className = 'ml-3 text-2xl hover:scale-110 transition';
-
-      heart.onclick = () => {
+      // Handle Wishlist heart button
+      if (e.target.classList.contains('wishlist-heart')) {
+        const heart = e.target;
+        const name = heart.dataset.name;
+        
         if (wishlist.includes(name))
           wishlist.splice(wishlist.indexOf(name), 1);
         else wishlist.push(name);
 
         heart.textContent = wishlist.includes(name) ? '❤️' : '🤍';
+        saveWishlist();
         updateWishlistUI();
-      };
-
-      btn.after(heart);
+      }
     });
+
+    // Attach heart buttons to existing buttons and watch for new ones
+    const attachHeartButtons = () => {
+      document.querySelectorAll('.add-to-basket').forEach(btn => {
+        if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('wishlist-heart')) {
+          const name = btn.dataset.name;
+          const heart = document.createElement('button');
+          heart.type = 'button';
+          heart.textContent = wishlist.includes(name) ? '❤️' : '🤍';
+          heart.className = 'wishlist-heart ml-3 text-2xl hover:scale-110 transition';
+          heart.dataset.name = name;
+          btn.after(heart);
+        }
+      });
+    };
+
+    // Initial attachment
+    attachHeartButtons();
+
+    // Re-attach when products load dynamically
+    const observer = new MutationObserver(attachHeartButtons);
+    observer.observe(document.body, { childList: true, subtree: true });
 
     /* ================= INIT ================= */
     updateBasketUI();

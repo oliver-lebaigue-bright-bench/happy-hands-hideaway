@@ -97,94 +97,13 @@
       </h2>
     </div>
   </section>
-
   <!-- Bunting Gallery -->
   <section class="flex-grow py-12 px-4 sm:px-6">
     <div class="max-w-[1100px] mx-auto">
-     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-
-        <!-- Bunting 1 -->
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
-          <div class="aspect-square overflow-hidden bg-gray-100 relative">
-            <img loading="lazy" src="../images/bunting1.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Bunting 1" class="card-img w-full h-full object-cover">
-          </div>
-          <div class="p-5 text-center flex-grow flex flex-col justify-center">
-            <h4 class="font-bold text-lg mb-1">Bunting #1</h4>
-            <p class="text-accent font-bold text-xl mb-4">£8.50</p>
-            
-            <div class="mt-auto flex flex-col items-center justify-center gap-2">
-              <button 
-                class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
-                data-name="Bunting #1"
-                data-price="8.50"
-              >
-                Add to Basket
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bunting 2 -->
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
-          <div class="aspect-square overflow-hidden bg-gray-100 relative">
-            <img loading="lazy" src="../images/bunting2.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Bunting 2" class="card-img w-full h-full object-cover">
-          </div>
-          <div class="p-5 text-center flex-grow flex flex-col justify-center">
-            <h4 class="font-bold text-lg mb-1">Bunting #2</h4>
-            <p class="text-accent font-bold text-xl mb-4">£9.00</p>
-            
-            <div class="mt-auto flex flex-col items-center justify-center gap-2">
-              <button 
-                class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
-                data-name="Bunting #2"
-                data-price="9.00"
-              >
-                Add to Basket
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bunting 3 -->
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
-          <div class="aspect-square overflow-hidden bg-gray-100 relative">
-            <img loading="lazy" src="../images/bunting3.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Bunting 3" class="card-img w-full h-full object-cover">
-          </div>
-          <div class="p-5 text-center flex-grow flex flex-col justify-center">
-            <h4 class="font-bold text-lg mb-1">Bunting #3</h4>
-            <p class="text-accent font-bold text-xl mb-4">£8.75</p>
-            
-            <div class="mt-auto flex flex-col items-center justify-center gap-2">
-              <button 
-                class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
-                data-name="Bunting #3"
-                data-price="8.75"
-              >
-                Add to Basket
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bunting 4 -->
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
-          <div class="aspect-square overflow-hidden bg-gray-100 relative">
-            <img loading="lazy" src="../images/bunting1.jpg" onerror="this.src='../images/img_not_found.jpg'" alt="Bunting 4" class="card-img w-full h-full object-cover">
-          </div>
-          <div class="p-5 text-center flex-grow flex flex-col justify-center">
-            <h4 class="font-bold text-lg mb-1">Bunting #4</h4>
-            <p class="text-accent font-bold text-xl mb-4">£10.50</p>
-            
-            <div class="mt-auto flex flex-col items-center justify-center gap-2">
-              <button 
-                class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
-                data-name="Bunting #4"
-                data-price="10.50"
-              >
-                Add to Basket
-              </button>
-            </div>
-          </div>
+      <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <!-- Products will load here dynamically -->
+        <div class="col-span-full text-center py-12 text-gray-500">
+          <p>Loading products...</p>
         </div>
       </div>
     </div>
@@ -196,5 +115,93 @@
       © 2025 Happy Hands Hideaway. Handmade, not mass-made.
     </p>
   </footer>
+
+  <script>
+    // Load products from Firebase by category
+    async function loadProductsByCategory(categoryName) {
+      const db = window.firebaseDB;
+      const ref = window.firebaseRef;
+      const get = window.firebaseGet;
+      
+      const grid = document.getElementById('productsGrid');
+      
+      try {
+        // Fetch all items from Firebase
+        const itemsRef = ref(db, 'items');
+        const snap = await get(itemsRef);
+        
+        if (!snap.exists()) {
+          grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500"><p>No products available yet.</p></div>';
+          return;
+        }
+        
+        const items = snap.val();
+        let html = '';
+        let count = 0;
+        
+        // Filter items by category
+        Object.keys(items).forEach(key => {
+          const item = items[key];
+          if (item.category && item.category.toLowerCase() === categoryName.toLowerCase()) {
+            count++;
+                        const imageUrl = (function(){
+              const stored = item.imageUrl || '';
+              // If stored URL is a valid https/http resource, use it
+              if (stored && /^https?:\/\/.+/.test(stored)) {
+                console.log(`✅ Using stored image URL for "${item.name}":`, stored);
+                return stored;
+              }
+              // Fallback
+              console.log(`⚠️ No valid image URL for "${item.name}", using placeholder`);
+              return '../images/img_not_found.jpg';
+            })();
+
+            console.log(`Product: ${item.name}`, { original: item.imageUrl, final: imageUrl });
+            const price = typeof item.price === 'number' ? item.price.toFixed(2) : '0.00';
+            
+            console.log(`Product: ${item.name}`, { imageUrl: item.imageUrl, fallbackUsed: !item.imageUrl });
+            
+            html += `
+              <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden group">
+                <div class="aspect-square overflow-hidden bg-gray-100 relative">
+                  <img loading="lazy" src="${imageUrl}" onerror="this.src='../images/img_not_found.jpg'" alt="${item.name}" class="card-img w-full h-full object-cover">
+                </div>
+                <div class="p-5 text-center flex-grow flex flex-col justify-center">
+                  <h4 class="font-bold text-lg mb-1">${item.name}</h4>
+                  <p class="text-sm text-gray-600 mb-2 line-clamp-2">${item.description || ''}</p>
+                  <p class="text-accent font-bold text-xl mb-4">£${price}</p>
+                  
+                  <div class="mt-auto flex flex-col items-center justify-center gap-2">
+                    <button 
+                      class="add-to-basket w-full bg-hero text-white font-semibold py-2 px-4 rounded-lg hover:bg-ink transition"
+                      data-name="${item.name}"
+                      data-price="${price}"
+                    >
+                      Add to Basket
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        });
+        
+        if (count === 0) {
+          grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500"><p>No products in this category yet.</p></div>';
+        } else {
+          grid.innerHTML = html;
+        }
+        
+      } catch (error) {
+        console.error('Error loading products:', error);
+        grid.innerHTML = '<div class="col-span-full text-center py-12 text-red-500"><p>Error loading products. Please refresh the page.</p></div>';
+      }
+    }
+    
+    // Load products when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProductsByCategory('bunting');
+    });
+  </script>
 </body>
 </html>
