@@ -8,3 +8,23 @@ contact
 TODO:
     other item pages
     profile.html
+
+
+
+fireabse console add 100 stock to gonk 1 cmd:
+
+
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.text = `
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+        
+        // Get the existing app from the window object
+        const db = window.firebaseDB; 
+
+        const key = 'Gonk #1'.toLowerCase().replace(/[^a-z0-9]/g, '');
+        
+        // Use the set function we just imported
+        set(ref(db, 'items/' + key + '/stock'), 100).then(() => console.log('Stock updated to 100!'));
+        `;
+    document.head.appendChild(script);
