@@ -6,7 +6,6 @@ community events
 contact
 
 TODO:
-    other item pages
     profile.html
 
 

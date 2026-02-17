@@ -37,7 +37,23 @@
   </script>
 </head>
 
-<body class="bg-paper text-ink font-poppins">
+<body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
+
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
+    <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="text-xl font-bold tracking-wide cursor-pointer" onclick="window.location.href='index.html'">
+        Happy Hands <span class="text-accent">Hideaway</span>
+      </div>
+      <div class="hidden md:flex space-x-8 text-sm font-medium">
+        <a href="index.html" class="hover:text-accent transition-colors">Home</a>
+        <a href="shop.html" class="hover:text-accent transition-colors">Shop</a>
+        <a href="profile.html" class="hover:text-accent transition-colors">About</a>
+        <a href="events.html" class="hover:text-accent transition-colors">Events</a>
+        <a href="socials.html" class="hover:text-accent transition-colors">Contact</a>
+      </div>
+    </div>
+  </nav>
 
   <!-- Hero -->
   <section class="bg-hero text-center py-16 px-4">

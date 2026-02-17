@@ -311,9 +311,14 @@
 
       const nameInput = document.createElement('input');
       nameInput.type = 'text';
-      nameInput.placeholder = 'Full Name';
+      nameInput.placeholder = 'Full Name*';
       nameInput.className = 'w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500';
       
+      const emailInput = document.createElement('input');
+      emailInput.type = 'email';
+      emailInput.placeholder = 'Email Address';
+      emailInput.className = 'w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500';
+
       const addrInput = document.createElement('input');
       addrInput.type = 'text';
       addrInput.placeholder = 'Address Line 1';
@@ -324,16 +329,29 @@
       postcodeInput.placeholder = 'UK Postcode';
       postcodeInput.className = 'w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500';
 
+      const notesInput = document.createElement('textarea');
+      notesInput.rows = 3;
+      notesInput.placeholder = 'Notes';
+      notesInput.className = 'w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500';
+
       const placeBtn = document.createElement('button');
       placeBtn.textContent = 'Place Order';
       placeBtn.className = 'w-full bg-green-700 text-white py-3 rounded-xl font-bold hover:bg-green-800 transition mt-2 relative overflow-hidden';
+      
+      nameInput.required = true;
+      emailInput.required = true;
+      addrInput.required = true;
+      postcodeInput.required = true;
+
 
       placeBtn.onclick = async () => {
         const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
         const addr = addrInput.value.trim();
         const postcode = postcodeInput.value.trim();
+        const notes = notesInput.value.trim();
 
-        if (!name || !addr || !postcode) {
+        if (!name || !addr || !postcode || !email) {
           alert('Please fill in all delivery details.');
           return;
         }
@@ -372,8 +390,10 @@
               created: new Date().toISOString(),
               customer: {
                 name: name,
+                email: email,
                 address: addr,
-                postcode: postcode
+                postcode: postcode,
+                notes: notes
               },
               status: 'pending'
             });
@@ -387,8 +407,10 @@
               created: new Date().toISOString(),
               customer: {
                 name: name,
+                email: email,
                 address: addr,
-                postcode: postcode
+                postcode: postcode,
+                notes: notes
               },
               status: 'pending'
             });
@@ -417,7 +439,7 @@
       backBtn.className = 'w-full text-gray-500 text-sm py-2 hover:underline';
       backBtn.onclick = renderCheckoutButton;
 
-      form.append(nameInput, addrInput, postcodeInput, placeBtn, backBtn);
+      form.append(nameInput, emailInput, addrInput, postcodeInput, notesInput, placeBtn, backBtn);
       checkoutContainer.appendChild(form);
     }
 

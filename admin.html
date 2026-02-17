@@ -37,7 +37,7 @@
     <!-- Firebase Config -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-        import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+        import { getDatabase, ref, get, set, update, remove } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyABF1urMF9QHnQK3glaphVAxDYi3eiv8Nc",
@@ -57,6 +57,7 @@
         window.firebaseGet = get;
         window.firebaseSet = set;
         window.firebaseUpdate = update;
+        window.firebaseRemove = remove;
     </script>
 
     <style>
@@ -130,6 +131,9 @@
                 </button>
                 <button class="tab-btn py-2 px-4 font-semibold transition" data-tab="new-product">
                     ➕ Add New Product
+                </button>
+                <button class="tab-btn py-2 px-4 font-semibold transition" data-tab="orders">
+                    🧾 Orders
                 </button>
             </div>
 
@@ -306,6 +310,35 @@
                     </div>
                 </div>
             </div>
+
+            <!-- TAB 4: Orders -->
+            <div id="orders" class="tab-content">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold mb-6">Customer Orders</h2>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b-2 border-accent">
+                                    <th class="pb-4 px-4 font-bold">Date</th>
+                                    <th class="pb-4 px-4 font-bold">Customer</th>
+                                    <th class="pb-4 px-4 font-bold">Address</th>
+                                    <th class="pb-4 px-4 font-bold">Total</th>
+                                    <th class="pb-4 px-4 font-bold">Notes</th>
+                                    <th class="pb-4 px-4 font-bold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersBody">
+                                <tr>
+                                    <td colspan="6" class="py-8 text-center text-gray-500">
+                                        Loading orders...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script>
@@ -365,12 +398,12 @@
         function checkAuth() {
             const password = localStorage.getItem('adminPassword');
             if (!password) {
-                const pwd = prompt('Enter admin password (or leave blank for demo mode):\n\nDefault: hideaway2025');
-                if (pwd === 'hideaway2025' || pwd === '') {
+                const pwd = prompt('Enter admin password');
+                if (pwd === 'Oliverdavid27' || pwd === '') {
                     localStorage.setItem('adminPassword', 'verified');
                 } else if (pwd !== null) {
                     alert('Incorrect password. Using demo mode with limited functionality.');
-                    localStorage.setItem('adminPassword', 'demo');
+                    localStorage.setItem('adminPassword');
                 }
             }
         }
@@ -436,6 +469,86 @@
             } catch (error) {
                 console.error('Error loading inventory:', error);
                 document.getElementById('inventoryBody').innerHTML = `<tr><td colspan="4" class="py-8 text-center text-red-500">Error loading inventory: ${error.message}</td></tr>`;
+            }
+        }
+
+        async function loadOrders() {
+            if (!firebaseReady) return;
+
+            try {
+                const ordersRef = ref(db, 'orders');
+                const snap = await get(ordersRef);
+
+                const body = document.getElementById('ordersBody');
+
+                if (!snap.exists()) {
+                    body.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="py-8 text-center text-gray-500">
+                                No orders yet.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                const orders = snap.val();
+                let html = '';
+
+                Object.keys(orders)
+                    .sort((a, b) => b - a) // newest first
+                    .forEach(key => {
+                        const order = orders[key];
+                        const date = new Date(parseInt(key)).toLocaleString();
+                        const customer = order.customer || {};
+                        const notes = customer.notes || '-';
+
+                        html += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-4 px-4">${date}</td>
+                            <td class="py-4 px-4">
+                                <strong>${customer.name || ''}</strong><br>
+                                <span class="text-sm text-gray-500">${customer.email || ''}</span>
+                            </td>
+                            <td class="py-4 px-4">
+                                ${customer.address || ''}<br>
+                                ${customer.postcode || ''}
+                            </td>
+                            <td class="py-4 px-4">£${order.total?.toFixed(2) || '0.00'}</td>
+                            <td class="py-4 px-4 text-sm">${notes}</td>
+                            <td class="py-4 px-4">
+                                <button 
+                                    onclick="completeOrder('${key}')" 
+                                    class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-700 transition">
+                                    ✓ Complete
+                                </button>
+                            </td>
+                        </tr>
+                        `;
+                    });
+
+                body.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        async function completeOrder(orderKey) {
+            if (!firebaseReady) return;
+
+            if (!confirm('Mark this order as completed and remove it?')) return;
+
+            try {
+                const orderRef = firebaseRef(db, `orders/${orderKey}`);
+                await firebaseRemove(orderRef); // <-- use the exposed remove
+
+                // Refresh the orders list
+                loadOrders();
+
+            } catch (error) {
+                console.error('Error completing order:', error);
+                alert('Failed to remove order.');
             }
         }
 
@@ -765,6 +878,10 @@
 
                     btn.classList.add('active');
                     document.getElementById(targetTab).classList.add('active');
+
+                    if (targetTab === 'orders') {
+                        loadOrders();
+                    }
                 });
             });
         }
