@@ -69,25 +69,55 @@
     .group:hover .card-img {
       transform: scale(1.05);
     }
+    .mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    .mobile-menu.open {
+      max-height: 300px;
+    }
   </style>
   <script src="../js/basket.js" defer></script>
 </head>
 
 <body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
 
-  <!-- Navigation (Sticky) -->
-  <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
-    <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="../index.html" class="text-xl font-bold tracking-wide cursor-pointer hover:text-accent transition-colors">
-        Happy Hands <span class="text-accent">Hideaway</span>
-      </a>
-      <div class="hidden md:flex space-x-8 text-sm font-medium">
-          <a href="../profile.html" class="hover:text-accent transition-colors">profile</a>
-          <a href="../shop.html" class="hover:text-accent transition-colors">shop</a>
-          <a href="../socials.html" class="hover:text-accent transition-colors">socials</a>
-      </div>
-    </div>
-  </nav>
+  <!-- Navigation Header -->
+    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
+        <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="../index.html" class="text-xl font-bold tracking-wide hover:text-accent transition-colors">
+                Happy Hands <span class="text-accent">Hideaway</span>
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="../index.html" class="hover:text-accent transition-colors">Home</a>
+                <a href="../shop.html" class="hover:text-accent transition-colors">Shop</a>
+                <a href="../profile.html" class="hover:text-accent transition-colors">About</a>
+                <a href="../events.html" class="hover:text-accent transition-colors">Events</a>
+                <a href="../socials.html" class="hover:text-accent transition-colors">Contact</a>
+            </div>
+
+            <!-- Hamburger Button -->
+            <button id="menuToggle" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="Toggle menu">
+                <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar1"></span>
+                <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar2"></span>
+                <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar3"></span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu md:hidden bg-white border-t border-header">
+            <div class="max-w-[1100px] mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-medium">
+                <a href="../index.html" class="py-2 hover:text-accent transition-colors">Home</a>
+                <a href="../shop.html" class="py-2 hover:text-accent transition-colors">Shop</a>
+                <a href="../profile.html" class="py-2 hover:text-accent transition-colors">About</a>
+                <a href="../events.html" class="py-2 hover:text-accent transition-colors">Events</a>
+                <a href="../socials.html" class="py-2 hover:text-accent transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
 
   <!-- Page Hero -->
   <section class="bg-hero text-center py-20 px-4 relative overflow-hidden">
@@ -240,5 +270,41 @@
       loadProductsByCategory('bunting');
     });
   </script>
-</body>
+
+  <!-- UI/Interactivity Script -->
+    <script>
+        const menuToggle = document.getElementById('menuToggle'),
+              mobileMenu = document.getElementById('mobileMenu'),
+              bar1 = document.getElementById('bar1'),
+              bar2 = document.getElementById('bar2'),
+              bar3 = document.getElementById('bar3');
+        
+        let menuOpen = false;
+
+        menuToggle.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            mobileMenu.classList.toggle('open', menuOpen);
+            
+            if (menuOpen) {
+                bar1.style.transform = 'rotate(45deg) translate(5px, 5px)';
+                bar2.style.opacity = '0';
+                bar3.style.transform = 'rotate(-45deg) translate(5px, -5px)';
+            } else {
+                bar1.style.transform = '';
+                bar2.style.opacity = '';
+                bar3.style.transform = '';
+            }
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuOpen = false;
+                mobileMenu.classList.remove('open');
+                bar1.style.transform = '';
+                bar2.style.opacity = '';
+                bar3.style.transform = '';
+            });
+        });
+    </script>
+  </body>
 </html>

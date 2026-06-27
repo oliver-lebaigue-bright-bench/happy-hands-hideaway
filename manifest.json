@@ -1,0 +1,12 @@
+{
+  "name": "Order Dashboard",
+  "short_name": "Admin",
+  "start_url": "/admin.html",
+  "scope": "/admin.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    { "src": "/resources/favicon.ico", "sizes": "any", "type": "image/x-icon" }
+  ]
+}

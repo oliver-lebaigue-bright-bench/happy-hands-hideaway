@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>About the Artist – Happy Hands Hideaway</title>
+  <meta name="description" content="Meet the artist behind Happy Hands Hideaway — handmade clay creations crafted with love in Wales.">
 
   <!-- Tailwind -->
   <script src="js/tailwind.js"></script>
@@ -11,7 +12,7 @@
   <!-- Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
@@ -29,12 +30,28 @@
             ink: '#4a3f35',
             header: '#d8cfc4',
             hero: '#bfa98a',
-            accent: '#7a5c3c'
+            accent: '#7a5c3c',
+            'accent-hover': '#5e462d'
           }
         }
       }
     }
   </script>
+
+  <style>
+    .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+    .mobile-menu.open { max-height: 300px; }
+    /* Fade in on scroll */
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 
 <body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
@@ -42,15 +59,29 @@
   <!-- Navigation -->
   <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
     <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="text-xl font-bold tracking-wide cursor-pointer" onclick="window.location.href='index.html'">
+      <a href="index.html" class="text-xl font-bold tracking-wide hover:text-accent transition-colors">
         Happy Hands <span class="text-accent">Hideaway</span>
-      </div>
+      </a>
       <div class="hidden md:flex space-x-8 text-sm font-medium">
         <a href="index.html" class="hover:text-accent transition-colors">Home</a>
         <a href="shop.html" class="hover:text-accent transition-colors">Shop</a>
-        <a href="profile.html" class="hover:text-accent transition-colors">About</a>
+        <a href="profile.html" class="text-accent transition-colors">About</a>
         <a href="events.html" class="hover:text-accent transition-colors">Events</a>
         <a href="socials.html" class="hover:text-accent transition-colors">Contact</a>
+      </div>
+      <button id="menuToggle" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="Toggle menu">
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar1"></span>
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar2"></span>
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar3"></span>
+      </button>
+    </div>
+    <div id="mobileMenu" class="mobile-menu md:hidden bg-white border-t border-header">
+      <div class="max-w-[1100px] mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-medium">
+        <a href="index.html" class="py-2 hover:text-accent transition-colors">Home</a>
+        <a href="shop.html" class="py-2 hover:text-accent transition-colors">Shop</a>
+        <a href="profile.html" class="py-2 text-accent">About</a>
+        <a href="events.html" class="py-2 hover:text-accent transition-colors">Events</a>
+        <a href="socials.html" class="py-2 hover:text-accent transition-colors">Contact</a>
       </div>
     </div>
   </nav>
@@ -58,7 +89,6 @@
   <!-- Hero -->
   <section class="bg-hero text-center py-16 px-4">
     <div class="max-w-[1100px] mx-auto">
-
         <h2 class="text-[2.2rem] sm:text-[2.8rem] font-semibold mb-3">
             Meet the Artist
         </h2>
@@ -69,61 +99,102 @@
   </section>
 
   <!-- Artist Profile -->
-  <section class="py-14">
+  <section class="flex-grow py-14">
     <div class="max-w-[900px] mx-auto px-6">
 
-      <!-- Artist Image -->
-      <div class="mb-10 text-center">
-        <div class="mb-8 sm:mb-10 text-center px-2">
-            <img
-                src="images/kandice.jpg"
-                alt="Kandice – mixed media artist"
-                class="w-full max-w-[420px] sm:max-w-[520px] mx-auto rounded-[18px] sm:rounded-[20px]
-                    shadow-[0_10px_25px_rgba(0,0,0,0.12)]"
-            >
+      <!-- Artist Image + Bio -->
+      <div class="flex flex-col lg:flex-row items-center lg:items-start gap-10 lg:gap-14">
+
+        <!-- Image -->
+        <div class="w-full max-w-[420px] lg:max-w-[400px] flex-shrink-0 scroll-reveal">
+          <img
+            src="images/kandice.jpg"
+            alt="Kandice – mixed media artist"
+            class="w-full rounded-[20px] shadow-[0_10px_30px_rgba(0,0,0,0.12)]"
+          >
+        </div>
+
+        <!-- Bio Text -->
+        <div class="text-center lg:text-left scroll-reveal">
+          <h3 class="text-2xl font-bold mb-2">Kandice</h3>
+          <p class="text-accent font-medium text-sm mb-5">Mixed Media Artist</p>
+
+          <!-- Quick highlights -->
+          <div class="mt-8 flex flex-wrap gap-3 justify-center lg:justify-start">
+            <span class="bg-accent/10 text-accent text-sm font-medium px-4 py-2 rounded-full">Made in Wales</span>
+            <span class="bg-accent/10 text-accent text-sm font-medium px-4 py-2 rounded-full">100% Handmade</span>
+            <span class="bg-accent/10 text-accent text-sm font-medium px-4 py-2 rounded-full">Personalised Orders</span>
+            <span class="bg-accent/10 text-accent text-sm font-medium px-4 py-2 rounded-full">Local Markets</span>
+          </div>
+
+          <!-- Buttons -->
+          <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <a href="shop.html"
+              class="inline-block bg-accent text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-accent-hover hover:-translate-y-1 hover:shadow-xl transition-all duration-300 text-center">
+              Explore the Shop
+            </a>
+            <a href="socials.html"
+              class="inline-block bg-hero text-ink font-medium px-8 py-3 rounded-full hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 text-center">
+              Get in Touch
+            </a>
+          </div>
         </div>
       </div>
-
-      <!-- Shop Link -->
-      <div class="text-center mt-10 sm:mt-12 px-4">
-        <a
-            href="shop.html"
-            class="inline-block bg-hero text-ink
-                px-10 py-3
-                rounded-[999px]
-                text-[0.95rem] sm:text-[1rem]
-                font-medium
-                transition-transform
-                hover:-translate-y-0.5 hover:shadow-lg"
-            >
-            Explore the Shop
-        </a>
-      </div>
-
-      <!-- contact button -->
-      <div class="text-center mt-8">
-        <a
-            href="socials.html"
-            class="inline-block bg-hero text-ink
-                px-10 py-3
-                rounded-[999px]
-                text-[0.95rem] sm:text-[1rem]
-                font-medium
-                transition-transform
-                hover:-translate-y-0.5 hover:shadow-lg"
-            >
-            My socials
-        </a>
-      </div>
-
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-header text-center py-4">
-    <p class="text-sm">
+  <footer class="bg-header text-center py-5 mt-auto">
+    <p class="text-sm text-ink/70">
       © 2025 Happy Hands Hideaway. Handmade, not mass-made.
     </p>
   </footer>
+
+  <!-- Mobile Menu + Scroll Reveal Script -->
+  <script>
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const bar1 = document.getElementById('bar1');
+    const bar2 = document.getElementById('bar2');
+    const bar3 = document.getElementById('bar3');
+    let menuOpen = false;
+
+    menuToggle.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      if (menuOpen) {
+        bar1.style.transform = 'rotate(45deg) translate(5px, 5px)';
+        bar2.style.opacity = '0';
+        bar3.style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      }
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuOpen = false;
+        mobileMenu.classList.remove('open');
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      });
+    });
+
+    // Scroll reveal animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>

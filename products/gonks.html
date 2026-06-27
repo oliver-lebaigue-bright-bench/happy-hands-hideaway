@@ -69,6 +69,8 @@
         .group:hover .card-img {
             transform: scale(1.05);
         }
+        .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .mobile-menu.open { max-height: 300px; }
     </style>
 </head>
 
@@ -77,13 +79,29 @@
     <!-- Navigation (Sticky) -->
     <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
         <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="../index.html" class="text-xl font-bold tracking-wide cursor-pointer hover:text-accent transition-colors">
+            <a href="../index.html" class="text-xl font-bold tracking-wide hover:text-accent transition-colors">
                 Happy Hands <span class="text-accent">Hideaway</span>
             </a>
             <div class="hidden md:flex space-x-8 text-sm font-medium">
-                <a href="../profile.html" class="hover:text-accent transition-colors">profile</a>
-                <a href="../shop.html" class="hover:text-accent transition-colors">shop</a>
-                <a href="../socials.html" class="hover:text-accent transition-colors">socials</a>
+                <a href="../index.html" class="hover:text-accent transition-colors">Home</a>
+                <a href="../shop.html" class="hover:text-accent transition-colors">Shop</a>
+                <a href="../profile.html" class="hover:text-accent transition-colors">About</a>
+                <a href="../events.html" class="hover:text-accent transition-colors">Events</a>
+                <a href="../socials.html" class="hover:text-accent transition-colors">Contact</a>
+            </div>
+            <button id="menuToggle" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="Toggle menu">
+                <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar1"></span>
+                <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar2"></span>
+                <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar3"></span>
+            </button>
+        </div>
+        <div id="mobileMenu" class="mobile-menu md:hidden bg-white border-t border-header">
+            <div class="max-w-[1100px] mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-medium">
+                <a href="../index.html" class="py-2 hover:text-accent transition-colors">Home</a>
+                <a href="../shop.html" class="py-2 hover:text-accent transition-colors">Shop</a>
+                <a href="../profile.html" class="py-2 hover:text-accent transition-colors">About</a>
+                <a href="../events.html" class="py-2 hover:text-accent transition-colors">Events</a>
+                <a href="../socials.html" class="py-2 hover:text-accent transition-colors">Contact</a>
             </div>
         </div>
     </nav>
@@ -91,16 +109,17 @@
     <!-- Page Hero -->
     <section class="bg-hero text-center py-20 px-4 relative overflow-hidden">
         <div class="max-w-[800px] mx-auto relative z-10">
-            <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
+            <h2 class="text-[2.5rem] sm:text-[3.5rem] font-semibold mb-4 leading-tight">
                 The Gonks Collection
             </h2>
+            <p class="text-ink/70 max-w-md mx-auto">Whimsical bearded creatures full of personality</p>
         </div>
     </section>
 
     <!-- Gonks Gallery -->
     <section class="flex-grow py-12 px-4 sm:px-6">
         <div class="max-w-[1100px] mx-auto">
-          <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="productsGrid">
+          <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <div class="col-span-full text-center py-12 text-gray-500">
               <p>Loading products...</p>
             </div>
@@ -108,13 +127,19 @@
         </div>
     </section>
 
+    <!-- Back to Shop -->
+    <div class="text-center pb-8">
+        <a href="../shop.html" class="inline-block bg-hero text-ink font-medium px-8 py-3 rounded-full hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300">
+            &larr; Back to Shop
+        </a>
+    </div>
+
     <!-- Footer -->
-    <footer class="bg-header text-center py-4 mt-auto">
-        <p class="text-sm">
+    <footer class="bg-header text-center py-5 mt-auto">
+        <p class="text-sm text-ink/70">
             © 2025 Happy Hands Hideaway. Handmade, not mass-made.
         </p>
     </footer>
-</body>
 
   <script>
     async function loadProductsByCategory(categoryName) {
@@ -143,12 +168,10 @@
             count++;
                         const imageUrl = (function(){
               const stored = item.imageUrl || '';
-              // If stored URL is a valid https/http resource, use it
               if (stored && /^https?:\/\/.+/.test(stored)) {
                 console.log(`✅ Using stored image URL for "${item.name}":`, stored);
                 return stored;
               }
-              // Fallback
               console.log(`⚠️ No valid image URL for "${item.name}", using placeholder`);
               return '../images/img_not_found.jpg';
             })();
@@ -193,6 +216,40 @@
     
     document.addEventListener('DOMContentLoaded', () => {
       loadProductsByCategory('gonks');
+    });
+  </script>
+
+  <!-- Mobile Menu Script -->
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const bar1 = document.getElementById('bar1');
+    const bar2 = document.getElementById('bar2');
+    const bar3 = document.getElementById('bar3');
+    let menuOpen = false;
+
+    menuToggle.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      if (menuOpen) {
+        bar1.style.transform = 'rotate(45deg) translate(5px, 5px)';
+        bar2.style.opacity = '0';
+        bar3.style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      }
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuOpen = false;
+        mobileMenu.classList.remove('open');
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      });
     });
   </script>
 </body>

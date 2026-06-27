@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
+    <link rel="manifest" href="manifest.json">
 
     <script>
         tailwind.config = {
@@ -341,7 +342,12 @@
             </div>
         </div>
     </div>
+
+    <!-- Core Admin Dashboard JavaScript -->
     <script>
+        let db, ref, get, set, update, firebaseRemove;
+        let firebaseReady = false;
+        let githubSettings = {};
 
         function initializeFirebase() {
             db = window.firebaseDB;
@@ -349,16 +355,16 @@
             get = window.firebaseGet;
             set = window.firebaseSet;
             update = window.firebaseUpdate;
+            firebaseRemove = window.firebaseRemove;
             
-            if (!db || !ref || !get || !set) {
-                console.error('Firebase not initialized properly');
+            if (!db || !ref || !get || !set || !firebaseRemove) {
+                console.error('Firebase variables are missing on window context');
                 return false;
             }
             return true;
         }
         
         // Wait for Firebase before proceeding
-        let firebaseReady = false;
         const checkFirebase = setInterval(() => {
             if (window.firebaseDB) {
                 clearInterval(checkFirebase);
@@ -367,13 +373,7 @@
                     console.log('Firebase initialized successfully');
                 } else {
                     console.error('Failed to initialize Firebase properly');
-                    // Show error message to user
-                    setTimeout(() => {
-                        const loadingDiv = document.getElementById('loadingIndicator');
-                        if (loadingDiv) {
-                            loadingDiv.innerHTML = '<p class="text-sm text-red-700">⚠️ Failed to connect to database. Please refresh the page or check your internet connection.</p>';
-                        }
-                    }, 1000);
+                    showFirebaseError();
                 }
             }
         }, 100);
@@ -382,19 +382,23 @@
         setTimeout(() => {
             if (!firebaseReady) {
                 console.error('Firebase failed to initialize after 10 seconds');
-                const loadingDiv = document.getElementById('loadingIndicator');
-                if (loadingDiv) {
-                    loadingDiv.innerHTML = '<p class="text-sm text-red-700">⚠️ Failed to load Firebase. Please refresh the page or check your internet connection.</p>';
-                }
+                showFirebaseError();
             }
         }, 10000);
+
+        function showFirebaseError() {
+            const loadingDiv = document.getElementById('loadingIndicator');
+            if (loadingDiv) {
+                loadingDiv.innerHTML = '<p class="text-sm text-red-700">⚠️ Failed to connect to database. Please refresh the page or check your internet connection.</p>';
+            }
+        }
 
         // Utility: Convert product name to Firebase key
         function keyFromName(name) {
             return name.toLowerCase().replace(/[^a-z0-9]/g, '');
         }
 
-        // Password Protection (Optional - can be removed)
+        // Password Protection
         function checkAuth() {
             const password = localStorage.getItem('adminPassword');
             if (!password) {
@@ -403,7 +407,6 @@
                     localStorage.setItem('adminPassword', 'verified');
                 } else if (pwd !== null) {
                     alert('Incorrect password. Using demo mode with limited functionality.');
-                    localStorage.setItem('adminPassword');
                 }
             }
         }
@@ -478,13 +481,12 @@
             try {
                 const ordersRef = ref(db, 'orders');
                 const snap = await get(ordersRef);
-
                 const body = document.getElementById('ordersBody');
 
                 if (!snap.exists()) {
                     body.innerHTML = `
                         <tr>
-                            <td colspan="5" class="py-8 text-center text-gray-500">
+                            <td colspan="6" class="py-8 text-center text-gray-500">
                                 No orders yet.
                             </td>
                         </tr>
@@ -536,24 +538,19 @@
 
         async function completeOrder(orderKey) {
             if (!firebaseReady) return;
-
             if (!confirm('Mark this order as completed and remove it?')) return;
 
             try {
-                const orderRef = firebaseRef(db, `orders/${orderKey}`);
-                await firebaseRemove(orderRef); // <-- use the exposed remove
-
-                // Refresh the orders list
+                const orderRef = ref(db, `orders/${orderKey}`);
+                await firebaseRemove(orderRef);
                 loadOrders();
-
             } catch (error) {
                 console.error('Error completing order:', error);
                 alert('Failed to remove order.');
             }
         }
 
-        // Populate Select Dropdowns
-        async function populateProductSelects(items) {
+        function populateProductSelects(items) {
             let options = '<option value="">-- Select Product --</option>';
             Object.keys(items).forEach(key => {
                 const displayName = items[key].name || key;
@@ -631,8 +628,8 @@
 
                 if (currentStock < quantity) {
                     feedback.classList.remove('hidden');
-                    feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
-                    feedback.textContent = `Not enough stock. Available: ${currentStock}`;
+                    feedback.className = 'p-4 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-700';
+                    feedback.textContent = `⚠️ Cannot deduct ${quantity} units. Only ${currentStock} available.`;
                     return;
                 }
 
@@ -655,13 +652,9 @@
             }
         }
 
-        // Add New Product
-        // GitHub Settings Management - Load from Firebase Database
-        let githubSettings = {};
-
+        // Load GitHub Integration Settings
         async function loadGitHubSettingsFromDB() {
             if (!firebaseReady) {
-                console.warn('Firebase not ready, scheduling retry...');
                 setTimeout(loadGitHubSettingsFromDB, 500);
                 return;
             }
@@ -684,7 +677,7 @@
             }
         }
 
-        // Upload image to GitHub
+        // Upload Image to GitHub Repository
         async function uploadImageToGithub(file) {
             const token = githubSettings.token;
             const repo = githubSettings.repo;
@@ -692,7 +685,6 @@
             const imagePath = githubSettings.imagePath || 'images';
 
             if (!token || !repo || !username) {
-                console.error('GitHub settings incomplete:', { token: !!token, repo, username });
                 throw new Error('GitHub settings not configured. Please visit setup.html first.');
             }
 
@@ -730,24 +722,11 @@
                             throw new Error(`GitHub API ${uploadResponse.status}: ${errData.message || 'Unknown error'}`);
                         }
 
-                        const uploadData = await uploadResponse.json();
-                        console.log('✅ Step 1 Complete: File uploaded to GitHub', { sha: uploadData.content?.sha });
-
-                        // Build the raw.githubusercontent URL
-                        // We assume 'main' is the branch. If your repo uses 'master', change 'main' to 'master' below.
+                        console.log('✅ Step 1 Complete: File uploaded to GitHub');
                         const rawUrl = `https://cdn.jsdelivr.net/gh/${username}/${repo}@main/${filepath}`;
-                        console.log('📍 Step 2: Raw URL constructed:', rawUrl);
-
-                        // --- REMOVED VERIFICATION STEP ---
-                        // We have REMOVED the code that checks if the URL is accessible immediately.
-                        // GitHub CDN takes 30-60s to propagate, so checking now causes a 404.
-                        // We trust the API upload response (Step 1) and return the URL.
-                        
-                        console.log('✅ ALL STEPS COMPLETE. Saving URL to Firebase (CDN propagation may take up to 60s):', rawUrl);
                         resolve(rawUrl);
 
                     } catch (error) {
-                        console.error('❌ Upload failed:', error.message);
                         reject(error);
                     }
                 };
@@ -755,27 +734,7 @@
             });
         }
 
-        // Image preview
-        document.addEventListener('DOMContentLoaded', () => {
-            const imageInput = document.getElementById('newProductImageFile');
-            if (imageInput) {
-                imageInput.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const preview = document.getElementById('imagePreview');
-                        const previewImg = document.getElementById('imagePreviewImg');
-                        
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                            previewImg.src = event.target.result;
-                            preview.classList.remove('hidden');
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
-        });
-
+        // Product Creation Form Submission
         document.getElementById('newProductForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -792,7 +751,6 @@
             const description = document.getElementById('newProductDescription').value.trim();
             const feedback = document.getElementById('newProductFeedback');
 
-            // Validation
             if (!name || isNaN(price) || price < 0 || isNaN(stock) || stock < 0) {
                 feedback.classList.remove('hidden');
                 feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
@@ -808,26 +766,12 @@
             }
 
             try {
-                // Step 1: Upload image
                 feedback.classList.remove('hidden');
                 feedback.className = 'p-4 rounded-lg text-sm font-medium bg-blue-100 text-blue-700';
                 feedback.textContent = '📤 Uploading image to GitHub...';
 
-                let imageUrl = '';
-                try {
-                    imageUrl = await uploadImageToGithub(imageFile);
-                    if (!imageUrl || imageUrl.trim() === '') {
-                        throw new Error('Image upload returned empty URL');
-                    }
-                    console.log('✅ Image upload success. URL:', imageUrl);
-                } catch (uploadError) {
-                    feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
-                    feedback.textContent = `❌ Image upload failed: ${uploadError.message}. Check console & GitHub settings.`;
-                    console.error('UPLOAD FAILED:', uploadError);
-                    return;
-                }
-
-                // Step 2: Save product to Firebase
+                let imageUrl = await uploadImageToGithub(imageFile);
+                
                 feedback.textContent = '💾 Saving product to database...';
                 
                 const productKey = keyFromName(name);
@@ -841,33 +785,26 @@
                     createdAt: new Date().toISOString()
                 };
 
-                console.log('💾 Saving to Firebase:', productData);
                 const productRef = ref(db, `items/${productKey}`);
                 await set(productRef, productData);
 
-                // Success!
                 feedback.className = 'p-4 rounded-lg text-sm font-medium bg-green-100 text-green-700';
                 feedback.textContent = `✅ Product "${name}" created successfully with image!`;
-                console.log('✅ PRODUCT CREATION COMPLETE');
 
-                // Reset form
                 document.getElementById('newProductForm').reset();
                 document.getElementById('imagePreview').classList.add('hidden');
-                
-                // Reload inventory
                 loadInventory();
 
-                // Hide feedback after 4 seconds
                 setTimeout(() => feedback.classList.add('hidden'), 4000);
 
             } catch (error) {
-                console.error('❌ UNEXPECTED ERROR:', error);
+                console.error('❌ Error handling product submit:', error);
                 feedback.className = 'p-4 rounded-lg text-sm font-medium bg-red-100 text-red-700';
                 feedback.textContent = `❌ Error: ${error.message}`;
             }
         });
 
-        // Tab Navigation
+        // Tab Navigation Mechanics
         function setupTabs() {
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -886,12 +823,30 @@
             });
         }
 
-        // Initialize
+        // Lifecycle Synchronization Setup
         document.addEventListener('DOMContentLoaded', () => {
             setupTabs();
             checkAuth();
             
-            // Hide loading indicator once Firebase is initialized
+            // Image input preview listener setup
+            const imageInput = document.getElementById('newProductImageFile');
+            if (imageInput) {
+                imageInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const preview = document.getElementById('imagePreview');
+                        const previewImg = document.getElementById('imagePreviewImg');
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            previewImg.src = event.target.result;
+                            preview.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Interface Visibility Sync Loop
             const hideLoadingWhenReady = setInterval(() => {
                 if (firebaseReady) {
                     clearInterval(hideLoadingWhenReady);
@@ -905,7 +860,7 @@
             }, 100);
         });
 
-        // Reload inventory every 30 seconds
+        // Background Sync Engine (Pulls records every 30 seconds)
         setInterval(() => {
             if (firebaseReady) {
                 loadInventory();
@@ -913,5 +868,37 @@
         }, 30000);
     </script>
 
+    <!-- Web Push & PWA Worker Control Matrix -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js', { scope: '/admin.html' })
+                    .then(reg => console.log('Admin SW registered:', reg.scope))
+                    .catch(err => console.error('SW Registration Failed:', err));
+            });
+        }
+
+        async function enableNotifications() {
+            try {
+                // 1. Register the confined PWA Service Worker
+                const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/admin.html' });
+                
+                // 2. Request user device permission
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') return alert('Permission denied');
+
+                // 3. Get the raw device token
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true
+                });
+
+                // 4. Print or update token payload to target database references
+                console.log('Save this payload to your DB:', JSON.stringify(subscription));
+            } catch (error) {
+                console.error('Notification Setup Failed:', error);
+                alert('Failed to subscribe to web push: ' + error.message);
+            }
+        }
+    </script>
 </body>
 </html>

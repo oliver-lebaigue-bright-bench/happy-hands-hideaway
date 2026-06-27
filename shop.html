@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Happy Hands Hideaway</title>
+  <title>Shop – Happy Hands Hideaway</title>
+  <meta name="description" content="Browse our handmade clay collections — gonks, creatures, fairy houses, personalised gifts and more.">
 
   <!-- Tailwind -->
   <script src="js/tailwind.js"></script>
@@ -13,6 +13,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
   <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
 
   <script>
@@ -69,6 +71,19 @@
     .group:hover .card-img {
       transform: scale(1.05);
     }
+    /* Mobile menu animation */
+    .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+    .mobile-menu.open { max-height: 300px; }
+    /* Scroll reveal */
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
 
@@ -77,15 +92,32 @@
   <!-- Navigation -->
   <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
     <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="text-xl font-bold tracking-wide cursor-pointer" onclick="window.scrollTo(0,0)">
+      <a href="index.html" class="text-xl font-bold tracking-wide hover:text-accent transition-colors">
         Happy Hands <span class="text-accent">Hideaway</span>
-      </div>
+      </a>
+      <!-- Desktop nav -->
       <div class="hidden md:flex space-x-8 text-sm font-medium">
         <a href="index.html" class="hover:text-accent transition-colors">Home</a>
-        <a href="shop.html" class="hover:text-accent transition-colors">Shop</a>
+        <a href="shop.html" class="text-accent transition-colors">Shop</a>
         <a href="profile.html" class="hover:text-accent transition-colors">About</a>
         <a href="events.html" class="hover:text-accent transition-colors">Events</a>
         <a href="socials.html" class="hover:text-accent transition-colors">Contact</a>
+      </div>
+      <!-- Hamburger button (mobile) -->
+      <button id="menuToggle" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="Toggle menu">
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar1"></span>
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar2"></span>
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar3"></span>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="mobile-menu md:hidden bg-white border-t border-header">
+      <div class="max-w-[1100px] mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-medium">
+        <a href="index.html" class="py-2 hover:text-accent transition-colors">Home</a>
+        <a href="shop.html" class="py-2 text-accent">Shop</a>
+        <a href="profile.html" class="py-2 hover:text-accent transition-colors">About</a>
+        <a href="events.html" class="py-2 hover:text-accent transition-colors">Events</a>
+        <a href="socials.html" class="py-2 hover:text-accent transition-colors">Contact</a>
       </div>
     </div>
   </nav>
@@ -96,12 +128,15 @@
     <div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
     
     <div class="max-w-[800px] mx-auto relative z-10">
-      <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
+      <h2 class="text-[2.5rem] sm:text-[3.5rem] font-semibold mb-4 leading-tight">
         Art that whispers <br/> <span class="italic text-accent">"Go ahead, smile"</span>
       </h2>
       <p class="text-[1.1rem] mb-8 text-ink/80 max-w-lg mx-auto">
         Explore our categories of handmade clay figurines, home decor, and gifts.
       </p>
+      <a href="profile.html" class="inline-block bg-white/80 text-ink font-medium px-6 py-2.5 rounded-full hover:bg-white hover:-translate-y-0.5 transition-all duration-300 text-sm">
+        Meet the Artist &rarr;
+      </a>
     </div>
   </section>
 
@@ -112,7 +147,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 
         <!-- Category: Gonks -->
-        <a href="products/gonks.html" class="group block">
+        <a href="products/gonks.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/gonks.jpg" onerror="this.src='https://picsum.photos/seed/gonks/400/400'" alt="Gonks" class="card-img w-full h-full object-cover">
@@ -127,7 +162,7 @@
         </a>
 
         <!-- Category: Creatures -->
-        <a href="products/creatures.html" class="group block">
+        <a href="products/creatures.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/creatures.jpg" onerror="this.src='https://picsum.photos/seed/creatures/400/400'" alt="Clay mini creatures" class="card-img w-full h-full object-cover">
@@ -142,7 +177,7 @@
         </a>
 
         <!-- Category: Desk Tidy -->
-        <a href="products/desk_tidy.html" class="group block">
+        <a href="products/desk_tidy.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/desk_tidy.jpg" onerror="this.src='https://picsum.photos/seed/desk/400/400'" alt="Clay desk tidy" class="card-img w-full h-full object-cover">
@@ -157,7 +192,7 @@
         </a>
 
         <!-- Category: Fairy Houses -->
-        <a href="products/fairy_house.html" class="group block">
+        <a href="products/fairy_house.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/fairy_house.jpg" onerror="this.src='https://picsum.photos/seed/fairy/400/400'" alt="Fairy Houses" class="card-img w-full h-full object-cover">
@@ -172,7 +207,7 @@
         </a>
 
         <!-- Category: Welsh Souvenirs -->
-        <a href="products/souvenirs.html" class="group block">
+        <a href="products/souvenirs.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/welsh_souvenir.jpg" onerror="this.src='https://picsum.photos/seed/welsh/400/400'" alt="Welsh Souvenirs" class="card-img w-full h-full object-cover">
@@ -187,7 +222,7 @@
         </a>
 
         <!-- Category: Jell Prints -->
-        <a href="products/jelly_prints.html" class="group block">
+        <a href="products/jelly_prints.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/jell_print.jpg" onerror="this.src='https://picsum.photos/seed/print/400/400'" alt="Jell Print Range" class="card-img w-full h-full object-cover">
@@ -202,7 +237,7 @@
         </a>
 
         <!-- Category: Personalised Gifts -->
-        <a href="products/personalised_gifts.html" class="group block">
+        <a href="products/personalised_gifts.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/personalised_gift.jpg" onerror="this.src='https://picsum.photos/seed/gifts/400/400'" alt="Personalised gifts" class="card-img w-full h-full object-cover">
@@ -217,7 +252,7 @@
         </a>
 
         <!-- Category: Magnets -->
-        <a href="products/magnets.html" class="group block">
+        <a href="products/magnets.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/magnets.jpg" onerror="this.src='https://picsum.photos/seed/magnets/400/400'" alt="Magnets" class="card-img w-full h-full object-cover">
@@ -232,7 +267,7 @@
         </a>
 
         <!-- Category: Bunting -->
-        <a href="products/bunting.html" class="group block">
+        <a href="products/bunting.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/bunting.jpg" onerror="this.src='https://picsum.photos/seed/bunting/400/400'" alt="Bunting" class="card-img w-full h-full object-cover">
@@ -247,7 +282,7 @@
         </a>
 
         <!-- Category: Baubles -->
-        <a href="products/bauble.html" class="group block">
+        <a href="products/bauble.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/bauble.jpg" onerror="this.src='https://picsum.photos/seed/bauble/400/400'" alt="Baubles" class="card-img w-full h-full object-cover">
@@ -262,7 +297,7 @@
         </a>
 
         <!-- Category: Figurines -->
-        <a href="products/figurines.html" class="group block">
+        <a href="products/figurines.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
               <img loading="lazy" src="images/figurines.jpg" onerror="this.src='https://picsum.photos/seed/figurines/400/400'" alt="Figurines" class="card-img w-full h-full object-cover">
@@ -281,10 +316,57 @@
   </section>
 
   <!-- Footer -->
-  <footer class="bg-header text-center py-4 mt-auto">
-    <p class="text-sm">
+  <footer class="bg-header text-center py-5 mt-auto">
+    <p class="text-sm text-ink/70">
       © 2025 Happy Hands Hideaway. Handmade, not mass-made.
     </p>
   </footer>
+
+  <!-- Mobile Menu + Scroll Reveal Script -->
+  <script>
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const bar1 = document.getElementById('bar1');
+    const bar2 = document.getElementById('bar2');
+    const bar3 = document.getElementById('bar3');
+    let menuOpen = false;
+
+    menuToggle.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      if (menuOpen) {
+        bar1.style.transform = 'rotate(45deg) translate(5px, 5px)';
+        bar2.style.opacity = '0';
+        bar3.style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      }
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuOpen = false;
+        mobileMenu.classList.remove('open');
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      });
+    });
+
+    // Scroll reveal animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>

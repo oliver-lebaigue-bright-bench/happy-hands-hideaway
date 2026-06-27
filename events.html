@@ -35,6 +35,11 @@
       }
     }
   </script>
+
+  <style>
+    .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+    .mobile-menu.open { max-height: 300px; }
+  </style>
 </head>
 
 <body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
@@ -42,15 +47,29 @@
   <!-- Navigation -->
   <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
     <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="text-xl font-bold tracking-wide cursor-pointer" onclick="window.location.href='index.html'">
+      <a href="index.html" class="text-xl font-bold tracking-wide hover:text-accent transition-colors">
         Happy Hands <span class="text-accent">Hideaway</span>
-      </div>
+      </a>
       <div class="hidden md:flex space-x-8 text-sm font-medium">
         <a href="index.html" class="hover:text-accent transition-colors">Home</a>
         <a href="shop.html" class="hover:text-accent transition-colors">Shop</a>
         <a href="profile.html" class="hover:text-accent transition-colors">About</a>
         <a href="events.html" class="text-accent transition-colors">Events</a>
         <a href="socials.html" class="hover:text-accent transition-colors">Contact</a>
+      </div>
+      <button id="menuToggle" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="Toggle menu">
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar1"></span>
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar2"></span>
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar3"></span>
+      </button>
+    </div>
+    <div id="mobileMenu" class="mobile-menu md:hidden bg-white border-t border-header">
+      <div class="max-w-[1100px] mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-medium">
+        <a href="index.html" class="py-2 hover:text-accent transition-colors">Home</a>
+        <a href="shop.html" class="py-2 hover:text-accent transition-colors">Shop</a>
+        <a href="profile.html" class="py-2 hover:text-accent transition-colors">About</a>
+        <a href="events.html" class="py-2 text-accent">Events</a>
+        <a href="socials.html" class="py-2 hover:text-accent transition-colors">Contact</a>
       </div>
     </div>
   </nav>
@@ -84,9 +103,9 @@
                 <span class="block text-sm">Feb 2025</span>
               </div>
               <div class="flex-1">
-                <h4 class="text-xl font-semibold mb-2">Valentine's Market</h4>
-                <p class="text-gray-600 mb-2">Join us for a love-filled day at the local market with handmade gifts perfect for your special someone.</p>
-                <p class="text-sm text-accent font-medium">📍 Town Centre, 10am - 4pm</p>
+                <h4 class="text-xl font-semibold mb-2">placeholder title</h4>
+                <p class="text-gray-600 mb-2">placeholder description</p>
+                <p class="text-sm text-accent font-medium">placeholder location</p>
               </div>
             </div>
           </div>
@@ -99,9 +118,9 @@
                 <span class="block text-sm">Mar 2025</span>
               </div>
               <div class="flex-1">
-                <h4 class="text-xl font-semibold mb-2">Spring Craft Fair</h4>
-                <p class="text-gray-600 mb-2">Celebrate the arrival of spring with our seasonal collection of handmade ceramics and decorations.</p>
-                <p class="text-sm text-accent font-medium">📍 Community Hall, 9am - 5pm</p>
+                <h4 class="text-xl font-semibold mb-2">placeholder title</h4>
+                <p class="text-gray-600 mb-2">placeholder description</p>
+                <p class="text-sm text-accent font-medium">placeholder location</p>
               </div>
             </div>
           </div>
@@ -114,9 +133,9 @@
                 <span class="block text-sm">Apr 2025</span>
               </div>
               <div class="flex-1">
-                <h4 class="text-xl font-semibold mb-2">Easter Pop-Up Shop</h4>
-                <p class="text-gray-600 mb-2">Find the perfect Easter gifts including our special seasonal baubles and treats.</p>
-                <p class="text-sm text-accent font-medium">📍 Shopping Centre, 10am - 6pm</p>
+                <h4 class="text-xl font-semibold mb-2">placeholder title</h4>
+                <p class="text-gray-600 mb-2">placeholder description</p>
+                <p class="text-sm text-accent font-medium">placeholder location</p>
               </div>
             </div>
           </div>
@@ -130,35 +149,35 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Past Event 1 -->
           <div class="bg-white/60 rounded-2xl p-6 shadow-md">
-            <h4 class="text-lg font-semibold mb-2">Christmas Markets 2024</h4>
-            <p class="text-gray-600 text-sm mb-3">A wonderful winter season filled with festive cheer and handmade gifts.</p>
-            <p class="text-sm text-gray-500">📍 Various Locations, Dec 2024</p>
+            <h4 class="text-lg font-semibold mb-2">placeholder title</h4>
+            <p class="text-gray-600 text-sm mb-3">placeholder description</p>
+            <p class="text-sm text-gray-500">📍 placeholder location</p>
           </div>
 
           <!-- Past Event 2 -->
           <div class="bg-white/60 rounded-2xl p-6 shadow-md">
-            <h4 class="text-lg font-semibold mb-2">Autumn Fair</h4>
-            <p class="text-gray-600 text-sm mb-3">Celebrating the beautiful colours of autumn with cozy crafts.</p>
-            <p class="text-sm text-gray-500">📍 Community Hall, Oct 2024</p>
+            <h4 class="text-lg font-semibold mb-2">placeholder title</h4>
+            <p class="text-gray-600 text-sm mb-3">placeholder description</p>
+            <p class="text-sm text-gray-500">📍 placeholder location</p>
           </div>
 
           <!-- Past Event 3 -->
           <div class="bg-white/60 rounded-2xl p-6 shadow-md">
-            <h4 class="text-lg font-semibold mb-2">Summer Festival</h4>
-            <p class="text-gray-600 text-sm mb-3">A sunny day of creativity and community spirit.</p>
-            <p class="text-sm text-gray-500">📍 Town Park, Aug 2024</p>
+            <h4 class="text-lg font-semibold mb-2">placeholder title</h4>
+            <p class="text-gray-600 text-sm mb-3">placeholder description</p>
+            <p class="text-sm text-gray-500">📍 placeholder location</p>
           </div>
 
           <!-- Past Event 4 -->
           <div class="bg-white/60 rounded-2xl p-6 shadow-md">
-            <h4 class="text-lg font-semibold mb-2">Art in the Park</h4>
-            <p class="text-gray-600 text-sm mb-3">Showcasing our latest creations in the beautiful outdoors.</p>
-            <p class="text-sm text-gray-500">📍 Riverside Park, Jul 2024</p>
+            <h4 class="text-lg font-semibold mb-2">placeholder title</h4>
+            <p class="text-gray-600 text-sm mb-3">placeholder description</p>
+            <p class="text-sm text-gray-500">📍 placeholder location</p>
           </div>
         </div>
       </div>
 
-      <!-- Stay Updated CTA -->
+      <!-- Stay Updated section -->
       <div class="mt-14 bg-accent/10 rounded-2xl p-8 text-center">
         <h3 class="text-xl font-semibold mb-3">Stay in the Loop!</h3>
         <p class="text-gray-600 mb-6">Follow us on social media to be the first to know about upcoming events and markets.</p>
@@ -171,10 +190,44 @@
   </section>
 
   <!-- Footer -->
-  <footer class="bg-header text-center py-4 mt-auto">
-    <p class="text-sm">
+  <footer class="bg-header text-center py-5 mt-auto">
+    <p class="text-sm text-ink/70">
       © 2025 Happy Hands Hideaway. Handmade, not mass-made.
     </p>
   </footer>
+
+  <!-- Mobile Menu Script -->
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const bar1 = document.getElementById('bar1');
+    const bar2 = document.getElementById('bar2');
+    const bar3 = document.getElementById('bar3');
+    let menuOpen = false;
+
+    menuToggle.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      if (menuOpen) {
+        bar1.style.transform = 'rotate(45deg) translate(5px, 5px)';
+        bar2.style.opacity = '0';
+        bar3.style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      }
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuOpen = false;
+        mobileMenu.classList.remove('open');
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      });
+    });
+  </script>
 </body>
 </html>

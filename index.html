@@ -3,7 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Happy Hands Hideaway</title>
+        <title>Happy Hands Hideaway – Handmade Clay Art</title>
+        <meta name="description" content="Handmade clay figurines, home decor, and personalised gifts crafted with love in Wales.">
 
         <!-- Tailwind -->
         <script src="js/tailwind.js"></script>
@@ -11,7 +12,7 @@
         <!-- Poppins -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/responsive.css">
         <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
@@ -28,26 +29,266 @@
                             ink: '#4a3f35',
                             header: '#d8cfc4',
                             hero: '#bfa98a',
-                            accent: '#7a5c3c'
+                            accent: '#7a5c3c',
+                            'accent-hover': '#5e462d'
                         }
                     }
                 }
             }
         </script>
+
+        <style>
+            /* Landing page fade-in animation */
+            @keyframes fadeUp {
+                from { opacity: 0; transform: translateY(30px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-up {
+                animation: fadeUp 0.8s ease-out forwards;
+            }
+            .animate-fade-up-delay-1 {
+                animation: fadeUp 0.8s ease-out 0.15s forwards;
+                opacity: 0;
+            }
+            .animate-fade-up-delay-2 {
+                animation: fadeUp 0.8s ease-out 0.3s forwards;
+                opacity: 0;
+            }
+            .animate-fade-up-delay-3 {
+                animation: fadeUp 0.8s ease-out 0.45s forwards;
+                opacity: 0;
+            }
+
+            /* Subtle shine on the logo card */
+            @keyframes shimmer {
+                0% { background-position: -200% 0; }
+                100% { background-position: 200% 0; }
+            }
+            .logo-card::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: inherit;
+                background: linear-gradient(
+                    105deg,
+                    transparent 40%,
+                    rgba(255,255,255,0.15) 45%,
+                    rgba(255,255,255,0.25) 50%,
+                    rgba(255,255,255,0.15) 55%,
+                    transparent 60%
+                );
+                background-size: 200% 100%;
+                animation: shimmer 6s ease-in-out infinite;
+                pointer-events: none;
+            }
+
+            /* Mobile menu animation */
+            .mobile-menu {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+            }
+            .mobile-menu.open {
+                max-height: 300px;
+            }
+
+            /* Floating logo gentle bounce */
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-6px); }
+            }
+            .float-gentle {
+                animation: float 4s ease-in-out infinite;
+            }
+
+            /* Link arrow animation */
+            .nav-link-arrow {
+                display: inline-block;
+                transition: transform 0.3s ease;
+            }
+            a:hover .nav-link-arrow {
+                transform: translateX(4px);
+            }
+        </style>
     </head>
 
-    <body class="bg-paper text-ink font-poppins">
+    <body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
 
-        <div class="max-w-[1100px] mx-auto px-6 flex justify-center items-center min-h-[calc(100vh-80px)]">
-            <div class="grid grid-cols-1 w-full max-w-[600px]">
-                <!-- Card -->
-                <div onclick="window.location.href='profile.html'" 
-                    class="bg-white rounded-[18px] p-8 text-center shadow-[0_10px_25px_rgba(0,0,0,0.08)] transition-transform hover:-translate-y-1 cursor-pointer">
-                    <img loading="lazy" src="images/logo.jpeg" alt="Enter the hideaway" 
-                        class="w-full h-auto max-h-[70vh] object-cover rounded-[14px] mx-auto mb-6">
-                    <h4 class="font-medium text-2xl">Enter the hideaway</h4>
+        <!-- Navigation -->
+        <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
+            <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
+                <a href="index.html" class="text-xl font-bold tracking-wide hover:text-accent transition-colors">
+                    Happy Hands <span class="text-accent">Hideaway</span>
+                </a>
+                <!-- Desktop nav -->
+                <div class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="index.html" class="text-accent transition-colors">Home</a>
+                    <a href="shop.html" class="hover:text-accent transition-colors">Shop</a>
+                    <a href="profile.html" class="hover:text-accent transition-colors">About</a>
+                    <a href="events.html" class="hover:text-accent transition-colors">Events</a>
+                    <a href="socials.html" class="hover:text-accent transition-colors">Contact</a>
+                </div>
+                <!-- Hamburger button (mobile) -->
+                <button id="menuToggle" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="Toggle menu">
+                    <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar1"></span>
+                    <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar2"></span>
+                    <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar3"></span>
+                </button>
+            </div>
+            <!-- Mobile menu -->
+            <div id="mobileMenu" class="mobile-menu md:hidden bg-white border-t border-header">
+                <div class="max-w-[1100px] mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-medium">
+                    <a href="index.html" class="py-2 text-accent">Home</a>
+                    <a href="shop.html" class="py-2 hover:text-accent transition-colors">Shop</a>
+                    <a href="profile.html" class="py-2 hover:text-accent transition-colors">About</a>
+                    <a href="events.html" class="py-2 hover:text-accent transition-colors">Events</a>
+                    <a href="socials.html" class="py-2 hover:text-accent transition-colors">Contact</a>
                 </div>
             </div>
-        </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-grow flex flex-col items-center justify-center px-4 py-12 sm:py-16">
+
+            <!-- Hero Section -->
+            <div class="max-w-[1100px] w-full mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+                <!-- Logo Card -->
+                <div class="animate-fade-up w-full max-w-[480px] lg:max-w-[520px]">
+                    <div class="logo-card relative bg-white rounded-[22px] p-6 sm:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.1)] overflow-hidden">
+                        <img loading="lazy" src="images/logo.jpeg" alt="Happy Hands Hideaway – Handmade clay art"
+                            class="w-full h-auto max-h-[55vh] object-cover rounded-[16px] mx-auto">
+                    </div>
+                </div>
+
+                <!-- Text Content -->
+                <div class="text-center lg:text-left max-w-[480px]">
+                    <p class="animate-fade-up-delay-1 text-accent font-medium text-sm tracking-widest uppercase mb-3">Handmade in Wales</p>
+                    <h1 class="animate-fade-up-delay-1 font-bold text-4xl sm:text-5xl lg:text-[3.4rem] leading-tight mb-5">
+                        Happy Hands<br><span class="text-accent italic">Hideaway</span>
+                    </h1>
+                    <p class="animate-fade-up-delay-2 text-ink/75 text-base sm:text-lg leading-relaxed mb-8">
+                        Discover one-of-a-kind clay creations — from whimsical gonks and mini creatures to personalised gifts and seasonal treasures. Every piece is handcrafted with love and a little bit of magic.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="animate-fade-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="shop.html"
+                            class="inline-block bg-accent text-white font-semibold px-8 py-3.5 rounded-full shadow-lg hover:bg-accent-hover hover:-translate-y-1 hover:shadow-xl transition-all duration-300 text-center">
+                            Explore the Shop <span class="nav-link-arrow">&rarr;</span>
+                        </a>
+                        <a href="profile.html"
+                            class="inline-block bg-hero text-ink font-medium px-8 py-3.5 rounded-full hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-center">
+                            Meet the Artist
+                        </a>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="animate-fade-up-delay-3 mt-10 flex gap-8 justify-center lg:justify-start text-center">
+                        <div>
+                            <p class="text-2xl font-bold text-accent">11+</p>
+                            <p class="text-xs text-ink/60 mt-1">Collections</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-accent">100%</p>
+                            <p class="text-xs text-ink/60 mt-1">Handmade</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-accent">100%</p>
+                            <p class="text-xs text-ink/60 mt-1">Unique</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teaser Section (scroll reveal) -->
+            <div class="max-w-[900px] w-full mt-20 sm:mt-28 text-center scroll-reveal">
+                <div class="bg-white/60 rounded-2xl p-8 sm:p-10 shadow-md border border-header/30">
+                    <h2 class="font-semibold text-2xl sm:text-3xl mb-4">Every Piece Tells a Story</h2>
+                    <p class="text-ink/70 max-w-lg mx-auto mb-6 leading-relaxed">
+                        From the warmth of a hand-painted gonk to the charm of a fairy house for your garden — each creation is made to bring a smile.
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <a href="products/gonks.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Gonks</a>
+                        <a href="products/creatures.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Creatures</a>
+                        <a href="products/fairy_house.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Fairy Houses</a>
+                        <a href="products/personalised_gifts.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Personalised Gifts</a>
+                        <a href="products/souvenirs.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Welsh Souvenirs</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Teaser -->
+            <div class="max-w-[900px] w-full mt-10 scroll-reveal">
+                <div class="bg-accent/10 rounded-2xl p-8 sm:p-10 text-center">
+                    <h3 class="text-xl font-semibold mb-2">Come See Us at a Market!</h3>
+                    <p class="text-ink/70 mb-5">We regularly run events and attend markets aross pembrokeshire.</p>
+                    <a href="events.html" class="inline-block bg-accent text-white font-medium px-8 py-3 rounded-full shadow-lg hover:bg-accent-hover hover:-translate-y-1 transition-all duration-300">
+                        View Events <span class="nav-link-arrow">&rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-header text-center py-5 mt-auto">
+            <p class="text-sm text-ink/70">
+                © 2025 Happy Hands Hideaway. Handmade, not mass-made.
+            </p>
+        </footer>
+
+        <!-- Mobile Menu Script -->
+        <script>
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const bar1 = document.getElementById('bar1');
+            const bar2 = document.getElementById('bar2');
+            const bar3 = document.getElementById('bar3');
+            let menuOpen = false;
+
+            menuToggle.addEventListener('click', () => {
+                menuOpen = !menuOpen;
+                mobileMenu.classList.toggle('open', menuOpen);
+
+                if (menuOpen) {
+                    bar1.style.transform = 'rotate(45deg) translate(5px, 5px)';
+                    bar2.style.opacity = '0';
+                    bar3.style.transform = 'rotate(-45deg) translate(5px, -5px)';
+                } else {
+                    bar1.style.transform = '';
+                    bar2.style.opacity = '';
+                    bar3.style.transform = '';
+                }
+            });
+
+            // Close menu when clicking a link
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    menuOpen = false;
+                    mobileMenu.classList.remove('open');
+                    bar1.style.transform = '';
+                    bar2.style.opacity = '';
+                    bar3.style.transform = '';
+                });
+            });
+
+            // Scroll reveal animation
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.7s ease-out, transform 0.7s ease-out';
+                observer.observe(el);
+            });
+        </script>
     </body>
 </html>

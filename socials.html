@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Socials – Happy Hands Hideaway</title>
+  <title>Contact – Happy Hands Hideaway</title>
+  <meta name="description" content="Get in touch with Happy Hands Hideaway — follow us on Instagram, Facebook, or send an email.">
 
   <!-- Tailwind -->
   <script src="js/tailwind.js"></script>
@@ -11,7 +12,7 @@
   <!-- Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
@@ -29,12 +30,26 @@
             ink: '#4a3f35',
             header: '#d8cfc4',
             hero: '#bfa98a',
-            accent: '#7a5c3c'
+            accent: '#7a5c3c',
+            'accent-hover': '#5e462d'
           }
         }
       }
     }
   </script>
+
+  <style>
+    .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+    .mobile-menu.open { max-height: 300px; }
+    /* Social card hover glow */
+    .social-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .social-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(122, 92, 60, 0.2);
+    }
+  </style>
 </head>
 
 <body class="bg-paper text-ink font-poppins min-h-screen flex flex-col">
@@ -42,15 +57,29 @@
   <!-- Navigation -->
   <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-header">
     <div class="max-w-[1100px] mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="text-xl font-bold tracking-wide cursor-pointer" onclick="window.location.href='index.html'">
+      <a href="index.html" class="text-xl font-bold tracking-wide hover:text-accent transition-colors">
         Happy Hands <span class="text-accent">Hideaway</span>
-      </div>
+      </a>
       <div class="hidden md:flex space-x-8 text-sm font-medium">
         <a href="index.html" class="hover:text-accent transition-colors">Home</a>
         <a href="shop.html" class="hover:text-accent transition-colors">Shop</a>
         <a href="profile.html" class="hover:text-accent transition-colors">About</a>
         <a href="events.html" class="hover:text-accent transition-colors">Events</a>
-        <a href="socials.html" class="hover:text-accent transition-colors">Contact</a>
+        <a href="socials.html" class="text-accent transition-colors">Contact</a>
+      </div>
+      <button id="menuToggle" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="Toggle menu">
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar1"></span>
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar2"></span>
+        <span class="block w-6 h-[2px] bg-ink transition-all duration-300" id="bar3"></span>
+      </button>
+    </div>
+    <div id="mobileMenu" class="mobile-menu md:hidden bg-white border-t border-header">
+      <div class="max-w-[1100px] mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-medium">
+        <a href="index.html" class="py-2 hover:text-accent transition-colors">Home</a>
+        <a href="shop.html" class="py-2 hover:text-accent transition-colors">Shop</a>
+        <a href="profile.html" class="py-2 hover:text-accent transition-colors">About</a>
+        <a href="events.html" class="py-2 hover:text-accent transition-colors">Events</a>
+        <a href="socials.html" class="py-2 text-accent">Contact</a>
       </div>
     </div>
   </nav>
@@ -59,7 +88,7 @@
   <section class="bg-hero text-center py-16 px-4">
     <div class="max-w-[1100px] mx-auto">
         <h2 class="text-[2.2rem] sm:text-[2.8rem] font-semibold mb-3">
-            Connect with Me
+            Connect with us!
         </h2>
         <p class="text-[1rem] sm:text-[1.1rem] max-w-[520px] mx-auto">
             Follow Happy Hands Hideaway and stay in touch
@@ -68,48 +97,108 @@
   </section>
 
   <!-- Social Links -->
-  <section class="py-14">
-    <div class="max-w-[600px] mx-auto px-6 flex flex-col gap-6">
+  <section class="flex-grow py-14">
+    <div class="max-w-[600px] mx-auto px-6 flex flex-col gap-5">
 
       <!-- Instagram -->
-      <a href="https://www.instagram.com/happy.hands.hideaway/" target="_blank" class="flex items-center justify-between bg-accent text-white px-6 py-4 rounded-[12px] hover:shadow-lg transition-transform hover:-translate-y-0.5">
-        <span class="font-medium text-lg">@happy.hands.hideaway</span>
-        <img src="resources/instagram.png" alt="Instagram" class="w-8 h-6">
+      <a href="https://www.instagram.com/happy.hands.hideaway/" target="_blank" rel="noopener noreferrer"
+        class="social-card flex items-center justify-between bg-white border border-header/40 px-6 py-5 rounded-2xl shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-xl flex items-center justify-center">
+            <img src="resources/instagram.png" alt="" class="w-6 h-5">
+          </div>
+          <div>
+            <span class="font-semibold text-lg block">Instagram</span>
+            <span class="text-sm text-ink/60">@happy.hands.hideaway</span>
+          </div>
+        </div>
+        <span class="text-accent text-xl">&rarr;</span>
       </a>
 
       <!-- Facebook -->
-      <a href="https://www.facebook.com/HappyHandsHideaway" target="_blank" class="flex items-center justify-between bg-accent text-white px-6 py-4 rounded-[12px] hover:shadow-lg transition-transform hover:-translate-y-0.5">
-        <span class="font-medium text-lg">Happy Hands Hideaway</span>
-        <img src="resources/facebook.png" alt="Facebook" class="w-8 h-6">
+      <a href="https://www.facebook.com/HappyHandsHideaway" target="_blank" rel="noopener noreferrer"
+        class="social-card flex items-center justify-between bg-white border border-header/40 px-6 py-5 rounded-2xl shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+            <img src="resources/facebook.png" alt="" class="w-6 h-5">
+          </div>
+          <div>
+            <span class="font-semibold text-lg block">Facebook</span>
+            <span class="text-sm text-ink/60">Happy Hands Hideaway</span>
+          </div>
+        </div>
+        <span class="text-accent text-xl">&rarr;</span>
       </a>
 
       <!-- Email -->
-      <a href="mailto:Happyhandshideaway@outlook.com" class="flex items-center justify-between bg-accent text-white px-6 py-4 rounded-[12px] hover:shadow-lg transition-transform hover:-translate-y-0.5">
-        <span class="font-medium text-lg">Email Me</span>
-        <img src="resources/email.png" alt="Email" class="w-6 h-6">
+      <a href="mailto:Happyhandshideaway@outlook.com"
+        class="social-card flex items-center justify-between bg-white border border-header/40 px-6 py-5 rounded-2xl shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-accent rounded-xl flex items-center justify-center">
+            <img src="resources/email.png" alt="" class="w-5 h-5">
+          </div>
+          <div>
+            <span class="font-semibold text-lg block">Email</span>
+            <span class="text-sm text-ink/60">Happyhandshideaway@outlook.com</span>
+          </div>
+        </div>
+        <span class="text-accent text-xl">&rarr;</span>
       </a>
 
     </div>
   </section>
 
-  <!-- Back Button -->
-  <div class="text-center mt-10">
-    <a href="profile.html" class="inline-block bg-hero text-ink px-8 py-3 rounded-[999px] font-medium hover:-translate-y-0.5 hover:shadow-lg transition-transform">
-      Back to Profile
-    </a>
+  <!-- Quick Links -->
+  <div class="flex-grow">
+    <div class="max-w-[600px] mx-auto px-6 flex flex-col sm:flex-row gap-4 justify-center pb-8">
+      <a href="profile.html" class="inline-block bg-hero text-ink px-8 py-3 rounded-full font-medium hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 text-center">
+        Meet the Artist
+      </a>
+      <a href="shop.html" class="inline-block bg-accent text-white px-8 py-3 rounded-full font-medium hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 text-center">
+        Visit the Shop
+      </a>
+    </div>
   </div>
 
-  <!--shop button-->
-  <div class="text-center mt-6">
-    <a href="shop.html" class="inline-block bg-hero text-ink px-8 py-3 rounded-[999px] font-medium hover:-translate-y-0.5 hover:shadow-lg transition-transform">
-      Visit the Shop
-    </a>
-
   <!-- Footer -->
-  <footer class="bg-header text-center py-4 mt-14">
-    <p class="text-sm">
+  <footer class="bg-header text-center py-5 mt-auto">
+    <p class="text-sm text-ink/70">
       © 2025 Happy Hands Hideaway. Handmade, not mass-made.
     </p>
   </footer>
+
+  <!-- Mobile Menu Script -->
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const bar1 = document.getElementById('bar1');
+    const bar2 = document.getElementById('bar2');
+    const bar3 = document.getElementById('bar3');
+    let menuOpen = false;
+
+    menuToggle.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      if (menuOpen) {
+        bar1.style.transform = 'rotate(45deg) translate(5px, 5px)';
+        bar2.style.opacity = '0';
+        bar3.style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      }
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuOpen = false;
+        mobileMenu.classList.remove('open');
+        bar1.style.transform = '';
+        bar2.style.opacity = '';
+        bar3.style.transform = '';
+      });
+    });
+  </script>
 </body>
 </html>
