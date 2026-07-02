@@ -1,12 +1,38 @@
 {
-  "name": "Order Dashboard",
-  "short_name": "Admin",
+  "name": "Happy Hands Hideaway Admin",
+  "short_name": "HHH Admin",
+  "description": "Admin dashboard for Happy Hands Hideaway - manage orders, inventory and receive push notifications",
   "start_url": "/admin.html",
-  "scope": "/admin.html",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "orientation": "portrait",
+  "background_color": "#f5f1eb",
+  "theme_color": "#7a5c3c",
+  "categories": ["business", "shopping"],
   "icons": [
-    { "src": "/resources/favicon.ico", "sizes": "any", "type": "image/x-icon" }
+    {
+      "src": "/images/icon-512x512.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/logo.jpeg",
+      "sizes": "any",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/resources/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon",
+      "purpose": "any"
+    }
   ]
 }

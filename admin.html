@@ -15,6 +15,14 @@
     <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
     <link rel="manifest" href="manifest.json">
 
+    <!-- Apple/iOS PWA Meta Tags - Required for "Add to Home Screen" on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="HHH Admin">
+    <link rel="apple-touch-icon" href="/images/logo.jpeg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.jpeg">
+    <meta name="theme-color" content="#7a5c3c">
+
     <script>
         tailwind.config = {
             theme: {
@@ -870,35 +878,102 @@
 
     <!-- Web Push & PWA Worker Control Matrix -->
     <script>
+        // VAPID Public Key - needed for push notifications on all browsers
+        // Generate your own pair with: npx web-push generate-vapid-keys
+        // Store the private key in env vars (VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY) on Vercel
+        const VAPID_PUBLIC_KEY = 'BEl62iUYgUivxNkvH6nMk2O1O1NY1jEp6FWBLzP_E0xg4Gan1sJxB7wmtYq1h1H0n5Q0Y1K1Q1P1E0x1K1Y1H0n5Q';
+
+        // Service Worker Registration - scope '/' for iOS Safari PWA install support
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js', { scope: '/admin.html' })
-                    .then(reg => console.log('Admin SW registered:', reg.scope))
+                navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then(reg => {
+                        console.log('Admin SW registered:', reg.scope);
+                        reg.update();
+                    })
                     .catch(err => console.error('SW Registration Failed:', err));
             });
         }
 
         async function enableNotifications() {
             try {
-                // 1. Register the confined PWA Service Worker
-                const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/admin.html' });
-                
-                // 2. Request user device permission
-                const permission = await Notification.requestPermission();
-                if (permission !== 'granted') return alert('Permission denied');
+                if (!('serviceWorker' in navigator)) {
+                    alert('Service Workers are not supported in this browser.');
+                    return;
+                }
 
-                // 3. Get the raw device token
+                // 1. Register service worker with root scope (iOS requirement)
+                const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+
+                // 2. Wait for SW to become active (critical for iOS)
+                if (!registration.active) {
+                    await new Promise((resolve) => {
+                        const check = setInterval(async () => {
+                            const reg = await navigator.serviceWorker.getRegistration('/');
+                            if (reg && reg.active) { clearInterval(check); resolve(); }
+                        }, 500);
+                        setTimeout(() => { clearInterval(check); resolve(); }, 15000);
+                    });
+                }
+
+                // 3. Request notification permission (must be from user gesture on iOS 16.4+)
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    alert('Notification permission was denied. Enable it in your device Settings.');
+                    return;
+                }
+
+                // 4. Subscribe with VAPID key - required for all modern browsers
                 const subscription = await registration.pushManager.subscribe({
-                    userVisibleOnly: true
+                    userVisibleOnly: true,
+                    applicationServerKey: VAPID_PUBLIC_KEY
                 });
 
-                // 4. Print or update token payload to target database references
-                console.log('Save this payload to your DB:', JSON.stringify(subscription));
+                // 5. Save subscription to Firebase for server-side push delivery
+                const subData = {
+                    endpoint: subscription.endpoint,
+                    keys: {
+                        p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh')))),
+                        auth: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth'))))
+                    },
+                    updatedAt: Date.now()
+                };
+
+                const saveSub = setInterval(async () => {
+                    if (window.firebaseDB && window.firebaseRef && window.firebaseSet) {
+                        clearInterval(saveSub);
+                        try {
+                            const subKey = btoa(subscription.endpoint).replace(/[.=+/]/g, '');
+                            await window.firebaseSet(window.firebaseRef(window.firebaseDB, 'pushSubscriptions/' + subKey), subData);
+                            console.log('Push subscription saved to Firebase');
+                        } catch (e) {
+                            console.error('Failed to save push subscription:', e);
+                        }
+                    }
+                }, 300);
+
+                console.log('Push subscription ready:', JSON.stringify(subscription));
+                alert('Notifications enabled! You will receive alerts for new orders.');
+
             } catch (error) {
                 console.error('Notification Setup Failed:', error);
                 alert('Failed to subscribe to web push: ' + error.message);
             }
         }
+
+        // iOS PWA Install Instructions - iOS Safari doesn't fire beforeinstallprompt
+        function showIOSInstallInstructions() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+            if (isIOS && !isStandalone) {
+                const banner = document.createElement('div');
+                banner.className = 'fixed bottom-0 left-0 right-0 bg-accent text-white p-4 text-center z-50 shadow-lg';
+                banner.innerHTML = '<p class="text-sm mb-2">To install this app, tap the <strong>Share</strong> button then <strong>"Add to Home Screen"</strong></p><button onclick="this.parentElement.remove()" class="bg-white text-accent px-4 py-1 rounded-lg text-sm font-semibold mt-1">Got it</button>';
+                document.body.appendChild(banner);
+                setTimeout(() => { if (banner.parentElement) banner.remove(); }, 15000);
+            }
+        }
+        window.addEventListener('load', () => { setTimeout(showIOSInstallInstructions, 2000); });
     </script>
 </body>
 </html>
