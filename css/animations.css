@@ -1,0 +1,350 @@
+/* ------------------------------------------------------------
+   1. KEYFRAMES
+   ------------------------------------------------------------ */
+@keyframes hhhFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hhhFadeUp { from { opacity: 0; transform: translateY(34px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes hhhFadeDown { from { opacity: 0; transform: translateY(-34px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes hhhFadeLeft { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes hhhFadeRight { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes hhhZoomIn { from { opacity: 0; transform: scale(0.86); } to { opacity: 1; transform: scale(1); } }
+@keyframes hhhZoomOut { from { opacity: 0; transform: scale(1.14); } to { opacity: 1; transform: scale(1); } }
+@keyframes hhhBlurIn { from { opacity: 0; filter: blur(14px); } to { opacity: 1; filter: blur(0); } }
+@keyframes hhhPopIn {
+    0% { opacity: 0; transform: scale(0.5); }
+    70% { opacity: 1; transform: scale(1.08); }
+    100% { opacity: 1; transform: scale(1); }
+}
+@keyframes hhhFlipInX {
+    from { opacity: 0; transform: perspective(600px) rotateX(-80deg); }
+    to { opacity: 1; transform: perspective(600px) rotateX(0); }
+}
+@keyframes hhhFlipInY {
+    from { opacity: 0; transform: perspective(600px) rotateY(80deg); }
+    to { opacity: 1; transform: perspective(600px) rotateY(0); }
+}
+@keyframes hhhRotateIn { from { opacity: 0; transform: rotate(-8deg) scale(0.9); } to { opacity: 1; transform: rotate(0) scale(1); } }
+
+@keyframes hhhFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+@keyframes hhhFloatX {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(8px); }
+}
+@keyframes hhhBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-5px) rotate(-1.5deg); }
+    75% { transform: translateY(-3px) rotate(1.5deg); }
+}
+@keyframes hhhSway {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+@keyframes hhhWiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+@keyframes hhhPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+}
+@keyframes hhhHeartbeat {
+    0% { transform: scale(1); }
+    14% { transform: scale(1.12); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.12); }
+    70% { transform: scale(1); }
+}
+@keyframes hhhBreathe {
+    0%, 100% { opacity: 0.75; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+}
+@keyframes hhhTada {
+    0% { transform: scale(1); }
+    10%, 20% { transform: scale(0.94) rotate(-3deg); }
+    30%, 50%, 70%, 90% { transform: scale(1.06) rotate(3deg); }
+    40%, 60%, 80% { transform: scale(1.06) rotate(-3deg); }
+    100% { transform: scale(1) rotate(0); }
+}
+@keyframes hhhJello {
+    0%, 11.1%, 100% { transform: none; }
+    22.2% { transform: skewX(-12deg) skewY(-12deg); }
+    33.3% { transform: skewX(6deg) skewY(6deg); }
+    44.4% { transform: skewX(-3deg) skewY(-3deg); }
+    55.5% { transform: skewX(1.5deg) skewY(1.5deg); }
+    66.6% { transform: skewX(-1deg) skewY(-1deg); }
+}
+@keyframes hhhSpinSlow { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes hhhShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+@keyframes hhhGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(122, 92, 60, 0.35); }
+    50% { box-shadow: 0 0 26px 6px rgba(122, 92, 60, 0.35); }
+}
+@keyframes hhhShimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+@keyframes hhhGradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes hhhUnderline {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+@keyframes hhhRipple {
+    to { transform: scale(4); opacity: 0; }
+}
+@keyframes hhhPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.92); }
+    100% { transform: scale(1); }
+}
+@keyframes hhhRiseIn {
+    from { opacity: 0; transform: translateY(60px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ------------------------------------------------------------
+   2. ENTRANCE (play once on load / class add)
+   ------------------------------------------------------------ */
+.hhh-fade-in { animation: hhhFadeIn 0.7s ease both; }
+.hhh-fade-up { animation: hhhFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hhh-fade-down { animation: hhhFadeDown 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hhh-fade-left { animation: hhhFadeLeft 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hhh-fade-right { animation: hhhFadeRight 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hhh-zoom-in { animation: hhhZoomIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hhh-zoom-out { animation: hhhZoomOut 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hhh-blur-in { animation: hhhBlurIn 0.8s ease both; }
+.hhh-pop-in { animation: hhhPopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.hhh-flip-x { animation: hhhFlipInX 0.8s ease both; }
+.hhh-flip-y { animation: hhhFlipInY 0.8s ease both; }
+.hhh-rotate-in { animation: hhhRotateIn 0.7s ease both; }
+.hhh-rise-in { animation: hhhRiseIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ------------------------------------------------------------
+   3. CONTINUOUS / LOOPING
+   ------------------------------------------------------------ */
+.hhh-float { animation: hhhFloat 4s ease-in-out infinite; }
+.hhh-float-slow { animation: hhhFloat 7s ease-in-out infinite; }
+.hhh-float-x { animation: hhhFloatX 5s ease-in-out infinite; }
+.hhh-bob { animation: hhhBob 3.4s ease-in-out infinite; }
+.hhh-sway { animation: hhhSway 5s ease-in-out infinite; }
+.hhh-wiggle { animation: hhhWiggle 2.4s ease-in-out infinite; }
+.hhh-pulse { animation: hhhPulse 2.4s ease-in-out infinite; }
+.hhh-heartbeat { animation: hhhHeartbeat 1.8s ease-in-out infinite; }
+.hhh-breathe { animation: hhhBreathe 4s ease-in-out infinite; }
+.hhh-tada { animation: hhhTada 1.2s ease-in-out; }
+.hhh-jello { animation: hhhJello 1s ease-in-out; }
+.hhh-shake { animation: hhhShake 0.6s ease-in-out; }
+.hhh-spin-slow { animation: hhhSpinSlow 18s linear infinite; }
+.hhh-glow { animation: hhhGlow 3s ease-in-out infinite; }
+
+/* Pause an animation until hovered */
+.hhh-hover-play { animation-play-state: paused; }
+.hhh-hover-play:hover,
+.group:hover .hhh-hover-play { animation-play-state: running; }
+
+/* Shimmering sweep (needs a background gradient) */
+.hhh-shimmer {
+    background-image: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%);
+    background-size: 200% 100%;
+    animation: hhhShimmer 2.6s linear infinite;
+}
+
+/* Animated gradient text / backgrounds */
+.hhh-gradient {
+    background-size: 220% 220%;
+    animation: hhhGradientShift 8s ease infinite;
+}
+
+/* ------------------------------------------------------------
+   4. SCROLL REVEAL  (only active when JS adds html.hhh-anim-ready,
+      so content stays visible if JS fails to load)
+   ------------------------------------------------------------ */
+html.hhh-anim-ready .hhh-reveal {
+    opacity: 0;
+    transform: var(--hhh-reveal-from, translateY(32px));
+    transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                filter 0.75s ease;
+    transition-delay: var(--hhh-reveal-delay, 0ms);
+    will-change: opacity, transform;
+}
+html.hhh-anim-ready .hhh-reveal.hhh-in {
+    opacity: 1;
+    transform: none;
+    filter: none;
+}
+.hhh-reveal[data-hhh="up"] { --hhh-reveal-from: translateY(32px); }
+.hhh-reveal[data-hhh="down"] { --hhh-reveal-from: translateY(-32px); }
+.hhh-reveal[data-hhh="left"] { --hhh-reveal-from: translateX(48px); }
+.hhh-reveal[data-hhh="right"] { --hhh-reveal-from: translateX(-48px); }
+.hhh-reveal[data-hhh="zoom"] { --hhh-reveal-from: scale(0.88); }
+.hhh-reveal[data-hhh="zoom-out"] { --hhh-reveal-from: scale(1.12); }
+.hhh-reveal[data-hhh="blur"] { --hhh-reveal-from: translateY(20px); filter: blur(12px); }
+.hhh-reveal[data-hhh="flip"] { --hhh-reveal-from: perspective(700px) rotateX(-24deg) translateY(24px); }
+
+/* Keep the old .scroll-reveal markup working too */
+html.hhh-anim-ready .scroll-reveal:not(.hhh-in) {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html.hhh-anim-ready .scroll-reveal.hhh-in,
+html.hhh-anim-ready .scroll-reveal.revealed {
+    opacity: 1;
+    transform: none;
+}
+
+/* Delay helpers */
+.hhh-delay-1 { --hhh-reveal-delay: 80ms; animation-delay: 0.08s; }
+.hhh-delay-2 { --hhh-reveal-delay: 160ms; animation-delay: 0.16s; }
+.hhh-delay-3 { --hhh-reveal-delay: 240ms; animation-delay: 0.24s; }
+.hhh-delay-4 { --hhh-reveal-delay: 320ms; animation-delay: 0.32s; }
+.hhh-delay-5 { --hhh-reveal-delay: 400ms; animation-delay: 0.4s; }
+.hhh-delay-6 { --hhh-reveal-delay: 480ms; animation-delay: 0.48s; }
+
+/* ------------------------------------------------------------
+   5. HOVER EFFECTS
+   ------------------------------------------------------------ */
+.hhh-hover-lift { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease; }
+.hhh-hover-lift:hover { transform: translateY(-8px); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16); }
+
+.hhh-hover-pop { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.hhh-hover-pop:hover { transform: scale(1.05); }
+
+.hhh-hover-press { transition: transform 0.15s ease; }
+.hhh-hover-press:active { transform: scale(0.94); }
+
+.hhh-hover-glow { transition: box-shadow 0.35s ease, transform 0.35s ease; }
+.hhh-hover-glow:hover { box-shadow: 0 0 28px 4px rgba(122, 92, 60, 0.35); transform: translateY(-2px); }
+
+.hhh-hover-underline { position: relative; }
+.hhh-hover-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    height: 2px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hhh-hover-underline:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* Sheen sweep on hover (for buttons / cards) */
+.hhh-sheen { position: relative; overflow: hidden; }
+.hhh-sheen::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    transform: skewX(-20deg);
+    pointer-events: none;
+    transition: none;
+}
+.hhh-sheen:hover::before { animation: hhhSheenSweep 0.9s ease; }
+@keyframes hhhSheenSweep { to { left: 125%; } }
+
+/* Image zoom inside a group/card */
+.hhh-img-zoom img { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.hhh-img-zoom:hover img { transform: scale(1.07); }
+
+/* ------------------------------------------------------------
+   6. RIPPLE (added by JS on button / link clicks)
+   ------------------------------------------------------------ */
+.hhh-ripple { position: relative; overflow: hidden; }
+.hhh-ripple-circle {
+    position: absolute;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.55);
+    transform: scale(0);
+    animation: hhhRipple 0.65s ease-out forwards;
+    pointer-events: none;
+}
+html.dark .hhh-ripple-circle { background: rgba(255, 255, 255, 0.28); }
+
+/* ------------------------------------------------------------
+   7. NAV + GLOBAL CHROME
+   ------------------------------------------------------------ */
+.hhh-nav-shrink { transition: padding 0.35s ease, box-shadow 0.35s ease, background-color 0.35s ease; }
+.hhh-nav-shrink.hhh-scrolled { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); }
+
+#hhhProgress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: linear-gradient(90deg, rgb(var(--accent)), rgb(var(--accent-hover)));
+    z-index: 60;
+    pointer-events: none;
+}
+
+#hhhToTop {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 40;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: rgb(var(--accent));
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease, background-color 0.3s ease;
+}
+#hhhToTop.hhh-show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+#hhhToTop:hover { transform: translateY(-4px); background: rgb(var(--accent-hover)); }
+#hhhToTop svg { width: 1.25rem; height: 1.25rem; }
+
+/* Whole-page fade in (no fill-mode so JS page-transition fades still work) */
+html.hhh-anim-ready body { animation: hhhFadeIn 0.5s ease; }
+
+/* ------------------------------------------------------------
+   8. REDUCED MOTION GUARD
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+    html.hhh-anim-ready .hhh-reveal,
+    html.hhh-anim-ready .scroll-reveal:not(.hhh-in) {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        transition: none !important;
+    }
+    .hhh-fade-in, .hhh-fade-up, .hhh-fade-down, .hhh-fade-left, .hhh-fade-right,
+    .hhh-zoom-in, .hhh-zoom-out, .hhh-blur-in, .hhh-pop-in, .hhh-flip-x,
+    .hhh-flip-y, .hhh-rotate-in, .hhh-rise-in,
+    .hhh-float, .hhh-float-slow, .hhh-float-x, .hhh-bob, .hhh-sway, .hhh-wiggle,
+    .hhh-pulse, .hhh-heartbeat, .hhh-breathe, .hhh-tada, .hhh-jello, .hhh-shake,
+    .hhh-spin-slow, .hhh-glow, .hhh-shimmer, .hhh-gradient,
+    html.hhh-anim-ready body {
+        animation: none !important;
+    }
+    .hhh-hover-lift:hover, .hhh-hover-pop:hover, .hhh-hover-glow:hover,
+    .hhh-img-zoom:hover img { transform: none !important; }
+    .hhh-hover-underline::after { transition: none !important; }
+    #hhhProgress { display: none; }
+}
