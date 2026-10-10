@@ -8,30 +8,31 @@
 
         <!-- Tailwind -->
         <script src="js/tailwind.js"></script>
+    <script src="js/theme.js"></script>
 
         <!-- Poppins -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/style.css?v=2">
         <link rel="stylesheet" href="css/responsive.css">
         <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
 
         <script>
-            tailwind.config = {
+            tailwind.config = { darkMode: 'class',
                 theme: {
                     extend: {
                         fontFamily: {
                             poppins: ['Poppins', 'sans-serif']
                         },
                         colors: {
-                            paper: '#f5f1eb',
-                            ink: '#4a3f35',
-                            header: '#d8cfc4',
-                            hero: '#bfa98a',
-                            accent: '#7a5c3c',
-                            'accent-hover': '#5e462d'
-                        }
+            paper: 'rgb(var(--paper) / <alpha-value>)',
+            ink: 'rgb(var(--ink) / <alpha-value>)',
+            header: 'rgb(var(--header) / <alpha-value>)',
+            hero: 'rgb(var(--hero) / <alpha-value>)',
+            accent: 'rgb(var(--accent) / <alpha-value>)',
+            'accent-hover': 'rgb(var(--accent-hover) / <alpha-value>)'
+        }
                     }
                 }
             }
@@ -181,12 +182,20 @@
                             class="inline-block bg-hero text-ink font-medium px-8 py-3.5 rounded-full hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-center">
                             Meet the Artist
                         </a>
+                        <a href="events.html" 
+                            class="inline-block bg-accent text-white font-medium px-8 py-3 rounded-full shadow-lg hover:bg-accent-hover hover:-translate-y-1 transition-all duration-300">
+                            View Events <span class="nav-link-arrow">&rarr;</span>
+                        </a>
+                        <a href="socials.html" 
+                            class="inline-block bg-hero text-ink font-medium px-8 py-3.5 rounded-full hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-center">
+                            Follow Us on Socials
+                        </a>
                     </div>
 
                     <!-- Quick Stats -->
                     <div class="animate-fade-up-delay-3 mt-10 flex gap-8 justify-center lg:justify-start text-center">
                         <div>
-                            <p class="text-2xl font-bold text-accent">11+</p>
+                            <p class="text-2xl font-bold text-accent">10+</p>
                             <p class="text-xs text-ink/60 mt-1">Collections</p>
                         </div>
                         <div>
@@ -198,34 +207,6 @@
                             <p class="text-xs text-ink/60 mt-1">Unique</p>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Teaser Section (scroll reveal) -->
-            <div class="max-w-[900px] w-full mt-20 sm:mt-28 text-center scroll-reveal">
-                <div class="bg-white/60 rounded-2xl p-8 sm:p-10 shadow-md border border-header/30">
-                    <h2 class="font-semibold text-2xl sm:text-3xl mb-4">Every Piece Tells a Story</h2>
-                    <p class="text-ink/70 max-w-lg mx-auto mb-6 leading-relaxed">
-                        From the warmth of a hand-painted gonk to the charm of a fairy house for your garden — each creation is made to bring a smile.
-                    </p>
-                    <div class="flex flex-wrap justify-center gap-3">
-                        <a href="products/gonks.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Gonks</a>
-                        <a href="products/creatures.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Creatures</a>
-                        <a href="products/fairy_house.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Fairy Houses</a>
-                        <a href="products/personalised_gifts.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Personalised Gifts</a>
-                        <a href="products/souvenirs.html" class="bg-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 border border-header/40">Welsh Souvenirs</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Events Teaser -->
-            <div class="max-w-[900px] w-full mt-10 scroll-reveal">
-                <div class="bg-accent/10 rounded-2xl p-8 sm:p-10 text-center">
-                    <h3 class="text-xl font-semibold mb-2">Come See Us at a Market!</h3>
-                    <p class="text-ink/70 mb-5">We regularly run events and attend markets across Pembrokeshire.</p>
-                    <a href="events.html" class="inline-block bg-accent text-white font-medium px-8 py-3 rounded-full shadow-lg hover:bg-accent-hover hover:-translate-y-1 transition-all duration-300">
-                        View Events <span class="nav-link-arrow">&rarr;</span>
-                    </a>
                 </div>
             </div>
         </main>

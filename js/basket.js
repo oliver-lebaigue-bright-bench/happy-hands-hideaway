@@ -24,6 +24,11 @@
     const keyFromName = name =>
       name.toLowerCase().replace(/[^a-z0-9]/g, '');
 
+    const heartIcon = active =>
+      active
+        ? '<i class="fa-solid fa-heart" style="color:#ef4444;"></i>'
+        : '<i class="fa-regular fa-heart" style="color:#9ca3af;"></i>';
+
     async function getStock(name) {
       const stockRef = ref(db, `items/${keyFromName(name)}/stock`);
       const snap = await get(stockRef);
@@ -74,7 +79,7 @@
     });
 
     const closeBtn = document.createElement('button');
-    closeBtn.textContent = '✕';
+    closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
     closeBtn.className =
       'absolute top-4 right-4 text-2xl text-gray-600 hover:text-red-600 transition';
     closeBtn.onclick = closeModal;
@@ -157,7 +162,7 @@
           price.textContent = `£${(item.price * item.qty).toFixed(2)}`;
           
           const removeBtn = document.createElement('button');
-          removeBtn.innerHTML = '&times;';
+          removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
           removeBtn.className = 'w-6 h-6 flex items-center justify-center bg-red-500 text-white rounded-full hover:bg-red-600 transition text-lg leading-none';
           removeBtn.onclick = () => {
             const index = basket.indexOf(item);
@@ -226,7 +231,7 @@
           };
 
           const removeBtn = document.createElement('button');
-          removeBtn.innerHTML = '&times;';
+          removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
           removeBtn.className = 'w-6 h-6 flex items-center justify-center bg-red-500 text-white rounded-full hover:bg-red-600 transition text-lg leading-none';
           removeBtn.onclick = () => {
             const index = wishlist.indexOf(name);
@@ -251,7 +256,7 @@
     function updateHeartButtons() {
       document.querySelectorAll('.wishlist-heart').forEach(heart => {
         const name = heart.dataset.name;
-        heart.textContent = wishlist.includes(name) ? '❤️' : '🤍';
+        heart.innerHTML = heartIcon(wishlist.includes(name));
       });
     }
 
@@ -282,7 +287,7 @@
         }
         
         const heart = btn.nextElementSibling;
-        if (heart) heart.textContent = wishlist.includes(name) ? '❤️' : '🤍';
+        if (heart) heart.innerHTML = heartIcon(wishlist.includes(name));
       });
     }
 
@@ -489,18 +494,26 @@
       // Success checkmark
       const checkmark = document.createElement('div');
       checkmark.className = 'success-icon';
-      checkmark.textContent = '✓';
+      checkmark.innerHTML = '<i class="fa-solid fa-check"></i>';
       checkmark.style.cssText = 'color: #16a34a; z-index: 10;';
       animContainer.appendChild(checkmark);
 
       // Create confetti pieces
+      const confettiIcons = [
+        ['fa-solid fa-party-popper', '#ef4444'],
+        ['fa-solid fa-gift', '#f59e0b'],
+        ['fa-solid fa-star', '#16a34a'],
+        ['fa-solid fa-crown', '#3b82f6'],
+        ['fa-solid fa-sparkles', '#8b5cf6']
+      ];
       for (let i = 0; i < 20; i++) {
         const confetti = document.createElement('div');
         confetti.className = 'confetti';
-        const emoji = ['🎉', '🎊', '✨', '🌟', '⭐'][Math.floor(Math.random() * 5)];
-        confetti.textContent = emoji;
+        const [fa, color] = confettiIcons[Math.floor(Math.random() * confettiIcons.length)];
+        confetti.innerHTML = `<i class="${fa}"></i>`;
         confetti.style.cssText = `
           font-size: ${12 + Math.random() * 12}px;
+          color: ${color};
           left: 50%;
           --tx: ${(Math.random() - 0.5) * 200}px;
           animation: confetti-fall ${1.5 + Math.random() * 1}s ease-out forwards;
@@ -516,7 +529,7 @@
         // Phase 2: Show success message
         animContainer.innerHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; animation: pop-scale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
-            <div style="font-size: 36px; color: #16a34a;">🎉</div>
+            <div style="font-size: 36px; color: #16a34a;"><i class="fa-solid fa-party-popper"></i></div>
             <div style="font-weight: 700; color: #15803d; font-size: 18px;">Order Placed!</div>
             <div style="font-size: 12px; color: #4b5563;">Your delivery is on its way</div>
           </div>
@@ -540,7 +553,7 @@
     function updateCombinedButton() {
       const basketCount = basket.reduce((a, b) => a + b.qty, 0);
       const wishlistCount = Math.max(0, wishlist.length);
-      floating.textContent = `🛒 ${basketCount} | ❤️ ${wishlistCount}`;
+      floating.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> ${basketCount} | <i class="fa-solid fa-heart"></i> ${wishlistCount}`;
     }
 
     floating.onclick = openModal;
@@ -549,11 +562,11 @@
     // Use event delegation so buttons created dynamically still work
     document.addEventListener('click', async (e) => {
       // Handle Add to Basket button
-      if (e.target.classList.contains('add-to-basket')) {
-        const btn = e.target;
-        const name = btn.dataset.name;
-        const price = parseFloat(btn.dataset.price);
-        
+      const addBtn = e.target.closest('.add-to-basket');
+      if (addBtn) {
+        const name = addBtn.dataset.name;
+        const price = parseFloat(addBtn.dataset.price);
+
         const stock = await getStock(name);
         const existing = basket.find(i => i.name === name);
 
@@ -566,15 +579,15 @@
       }
 
       // Handle Wishlist heart button
-      if (e.target.classList.contains('wishlist-heart')) {
-        const heart = e.target;
+      const heart = e.target.closest('.wishlist-heart');
+      if (heart) {
         const name = heart.dataset.name;
-        
+
         if (wishlist.includes(name))
           wishlist.splice(wishlist.indexOf(name), 1);
         else wishlist.push(name);
 
-        heart.textContent = wishlist.includes(name) ? '❤️' : '🤍';
+        heart.innerHTML = heartIcon(wishlist.includes(name));
         saveWishlist();
         updateWishlistUI();
       }
@@ -587,8 +600,8 @@
           const name = btn.dataset.name;
           const heart = document.createElement('button');
           heart.type = 'button';
-          heart.textContent = wishlist.includes(name) ? '❤️' : '🤍';
-          heart.className = 'wishlist-heart ml-3 text-2xl hover:scale-110 transition';
+          heart.innerHTML = heartIcon(wishlist.includes(name));
+          heart.className = 'wishlist-heart ml-3 text-2xl inline-flex items-center hover:scale-110 transition';
           heart.dataset.name = name;
           btn.after(heart);
         }

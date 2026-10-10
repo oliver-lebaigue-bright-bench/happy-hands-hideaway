@@ -5,23 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Setup - Happy Hands Hideaway</title>
     <script src="js/tailwind.js"></script>
+    <script src="js/theme.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        tailwind.config = {
+        tailwind.config = { darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
                         poppins: ['Poppins', 'sans-serif']
                     },
                     colors: {
-                        paper: '#f5f1eb',
-                        ink: '#4a3f35',
-                        header: '#d8cfc4',
-                        hero: '#bfa98a',
-                        accent: '#7a5c3c'
-                    }
+            paper: 'rgb(var(--paper) / <alpha-value>)',
+            ink: 'rgb(var(--ink) / <alpha-value>)',
+            header: 'rgb(var(--header) / <alpha-value>)',
+            hero: 'rgb(var(--hero) / <alpha-value>)',
+            accent: 'rgb(var(--accent) / <alpha-value>)',
+            'accent-hover': 'rgb(var(--accent-hover) / <alpha-value>)'
+        }
                 }
             }
         }
@@ -119,6 +121,7 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body class="bg-paper text-ink font-poppins min-h-screen flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full">

@@ -4,8 +4,133 @@ h2 {
     font-family: ntype !important;
  }
 
+/* ===== Theme tokens ===== */
+:root {
+    --paper: 245 241 235;
+    --ink: 74 63 53;
+    --header: 216 207 196;
+    --hero: 191 169 138;
+    --accent: 122 92 60;
+    --accent-hover: 94 70 45;
+    color-scheme: light;
+}
+
+html.dark {
+    --paper: 28 25 23;
+    --ink: 236 231 225;
+    --header: 42 37 34;
+    --hero: 58 50 43;
+    --accent: 211 168 111;
+    --accent-hover: 224 188 138;
+    color-scheme: dark;
+}
+
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme toggle icon swap */
+.hhh-theme-light,
+.hhh-theme-dark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.hhh-theme-dark { display: none; }
+html.dark .hhh-theme-light { display: none; }
+html.dark .hhh-theme-dark { display: inline-flex; }
+
+/* ===== Dark mode overrides for hard-coded utilities ===== */
+
+/* White surfaces */
+html.dark .bg-white { background-color: #26211e; }
+html.dark .bg-white\/90 { background-color: rgba(38, 33, 30, 0.9); }
+html.dark .bg-white\/80 { background-color: rgba(38, 33, 30, 0.8); }
+html.dark .bg-white\/60 { background-color: rgba(38, 33, 30, 0.6); }
+html.dark .hover\:bg-white:hover { background-color: #2f2925; }
+
+/* Neutral greys */
+html.dark .bg-gray-100 { background-color: #2b2622; }
+html.dark .bg-gray-50 { background-color: #2b2622; }
+html.dark .bg-gray-400 { background-color: #6b6259; }
+html.dark .text-gray-500 { color: #a9a199; }
+html.dark .text-gray-600 { color: #bdb5ad; }
+html.dark .text-gray-100 { color: #ece7e1; }
+html.dark .border-gray-200 { border-color: #3a332e; }
+html.dark .border-gray-300 { border-color: #4a4239; }
+
+/* Ink used as a background (selected tabs, button hover) stays dark */
+html.dark .bg-ink { background-color: #3a332e; }
+html.dark .hover\:bg-ink:hover { background-color: #4a4239; }
+/* Hamburger bars need to be light on a dark page */
+html.dark #bar1,
+html.dark #bar2,
+html.dark #bar3 { background-color: #ece7e1 !important; }
+
+/* Accent used as a background keeps enough contrast with white text */
+html.dark .bg-accent { background-color: #966c42; }
+html.dark .hover\:bg-accent-hover:hover { background-color: #7a5834; }
+html.dark .bg-accent\/10 { background-color: rgba(211, 168, 111, 0.12); }
+
+/* Loading image placeholder */
+html.dark .card-img.loading { background-color: #2b2622; }
+
+/* Status / alert colours (admin, setup, basket) */
+html.dark .bg-red-50 { background-color: #3a2020; }
+html.dark .bg-red-100 { background-color: #452626; }
+html.dark .bg-red-600 { background-color: #b91c1c; }
+html.dark .bg-red-700 { background-color: #991b1b; }
+html.dark .text-red-500 { color: #f87171; }
+html.dark .text-red-600 { color: #fca5a5; }
+html.dark .text-red-700 { color: #fca5a5; }
+html.dark .text-red-800 { color: #fecaca; }
+
+html.dark .bg-green-50 { background-color: #1e3326; }
+html.dark .bg-green-100 { background-color: #22402c; }
+html.dark .text-green-700 { color: #86efac; }
+html.dark .text-green-900 { color: #bbf7d0; }
+html.dark .border-green-200 { border-color: #2f5540; }
+html.dark .border-green-300 { border-color: #3a6b4f; }
+html.dark .from-green-50 { --tw-gradient-from: #1e3326; --tw-gradient-to: rgba(30, 51, 38, 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+html.dark .to-green-100 { --tw-gradient-to: #22402c; }
+
+html.dark .bg-blue-50 { background-color: #1e2a3d; }
+html.dark .bg-blue-100 { background-color: #24324a; }
+html.dark .text-blue-700 { color: #93c5fd; }
+html.dark .text-blue-900 { color: #bfdbfe; }
+html.dark .border-blue-200 { border-color: #33477a; }
+
+html.dark .bg-yellow-50 { background-color: #3a3320; }
+html.dark .bg-yellow-100 { background-color: #45401f; }
+html.dark .text-yellow-700 { color: #fde047; }
+html.dark .text-yellow-900 { color: #fef08a; }
+html.dark .border-yellow-200 { border-color: #5c5324; }
+
+/* Form controls */
+html.dark input,
+html.dark select,
+html.dark textarea {
+    background-color: #2b2622;
+    color: rgb(var(--ink));
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder { color: #8f877e; }
+html.dark option { background-color: #2b2622; color: rgb(var(--ink)); }
+
 .card-img.loading {
     opacity: 0.5;
     filter: blur(2px);
     background-color: #f3f4f6;
+}
+
+/* Decorative hero flowers */
+.hero-flower-left { animation: hhhSway 8s ease-in-out infinite; }
+.hero-flower-right { animation: hhhSway 8s ease-in-out infinite; animation-delay: -2s; }
+@keyframes hhhSway {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero-flower-left,
+    .hero-flower-right { animation: none; }
 }

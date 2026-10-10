@@ -7,30 +7,32 @@
 
     <!-- Tailwind -->
     <script src="../js/tailwind.js"></script>
+    <script src="../js/theme.js"></script>
 
     <!-- Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css?v=2">
     <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="icon" href="../resources/favicon.ico" type="image/x-icon">
 
     <script>
-        tailwind.config = {
+        tailwind.config = { darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
                         poppins: ['Poppins', 'sans-serif']
                     },
                     colors: {
-                        paper: '#f5f1eb',
-                        ink: '#4a3f35',
-                        header: '#d8cfc4',
-                        hero: '#bfa98a',
-                        accent: '#7a5c3c',
-                        'accent-hover': '#5e462d'
-                    }
+            paper: 'rgb(var(--paper) / <alpha-value>)',
+            ink: 'rgb(var(--ink) / <alpha-value>)',
+            header: 'rgb(var(--header) / <alpha-value>)',
+            hero: 'rgb(var(--hero) / <alpha-value>)',
+            accent: 'rgb(var(--accent) / <alpha-value>)',
+            'accent-hover': 'rgb(var(--accent-hover) / <alpha-value>)'
+        }
                 }
             }
         }
@@ -119,10 +121,14 @@
 
     <!-- Page Hero -->
     <section class="bg-hero text-center py-20 px-4 relative overflow-hidden">
-        <div class="max-w-[800px] mx-auto relative z-10">
-            <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
-                Personalised Gifts Collection
-            </h2>
+        <div class="relative max-w-[1100px] mx-auto">
+            <img class="hero-flower-left pointer-events-none absolute left-0 z-0 w-[140px] opacity-80 sm:w-[240px] lg:w-[360px]" style="top:50%;translate:0 -50%" src="../images/flowers_left.png" alt="" aria-hidden="true">
+            <img class="hero-flower-right pointer-events-none absolute right-0 z-0 w-[140px] opacity-80 sm:w-[240px] lg:w-[360px]" style="top:50%;translate:0 -50%" src="../images/flowers_right.png" alt="" aria-hidden="true">
+            <div class="max-w-[800px] mx-auto relative z-10">
+                <h2 class="text-[3.5rem] font-semibold mb-4 leading-tight">
+                    Personalised Gifts Collection
+                </h2>
+            </div>
         </div>
     </section>
 

@@ -8,30 +8,32 @@
 
   <!-- Tailwind -->
   <script src="js/tailwind.js"></script>
+    <script src="js/theme.js"></script>
 
   <!-- Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=2">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="icon" href="resources/favicon.ico" type="image/x-icon">
 
   <script>
-    tailwind.config = {
+    tailwind.config = { darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
             poppins: ['Poppins', 'sans-serif']
           },
           colors: {
-            paper: '#f5f1eb',
-            ink: '#4a3f35',
-            header: '#d8cfc4',
-            hero: '#bfa98a',
-            accent: '#7a5c3c',
-            'accent-hover': '#5e462d'
-          }
+            paper: 'rgb(var(--paper) / <alpha-value>)',
+            ink: 'rgb(var(--ink) / <alpha-value>)',
+            header: 'rgb(var(--header) / <alpha-value>)',
+            hero: 'rgb(var(--hero) / <alpha-value>)',
+            accent: 'rgb(var(--accent) / <alpha-value>)',
+            'accent-hover': 'rgb(var(--accent-hover) / <alpha-value>)'
+        }
         }
       }
     }
@@ -124,19 +126,20 @@
 
   <!-- Hero -->
   <section class="bg-hero text-center py-20 px-4 relative overflow-hidden">
-    <!-- Decorative pattern background -->
-    <div class="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-    
-    <div class="max-w-[800px] mx-auto relative z-10">
-      <h2 class="text-[2.5rem] sm:text-[3.5rem] font-semibold mb-4 leading-tight">
-        Art that whispers <br/> <span class="italic text-accent">"Go ahead, smile"</span>
-      </h2>
-      <p class="text-[1.1rem] mb-8 text-ink/80 max-w-lg mx-auto">
-        Explore our categories of handmade clay figurines, home decor, and gifts.
-      </p>
-      <a href="profile.html" class="inline-block bg-white/80 text-ink font-medium px-6 py-2.5 rounded-full hover:bg-white hover:-translate-y-0.5 transition-all duration-300 text-sm">
-        Meet the Artist &rarr;
-      </a>
+    <div class="relative max-w-[1100px] mx-auto">
+      <img class="hero-flower-left pointer-events-none absolute left-0 z-0 w-[140px] opacity-80 sm:w-[240px] lg:w-[360px]" style="top:50%;translate:0 -50%" src="images/flowers_left.png" alt="" aria-hidden="true">
+      <img class="hero-flower-right pointer-events-none absolute right-0 z-0 w-[140px] opacity-80 sm:w-[240px] lg:w-[360px]" style="top:50%;translate:0 -50%" src="images/flowers_right.png" alt="" aria-hidden="true">
+      <div class="max-w-[800px] mx-auto relative z-10">
+        <h2 class="text-[2.5rem] sm:text-[3.5rem] font-semibold mb-4 leading-tight">
+          Art that whispers <br/> <span class="italic text-accent">"Go ahead, smile"</span>
+        </h2>
+        <p class="text-[1.1rem] mb-8 text-ink/80 max-w-lg mx-auto">
+          Explore our categories of handmade clay figurines, home decor, and gifts.
+        </p>
+        <a href="profile.html" class="inline-block bg-white/80 text-ink font-medium px-6 py-2.5 rounded-full hover:bg-white hover:-translate-y-0.5 transition-all duration-300 text-sm">
+          Meet the Artist &rarr;
+        </a>
+      </div>
     </div>
   </section>
 
@@ -150,7 +153,7 @@
         <a href="products/gonks.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/gonks.jpg" onerror="this.src='https://picsum.photos/seed/gonks/400/400'" alt="Gonks" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/gonks.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Gonks" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
@@ -165,7 +168,7 @@
         <a href="products/creatures.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/creatures.jpg" onerror="this.src='https://picsum.photos/seed/creatures/400/400'" alt="Clay mini creatures" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/creatures.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Clay mini creatures" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
@@ -180,7 +183,7 @@
         <a href="products/desk_tidy.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/desk_tidy.jpg" onerror="this.src='https://picsum.photos/seed/desk/400/400'" alt="Clay desk tidy" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/desk_tidy.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Clay desk tidy" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
@@ -195,7 +198,7 @@
         <a href="products/fairy_house.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/fairy_house.jpg" onerror="this.src='https://picsum.photos/seed/fairy/400/400'" alt="Fairy Houses" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/fairy_house.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Fairy Houses" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
@@ -210,7 +213,7 @@
         <a href="products/souvenirs.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/welsh_souvenir.jpg" onerror="this.src='https://picsum.photos/seed/welsh/400/400'" alt="Welsh Souvenirs" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/welsh_souvenir.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Welsh Souvenirs" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
@@ -222,14 +225,14 @@
         </a>
 
         <!-- Category: Jell Prints -->
-        <a href="products/jelly_prints.html" class="group block scroll-reveal">
+        <a href="products/gel_prints.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/jell_print.jpg" onerror="this.src='https://picsum.photos/seed/print/400/400'" alt="Jell Print Range" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/gel_print.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Gel Print Range" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
-              <h4 class="font-bold text-xl mb-1">Jell Print Range</h4>
+              <h4 class="font-bold text-xl mb-1">Gel Print Range</h4>
               <p class="text-gray-500 text-sm mb-4">Unique textured art</p>
               <span class="inline-block text-accent font-medium text-sm group-hover:underline">View Collection &rarr;</span>
             </div>
@@ -240,7 +243,7 @@
         <a href="products/personalised_gifts.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/personalised_gift.jpg" onerror="this.src='https://picsum.photos/seed/gifts/400/400'" alt="Personalised gifts" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/personalised_gift.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Personalised gifts" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
@@ -255,7 +258,7 @@
         <a href="products/magnets.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/magnets.jpg" onerror="this.src='https://picsum.photos/seed/magnets/400/400'" alt="Magnets" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/magnets.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Magnets" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
@@ -270,7 +273,7 @@
         <a href="products/bunting.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/bunting.jpg" onerror="this.src='https://picsum.photos/seed/bunting/400/400'" alt="Bunting" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/bunting.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Bunting" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
@@ -285,7 +288,7 @@
         <a href="products/bauble.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/bauble.jpg" onerror="this.src='https://picsum.photos/seed/bauble/400/400'" alt="Baubles" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/bauble.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Baubles" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
@@ -300,7 +303,7 @@
         <a href="products/figurines.html" class="group block scroll-reveal">
           <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="aspect-square overflow-hidden bg-gray-100 relative">
-              <img loading="lazy" src="images/figurines.jpg" onerror="this.src='https://picsum.photos/seed/figurines/400/400'" alt="Figurines" class="card-img w-full h-full object-cover">
+              <img loading="lazy" src="images/figurines.jpg" onerror="this.src='images/img_not_found.jpg'" alt="Figurines" class="card-img w-full h-full object-cover">
               <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
             </div>
             <div class="p-5 text-center">
