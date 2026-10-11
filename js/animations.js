@@ -632,6 +632,34 @@
             }, 250);
             window.addEventListener('resize', relayout);
             window.addEventListener('orientationchange', relayout);
+
+            // The traced colours are baked into the SVG at render time, so a
+            // theme flip needs a fresh parse to pick up the new computed ink
+            // and accent values.
+            window.hhhRefreshHeroTitles = function () {
+                // The body colour transitions over 0.3s, so reading the ink
+                // straight after a theme flip would still yield the old value.
+                // Pause transitions long enough to read the target colour.
+                var body = document.body;
+                var prevTransition = body ? body.style.transition : '';
+                if (body) {
+                    body.style.transition = 'none';
+                    void body.offsetWidth; // flush pending style changes
+                }
+                titles.forEach(function (el) {
+                    var old = el.querySelector('.hhh-writer');
+                    if (old && old.parentNode) old.parentNode.removeChild(old);
+                    var sr = el.querySelector('.hhh-sr');
+                    if (sr) {
+                        while (sr.firstChild) el.insertBefore(sr.firstChild, sr);
+                        if (sr.parentNode) sr.parentNode.removeChild(sr);
+                    }
+                    delete el.__hhhRuns;
+                    delete el.__hhhSig;
+                    try { buildWritingTitle(el, data, true); } catch (e) {}
+                });
+                if (body) body.style.transition = prevTransition;
+            };
         }
 
         loadScript(HHH_GLYPHS_URL, function () {

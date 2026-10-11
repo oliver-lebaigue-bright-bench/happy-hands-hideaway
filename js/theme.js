@@ -36,6 +36,11 @@
 
     function applyTheme(isDark) {
         root.classList.toggle('dark', isDark);
+        // Hero titles are traced into an SVG with baked-in colours, so ask
+        // animations.js to repaint them for the new theme when available.
+        try {
+            if (typeof window.hhhRefreshHeroTitles === 'function') window.hhhRefreshHeroTitles();
+        } catch (e) { /* ignore */ }
         var meta = document.querySelector('meta[name="color-scheme"]');
         if (!meta) {
             meta = document.createElement('meta');

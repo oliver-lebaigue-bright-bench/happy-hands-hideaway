@@ -100,6 +100,9 @@ html.dark .bg-accent { background-color: #966c42; }
 html.dark .hover\:bg-accent-hover:hover { background-color: #7a5834; }
 html.dark .bg-accent\/10 { background-color: rgba(211, 168, 111, 0.12); }
 
+/* Accent text on the light hero background needs extra contrast */
+html:not(.dark) section.bg-hero .text-accent { color: #5f3a1c; }
+
 /* Loading image placeholder */
 html.dark .card-img.loading { background-color: #2b2622; }
 
