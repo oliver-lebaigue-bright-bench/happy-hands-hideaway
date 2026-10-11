@@ -359,6 +359,14 @@
             document.body.style.opacity = '0';
             setTimeout(function () { window.location.href = a.href; }, 200);
         });
+
+        // If the browser restores this page from its back/forward cache the
+        // faded-out state we applied before navigating comes back with it,
+        // leaving a blank (but coloured) screen. Clear it on every show.
+        window.addEventListener('pageshow', function () {
+            document.body.style.transition = '';
+            document.body.style.opacity = '';
+        });
     }
 
     /* --------------------------------------------------------

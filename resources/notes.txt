@@ -1,5 +1,5 @@
-shop
-    paypal
+- backi page refresh needed
+- events
 
 
 fireabse console add 100 stock to gonk 1 cmd:
