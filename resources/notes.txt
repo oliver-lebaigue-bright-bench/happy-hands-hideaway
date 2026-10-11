@@ -1,14 +1,6 @@
 shop
     paypal
 
-community events
-
-contact
-
-TODO:
-    profile.html
-
-
 
 fireabse console add 100 stock to gonk 1 cmd:
 

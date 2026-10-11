@@ -349,7 +349,7 @@
       postcodeInput.required = true;
 
 
-      placeBtn.onclick = async () => {
+        placeBtn.onclick = () => {
         const name = nameInput.value.trim();
         const email = emailInput.value.trim();
         const addr = addrInput.value.trim();
@@ -367,76 +367,7 @@
           return;
         }
 
-        placeBtn.disabled = true;
-        placeBtn.classList.add('opacity-100'); 
-        placeBtn.classList.remove('hover:bg-green-800');
-
-        try {
-          // 1. Deduct Stock
-          for (const item of basket) {
-            await deductStock(item);
-          }
-
-          // 2. Save Order
-          const orderRef = ref(db, `orders/${Date.now()}`);
-          
-          // === CRITICAL FIX ===
-          // We dynamically look for the 'set' function on the window or firebase app object
-          // to ensure we are calling the correct method.
-          let firebaseSet = window.firebaseSet;
-          if (!firebaseSet && window.firebaseApp) {
-             firebaseSet = window.firebaseApp.database?.ref ? (path, val) => window.firebaseApp.database.ref(path).set(val) : null;
-          }
-          
-          if (typeof firebaseSet === 'function') {
-             await firebaseSet(orderRef, {
-              items: basket,
-              total: basket.reduce((a, b) => a + b.price * b.qty, 0),
-              created: new Date().toISOString(),
-              customer: {
-                name: name,
-                email: email,
-                address: addr,
-                postcode: postcode,
-                notes: notes
-              },
-              status: 'pending'
-            });
-          } else {
-            // Fallback or Error if set is still missing
-            console.error('Firebase set function not found on window or app.');
-            // Try standard set just in case variables were shadowed
-            await set(orderRef, {
-              items: basket,
-              total: basket.reduce((a, b) => a + b.price * b.qty, 0),
-              created: new Date().toISOString(),
-              customer: {
-                name: name,
-                email: email,
-                address: addr,
-                postcode: postcode,
-                notes: notes
-              },
-              status: 'pending'
-            });
-          }
-          // === END FIX ===
-
-          basket.length = 0; 
-          saveBasket();
-
-          playTruckAnimation(placeBtn, () => {
-            isAnimating = false;
-            updateBasketUI();
-            closeModal();
-          });
-
-        } catch (err) {
-          console.error(err);
-          alert('Error placing order: ' + err.message);
-          placeBtn.disabled = false;
-          placeBtn.classList.add('hover:bg-green-800');
-        }
+        renderPayPalCheckout({ name, email, addr, postcode, notes });
       };
 
       const backBtn = document.createElement('button');
@@ -614,6 +545,163 @@
     // Re-attach when products load dynamically
     const observer = new MutationObserver(attachHeartButtons);
     observer.observe(document.body, { childList: true, subtree: true });
+
+    async function placeOrderAfterPayment(orderData) {
+      const { name, email, addr, postcode, notes } = orderData;
+      const orderTotal = basket.reduce((a, b) => a + b.price * b.qty, 0);
+
+      try {
+        for (const item of basket) {
+          await deductStock(item);
+        }
+
+        const orderRef = ref(db, `orders/${Date.now()}`);
+
+        let firebaseSet = window.firebaseSet;
+        if (!firebaseSet && window.firebaseApp) {
+          firebaseSet = window.firebaseApp.database?.ref ? (path, val) => window.firebaseApp.database.ref(path).set(val) : null;
+        }
+
+        if (typeof firebaseSet === 'function') {
+          await firebaseSet(orderRef, {
+            items: basket,
+            total: orderTotal,
+            created: new Date().toISOString(),
+            customer: {
+              name: name,
+              email: email,
+              address: addr,
+              postcode: postcode,
+              notes: notes
+            },
+            status: 'paid'
+          });
+        } else {
+          await set(orderRef, {
+            items: basket,
+            total: orderTotal,
+            created: new Date().toISOString(),
+            customer: {
+              name: name,
+              email: email,
+              address: addr,
+              postcode: postcode,
+              notes: notes
+            },
+            status: 'paid'
+          });
+        }
+
+        basket.length = 0;
+        saveBasket();
+
+        checkoutContainer.innerHTML = '';
+        playTruckAnimation(checkoutContainer, () => {
+          isAnimating = false;
+          updateBasketUI();
+          closeModal();
+        });
+      } catch (err) {
+        console.error(err);
+        alert('Error completing order after payment: ' + err.message);
+        renderCheckoutButton();
+      }
+    }
+
+    function loadPayPalSDK(callback) {
+      if (window.paypal) {
+        callback();
+        return;
+      }
+      const clientId = 'sb';
+      const script = document.createElement('script');
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=GBP`;
+      script.async = true;
+      script.onload = callback;
+      script.onerror = () => {
+        alert('Failed to load PayPal SDK. Please check your connection.');
+        renderCheckoutButton();
+      };
+      document.head.appendChild(script);
+    }
+
+
+
+    function renderPayPalCheckout(orderData) {
+      checkoutContainer.innerHTML = '';
+
+      const total = basket.reduce((a, b) => a + b.price * b.qty, 0).toFixed(2);
+
+      const heading = document.createElement('h3');
+      heading.className = 'text-lg font-bold mb-2';
+      heading.textContent = 'Pay with PayPal';
+      checkoutContainer.appendChild(heading);
+
+      const totalText = document.createElement('p');
+      totalText.className = 'text-sm text-gray-600 mb-4';
+      totalText.textContent = `Total: £${total}`;
+      checkoutContainer.appendChild(totalText);
+
+      const paypalButtonsContainer = document.createElement('div');
+      paypalButtonsContainer.id = 'paypal-buttons-container';
+      checkoutContainer.appendChild(paypalButtonsContainer);
+
+      const backBtn = document.createElement('button');
+      backBtn.textContent = 'Back to Details';
+      backBtn.className = 'w-full text-gray-500 text-sm py-2 mt-2 hover:underline';
+      backBtn.onclick = renderDeliveryForm;
+      checkoutContainer.appendChild(backBtn);
+
+      loadPayPalSDK(() => {
+        const renderButtons = () => {
+          if (window.paypal && window.paypal.Buttons) {
+            window.paypal
+              .Buttons({
+                createOrder: (data, actions) => {
+                  return actions.order.create({
+                    purchase_units: [
+                      {
+                        amount: {
+                          currency_code: 'GBP',
+                          value: total
+                        }
+                      }
+                    ]
+                  });
+                },
+                onApprove: (data, actions) => {
+                  return actions.order.capture().then(() => {
+                    placeOrderAfterPayment(orderData);
+                  });
+                },
+                onError: err => {
+                  console.error(err);
+                  alert('PayPal payment failed. Please try again.');
+                  renderCheckoutButton();
+                }
+              })
+              .render('#paypal-buttons-container');
+            return true;
+          }
+          return false;
+        };
+
+        if (!renderButtons()) {
+          let attempts = 0;
+          const maxAttempts = 50;
+          const interval = setInterval(() => {
+            attempts++;
+            if (renderButtons()) {
+              clearInterval(interval);
+            } else if (attempts >= maxAttempts) {
+              clearInterval(interval);
+              alert('PayPal SDK not loaded. Please refresh the page.');
+              renderCheckoutButton();
+            }
+          }, 100);
+        }
+      });
+    }
 
     /* ================= INIT ================= */
     updateBasketUI();
