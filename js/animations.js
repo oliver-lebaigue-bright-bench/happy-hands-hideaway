@@ -1,6 +1,19 @@
 (function () {
     'use strict';
 
+    // URL of this very script, so the sibling glyph data (glyphs.js) can be
+    // located no matter which folder the page lives in.
+    var SELF_SRC = (function () {
+        try {
+            if (document.currentScript && document.currentScript.src) return document.currentScript.src;
+            var scripts = document.getElementsByTagName('script');
+            for (var i = scripts.length - 1; i >= 0; i--) {
+                if (/\/animations\.js(\?|$)/.test(scripts[i].src)) return scripts[i].src;
+            }
+        } catch (e) { /* ignore */ }
+        return '';
+    })();
+
     var root = document.documentElement;
     var prefersReduced = window.matchMedia &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -60,9 +73,11 @@
        Auto-tag page furniture
        -------------------------------------------------------- */
     function tagStatic() {
-        // Headings & hero copy.
+        // Headings & hero copy. Hero titles are handled by the "writing"
+        // module below, so leave them to it.
         $$('main h1, section h1, section h2').forEach(function (el, i) {
             if (el.closest('[data-hhh-noanim]')) return;
+            if (el.closest('section.bg-hero')) return;
             reveal(el, { dir: 'up', delay: i * 60 });
         });
         $$('section h3').forEach(function (el) { reveal(el, { dir: 'up' }); });
@@ -347,6 +362,285 @@
     }
 
     /* --------------------------------------------------------
+       Handwritten hero titles
+       Draws the real glyph outlines of the custom font, one
+       letter at a time, so the title is "written in" live.
+       -------------------------------------------------------- */
+    var HHH_GLYPHS_URL = resolveAsset('glyphs.js');
+    var HHH_MASK_SEQ = 0;
+
+    function resolveAsset(rel) {
+        try { return new URL(rel, SELF_SRC || window.location.href).href; }
+        catch (e) { return rel; }
+    }
+
+    function glyphAdvance(data, ch, fontSize) {
+        var upm = data.unitsPerEm || 1000;
+        var g = data.glyphs[ch];
+        var a = (g && typeof g.a === 'number') ? g.a : upm * 0.5;
+        return a * fontSize / upm;
+    }
+
+    function loadScript(src, onload, onerror) {
+        var s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onload = onload;
+        s.onerror = onerror || function () {};
+        document.head.appendChild(s);
+    }
+
+    function debounce(fn, wait) {
+        var t;
+        return function () {
+            var ctx = this, args = arguments;
+            clearTimeout(t);
+            t = setTimeout(function () { fn.apply(ctx, args); }, wait);
+        };
+    }
+
+    function heroTitles() {
+        return $$('section.bg-hero h1, section.bg-hero h2').filter(function (el) {
+            return !el.closest('[data-hhh-noanim]');
+        });
+    }
+
+    // Turn the title's DOM into paragraphs of styled runs.
+    function parseTitleRuns(el) {
+        var paragraphs = [[]];
+        var para = paragraphs[0];
+
+        function walk(node, style) {
+            if (node.nodeType === 3) {
+                if (node.nodeValue) {
+                    para.push({ text: node.nodeValue, italic: style.italic, color: style.color });
+                }
+                return;
+            }
+            if (node.nodeType !== 1) return;
+            if (node.tagName === 'BR') { para = []; paragraphs.push(para); return; }
+            var cs = getComputedStyle(node);
+            var next = {
+                italic: cs.fontStyle === 'italic' || cs.fontStyle === 'oblique',
+                color: cs.color
+            };
+            for (var i = 0; i < node.childNodes.length; i++) walk(node.childNodes[i], next);
+        }
+
+        var base = getComputedStyle(el);
+        var baseStyle = {
+            italic: base.fontStyle === 'italic' || base.fontStyle === 'oblique',
+            color: base.color
+        };
+        for (var i = 0; i < el.childNodes.length; i++) walk(el.childNodes[i], baseStyle);
+        return paragraphs;
+    }
+
+    function tokenize(data, para, fontSize) {
+        var spaceW = glyphAdvance(data, ' ', fontSize);
+        var items = [];
+        var word = [];
+
+        function wordWidth(chars) {
+            var w = 0;
+            for (var i = 0; i < chars.length; i++) w += glyphAdvance(data, chars[i].ch, fontSize);
+            return w;
+        }
+
+        function flush() {
+            if (!word.length) return;
+            items.push({ type: 'word', chars: word, width: wordWidth(word) });
+            word = [];
+        }
+
+        for (var r = 0; r < para.length; r++) {
+            var run = para[r], text = run.text;
+            for (var i = 0; i < text.length; i++) {
+                var ch = text.charAt(i);
+                if (ch === ' ' || ch === '\n' || ch === '\t' || ch === '\u00a0') {
+                    flush();
+                    if (!items.length || items[items.length - 1].type !== 'space') {
+                        items.push({ type: 'space', width: spaceW });
+                    }
+                } else {
+                    word.push({ ch: ch, italic: run.italic, color: run.color });
+                }
+            }
+        }
+        flush();
+        // Strip any indentation whitespace that clung to the paragraph edges.
+        while (items.length && items[0].type === 'space') items.shift();
+        while (items.length && items[items.length - 1].type === 'space') items.pop();
+        return items;
+    }
+
+    function wrapItems(items, maxWidth) {
+        var lines = [], cur = [], curW = 0;
+        for (var i = 0; i < items.length; i++) {
+            var it = items[i];
+            if (it.type === 'space') {
+                if (cur.length) { cur.push(it); curW += it.width; }
+                continue;
+            }
+            if (cur.length && curW + it.width > maxWidth) {
+                var last = cur[cur.length - 1];
+                if (last && last.type === 'space') { curW -= last.width; cur.pop(); }
+                lines.push(cur); cur = []; curW = 0;
+            }
+            cur.push(it); curW += it.width;
+        }
+        if (cur.length) lines.push(cur);
+        return lines;
+    }
+
+    function lineWidth(line) {
+        var w = 0;
+        for (var i = 0; i < line.length; i++) w += line[i].width;
+        var last = line[line.length - 1];
+        if (last && last.type === 'space') w -= last.width;
+        return w;
+    }
+
+    function renderTitleSVG(data, paragraphs, o) {
+        var upm = data.unitsPerEm || 1000;
+        var scale = o.fontSize / upm;
+        var ascent = (data.ascender || upm * 0.8) * scale;
+        var descent = Math.abs(data.descender || upm * 0.2) * scale;
+        var ns = 'http://www.w3.org/2000/svg';
+
+        var lines = [];
+        for (var p = 0; p < paragraphs.length; p++) {
+            var wrapped = wrapItems(tokenize(data, paragraphs[p], o.fontSize), o.maxWidth);
+            for (var w = 0; w < wrapped.length; w++) lines.push(wrapped[w]);
+        }
+
+        var markup = '';
+        var order = 0; // running index for the writing stagger
+        var pen = upm * (o.penRatio || 0.14); // pen thickness in font units
+
+        for (var li = 0; li < lines.length; li++) {
+            var line = lines[li];
+            var baseline = ascent + li * o.lineHeight;
+            var lw = lineWidth(line);
+            var x = o.align === 'left' ? 0 :
+                (o.align === 'right' ? (o.maxWidth - lw) : (o.maxWidth - lw) / 2);
+
+            for (var k = 0; k < line.length; k++) {
+                var it = line[k];
+                if (it.type === 'space') { x += it.width; continue; }
+                for (var c = 0; c < it.chars.length; c++) {
+                    var ch = it.chars[c];
+                    var gl = data.glyphs[ch.ch];
+                    if (gl && gl.d) {
+                        var tr = 'translate(' + x.toFixed(2) + ' ' + baseline.toFixed(2) +
+                            ') scale(' + scale.toFixed(6) + ')' + (ch.italic ? ' skewX(-14)' : '');
+                        var delay = (o.baseDelay + order * o.step).toFixed(3);
+                        var mid = 'hhhm' + (HHH_MASK_SEQ++);
+                        // The pen only masks the solid fill, so the letter inks
+                        // in as it is drawn rather than showing a hollow outline.
+                        markup += '<g transform="' + tr + '">' +
+                            '<mask id="' + mid + '" maskUnits="userSpaceOnUse"' +
+                                ' x="-1200" y="-1600" width="3400" height="2600">' +
+                                '<path class="hhh-pen" d="' + gl.d + '" stroke-width="' + pen.toFixed(1) +
+                                    '" pathLength="1" stroke-dasharray="1"' +
+                                    ' style="animation-delay:' + delay + 's"></path>' +
+                                '<path class="hhh-close" d="' + gl.d + '"' +
+                                    ' style="animation-delay:' + delay + 's"></path>' +
+                            '</mask>' +
+                            '<path class="hhh-ink" d="' + gl.d + '" fill="' + ch.color +
+                                '" mask="url(#' + mid + ')"></path>' +
+                            '</g>';
+                        order++;
+                    }
+                    x += glyphAdvance(data, ch.ch, o.fontSize);
+                }
+            }
+        }
+
+        var n = lines.length || 1;
+        var contentH = (n - 1) * o.lineHeight + ascent + descent;
+        // Keep the original line-box height so the hero doesn't jump when the
+        // real text is swapped for the traced SVG.
+        var boxH = n * o.lineHeight;
+        var h = Math.max(contentH, boxH, 1);
+        var offsetY = (h - contentH) / 2;
+
+        var svg = document.createElementNS(ns, 'svg');
+        svg.setAttribute('class', 'hhh-writer');
+        svg.setAttribute('viewBox', '0 0 ' + o.maxWidth.toFixed(2) + ' ' + h.toFixed(2));
+        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.setAttribute('focusable', 'false');
+        svg.innerHTML = '<g transform="translate(0 ' + offsetY.toFixed(2) + ')">' + markup + '</g>';
+        return svg;
+    }
+
+    function buildWritingTitle(el, data, noAnim) {
+        if (!el.__hhhRuns) {
+            el.__hhhRuns = parseTitleRuns(el);
+            var sr = document.createElement('span');
+            sr.className = 'hhh-sr';
+            while (el.firstChild) sr.appendChild(el.firstChild);
+            el.appendChild(sr);
+            el.style.position = 'relative';
+        }
+
+        var cs = getComputedStyle(el);
+        var fontSize = parseFloat(cs.fontSize) || 40;
+        var lineHeight = parseFloat(cs.lineHeight) || fontSize * 1.15;
+        var align = cs.textAlign === 'left' ? 'left' : (cs.textAlign === 'right' ? 'right' : 'center');
+        var maxWidth = el.clientWidth || el.offsetWidth || 600;
+
+        var sig = [fontSize, Math.round(lineHeight), maxWidth, align, noAnim ? 'n' : 'a'].join('|');
+        if (noAnim && el.__hhhSig === sig) return;
+
+        var svg = renderTitleSVG(data, el.__hhhRuns, {
+            fontSize: fontSize,
+            maxWidth: maxWidth,
+            lineHeight: lineHeight,
+            align: align,
+            step: 0.055,
+            baseDelay: 0.05
+        });
+
+        var old = el.querySelector('.hhh-writer');
+        if (old && old.parentNode) old.parentNode.removeChild(old);
+
+        if (noAnim) svg.classList.add('hhh-static');
+
+        el.appendChild(svg);
+        el.__hhhSig = sig;
+    }
+
+    function initWriting() {
+        var titles = heroTitles();
+        if (!titles.length) return;
+
+        function fallback() {
+            titles.forEach(function (el) { reveal(el, { dir: 'up' }); });
+        }
+
+        function ready(data) {
+            titles.forEach(function (el) {
+                try { buildWritingTitle(el, data, false); }
+                catch (e) { reveal(el, { dir: 'up' }); }
+            });
+            var relayout = debounce(function () {
+                titles.forEach(function (el) {
+                    try { buildWritingTitle(el, data, true); } catch (e) {}
+                });
+            }, 250);
+            window.addEventListener('resize', relayout);
+            window.addEventListener('orientationchange', relayout);
+        }
+
+        loadScript(HHH_GLYPHS_URL, function () {
+            if (!window.HHH_GLYPHS || !window.HHH_GLYPHS.glyphs) { fallback(); return; }
+            ready(window.HHH_GLYPHS);
+        }, fallback);
+    }
+
+    /* --------------------------------------------------------
        Boot
        -------------------------------------------------------- */
     function init() {
@@ -359,6 +653,7 @@
         try { initParallax(); } catch (e) {}
         try { initChrome(); } catch (e) {}
         try { initPageTransitions(); } catch (e) {}
+        try { initWriting(); } catch (e) {}
     }
 
     if (document.readyState === 'loading') {

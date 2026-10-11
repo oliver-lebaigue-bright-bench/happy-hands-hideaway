@@ -1,29 +1,53 @@
 (function () {
     var TEST_MODE = false; // Set to true to force light mode only
 
+    var STORAGE_KEY = 'hhh-theme';
     var root = document.documentElement;
 
     function systemPrefersDark() {
         return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     }
 
+    function readOverride() {
+        try {
+            var value = localStorage.getItem(STORAGE_KEY);
+            if (value === 'dark' || value === 'light') return value;
+        } catch (e) { /* ignore */ }
+        return null;
+    }
+
+    function writeOverride(value) {
+        try {
+            if (value === null) {
+                localStorage.removeItem(STORAGE_KEY);
+            } else {
+                localStorage.setItem(STORAGE_KEY, value);
+            }
+        } catch (e) { /* ignore */ }
+    }
+
+    // The device preference is the default; a stored value is a manual override.
+    function preferredDark() {
+        if (TEST_MODE) return false;
+        var override = readOverride();
+        if (override !== null) return override === 'dark';
+        return systemPrefersDark();
+    }
+
     function applyTheme(isDark) {
-        var effectiveDark = TEST_MODE ? false : isDark;
-        root.classList.toggle('dark', effectiveDark);
+        root.classList.toggle('dark', isDark);
         var meta = document.querySelector('meta[name="color-scheme"]');
         if (!meta) {
             meta = document.createElement('meta');
             meta.name = 'color-scheme';
             document.head.appendChild(meta);
         }
-        meta.content = effectiveDark ? 'dark light' : 'light dark';
+        meta.content = isDark ? 'dark light' : 'light dark';
     }
 
     // Apply immediately so there is no flash of the wrong theme.
-    // Always follow the OS preference. A previously saved toggle (localStorage)
-    // must never stick the site in dark mode on a light-mode device, so the
-    // manual toggle below is a temporary override for the current page only.
-    applyTheme(TEST_MODE ? false : systemPrefersDark());
+    // Defaults to the OS preference and honours a previous manual override.
+    applyTheme(preferredDark());
 
     var ICONS = {
         moon: '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>',
@@ -46,10 +70,49 @@
         }
     }
 
-    function toggleTheme() {
-        if (TEST_MODE) return; // Prevent manual toggling while test mode is active
-        applyTheme(!isDark());
+    function applyThemeChange(next) {
+        applyTheme(next);
+        writeOverride(next ? 'dark' : 'light');
         syncButtons();
+    }
+
+    // Manual override: remember the choice so it survives page navigations
+    // and so live OS changes don't undo it.
+    function toggleTheme(e) {
+        if (TEST_MODE) return;
+        var next = !isDark();
+
+        // Animated, page-wide reveal spreading out from the clicked switch
+        // (View Transitions API). Falls back to an instant switch elsewhere.
+        if (document.startViewTransition) {
+            var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!reduced) {
+                var btn = ((e && e.currentTarget) || null);
+                var revealX = window.innerWidth / 2;
+                var revealY = window.innerHeight / 2;
+                if (btn) {
+                    var rect = btn.getBoundingClientRect();
+                    revealX = rect.left + rect.width / 2;
+                    revealY = rect.top + rect.height / 2;
+                }
+                var farX = Math.max(revealX, window.innerWidth - revealX);
+                var farY = Math.max(revealY, window.innerHeight - revealY);
+                root.style.setProperty('--hhh-reveal-x', revealX + 'px');
+                root.style.setProperty('--hhh-reveal-y', revealY + 'px');
+                root.style.setProperty('--hhh-reveal-radius', Math.hypot(farX, farY) + 'px');
+
+                document.startViewTransition(function () {
+                    applyThemeChange(next);
+                }).finished.then(function () {
+                    root.style.removeProperty('--hhh-reveal-x');
+                    root.style.removeProperty('--hhh-reveal-y');
+                    root.style.removeProperty('--hhh-reveal-radius');
+                }).catch(function () { /* transition skipped – vars are inert */ });
+                return;
+            }
+        }
+
+        applyThemeChange(next);
     }
 
     function makeButton(extraClass) {
@@ -104,14 +167,15 @@
         init();
     }
 
-    // Follow the OS preference live, so the site changes with the system.
+    // Follow the OS preference live, but only while the user has not
+    // manually overridden it.
     if (window.matchMedia) {
         try {
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
-                if (!TEST_MODE) {
-                    applyTheme(e.matches);
-                    syncButtons();
-                }
+                if (TEST_MODE) return;
+                if (readOverride() !== null) return; // respect the manual override
+                applyTheme(e.matches);
+                syncButtons();
             });
         } catch (e) { /* older browsers */ }
     }
